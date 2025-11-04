@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { User } from '../lib/definitions';
 import { updateUserDetails, deleteUser } from '../actions';
 import { useRouter } from 'next/navigation';
+import styles from '../page.module.css';
 
 export default function UserRow({ user }: { user: User }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -56,33 +57,66 @@ export default function UserRow({ user }: { user: User }) {
     const isDeletable = user.id !== 3; // Giả sử Admin ID 3 không thể xóa
 
     return (
-        <tr className={`border-b ${isAdmin ? 'bg-pink-100 text-pink-700' : 'bg-white'}`}>
-            <td className="px-4 py-2 font-bold">{user.id}</td>
+        <tr className={isAdmin ? styles.adminRow : undefined}>
+            <td>{user.id}</td>
             
             {/* Full Name */}
-            <td className="px-4 py-2">
-                {isEditing ? <input type="text" name="full_name" value={formData.full_name} onChange={handleChange} className="border p-1 w-full"/> : user.full_name}
+            <td>
+                {isEditing ? 
+                    <input 
+                        type="text" 
+                        name="full_name" 
+                        value={formData.full_name} 
+                        onChange={handleChange} 
+                        className={styles.input}
+                    /> : user.full_name}
             </td>
             
             {/* Email */}
-            <td className="px-4 py-2">
-                {isEditing ? <input type="email" name="email" value={formData.email} onChange={handleChange} className="border p-1 w-full"/> : user.email}
+            <td>
+                {isEditing ? 
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
+                        onChange={handleChange} 
+                        className={styles.input}
+                    /> : user.email}
             </td>
             
             {/* Phone */}
-            <td className="px-4 py-2">
-                {isEditing ? <input type="text" name="phone" value={formData.phone || ''} onChange={handleChange} className="border p-1 w-full"/> : user.phone}
+            <td>
+                {isEditing ? 
+                    <input 
+                        type="text" 
+                        name="phone" 
+                        value={formData.phone || ''} 
+                        onChange={handleChange} 
+                        className={styles.input}
+                    /> : user.phone}
             </td>
             
             {/* Address */}
-            <td className="px-4 py-2">
-                {isEditing ? <input type="text" name="address" value={formData.address || ''} onChange={handleChange} className="border p-1 w-full"/> : user.address}
+            <td>
+                {isEditing ? 
+                    <input 
+                        type="text" 
+                        name="address" 
+                        value={formData.address || ''} 
+                        onChange={handleChange} 
+                        className={styles.input}
+                    /> : user.address}
             </td>
             
             {/* Role */}
-            <td className="px-4 py-2">
+            <td>
                 {isEditing ? (
-                    <select name="role" value={formData.role} onChange={handleChange} className="border p-1">
+                    <select 
+                        name="role" 
+                        value={formData.role} 
+                        onChange={handleChange} 
+                        className={styles.select}
+                    >
                         <option value="customer">customer</option>
                         <option value="admin">admin</option>
                     </select>
@@ -90,22 +124,22 @@ export default function UserRow({ user }: { user: User }) {
             </td>
             
             {/* Actions */}
-            <td className="px-4 py-2 space-x-2 w-40">
+            <td>
                 {isAdmin ? (
-                    <span className="text-pink-600">No action</span>
+                    <span style={{ color: '#f06292' }}>No action</span>
                 ) : isEditing ? (
                     <>
                         <button 
                             onClick={handleSave} 
                             disabled={isPending}
-                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 disabled:opacity-50"
+                            className={styles.saveBtn}
                         >
                             {isPending ? 'Saving...' : 'Save'}
                         </button>
                         <button 
                             onClick={handleCancel} 
                             disabled={isPending}
-                            className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500 disabled:opacity-50"
+                            className={styles.cancelBtn}
                         >
                             Cancel
                         </button>
@@ -114,14 +148,14 @@ export default function UserRow({ user }: { user: User }) {
                     <>
                         <button 
                             onClick={() => setIsEditing(true)}
-                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                            className={styles.editBtn}
                         >
                             Edit
                         </button>
                         <button 
                             onClick={handleDelete}
                             disabled={isPending || !isDeletable}
-                            className="bg-red-700 text-white px-3 py-1 rounded hover:bg-red-800 disabled:opacity-50"
+                            className={styles.deleteBtn}
                         >
                             Delete
                         </button>
