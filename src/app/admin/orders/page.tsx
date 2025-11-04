@@ -58,7 +58,7 @@ export default async function OrdersPage() {
                   />
                 </td>
                 <td className="px-4 py-3">
-                  {new Date(o.orderDate).toLocaleString('vi-VN')}
+                  {o.orderDate ? new Date(o.orderDate).toLocaleString('vi-VN') : '-'}
                 </td>
                 <td className="px-4 py-3">
                   <Link
