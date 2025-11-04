@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id            Int             @id @default(autoincrement()) @map("id")
+  userId        Int             @map("user_id")
+  totalAmount   Decimal         @map("total_amount") @db.Decimal(10, 2)
+  orderDate     DateTime?       @default(now()) @map("order_date") @db.DateTime(0)
+  status        OrderStatus?    @default(pending) @map("status")
+  notifications notifications[]
+  order_items   order_items[]
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "orders_ibfk_1")
+
+  @@index([userId], map: "user_id")
+  @@map("orders")
+}
+
+model User {
+  id                                                Int             @id @default(autoincrement()) @map("id")
+  full_name                                         String          @db.VarChar(100)
+  email                                             String          @unique(map: "email") @map("email") @db.VarChar(100)
+  password                                          String          @db.VarChar(255)
+  phone                                             String?         @map("phone") @db.VarChar(20)
+  addr                                              String?         @map("address") @db.Text
+  role                                              users_role?     @default(customer)
+  cart_items                                        cart_items[]
+  notifications_notifications_user_idTousers        notifications[] @relation("notifications_user_idTousers")
+  notifications_notifications_target_user_idTousers notifications[] @relation("notifications_target_user_idTousers")
+  orders                                            Order[]
+  reviews                                           reviews[]
+
+  @@map("users")
+}
+
+model cart_items {
+  id           Int       @id @default(autoincrement())
+  user_id      Int
+  product_id   Int
+  quantity     Int?      @default(1)
+  service_id   Int?
+  card_message String?   @db.VarChar(255)
+  users        User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "cart_items_ibfk_1")
+  products     products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "cart_items_ibfk_2")
+  services     services? @relation(fields: [service_id], references: [id], onUpdate: Restrict, map: "cart_items_ibfk_3")
+
+  @@index([product_id], map: "product_id")
+  @@index([service_id], map: "service_id")
+  @@index([user_id], map: "user_id")
+}
+
+model collections {
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(100)
+  description String?    @db.Text
+  products    products[]
+}
+
+model notifications {
+  id                                        Int                @id @default(autoincrement())
+  user_id                                   Int
+  target_user_id                            Int?
+  product_id                                Int?
+  order_id                                  Int?
+  type                                      notifications_type
+  message                                   String             @db.Text
+  created_at                                DateTime?          @default(now()) @db.DateTime(0)
+  users_notifications_user_idTousers        User               @relation("notifications_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "notifications_ibfk_1")
+  users_notifications_target_user_idTousers User?              @relation("notifications_target_user_idTousers", fields: [target_user_id], references: [id], onUpdate: Restrict, map: "notifications_ibfk_2")
+  products                                  products?          @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "notifications_ibfk_3")
+  orders                                    Order?             @relation(fields: [order_id], references: [id], onUpdate: Restrict, map: "notifications_ibfk_4")
+
+  @@index([order_id], map: "order_id")
+  @@index([product_id], map: "product_id")
+  @@index([target_user_id], map: "target_user_id")
+  @@index([user_id], map: "user_id")
+}
+
+model order_items {
+  id           Int       @id @default(autoincrement())
+  order_id     Int
+  product_id   Int
+  quantity     Int?      @default(1)
+  price        Decimal   @db.Decimal(10, 2)
+  service_id   Int?
+  card_message String?   @db.VarChar(255)
+  orders       Order     @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "order_items_ibfk_1")
+  products     products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "order_items_ibfk_2")
+  services     services? @relation(fields: [service_id], references: [id], onUpdate: Restrict, map: "order_items_ibfk_3")
+
+  @@index([order_id], map: "order_id")
+  @@index([product_id], map: "product_id")
+  @@index([service_id], map: "service_id")
+}
+
+model products {
+  id            Int              @id @default(autoincrement())
+  name          String           @db.VarChar(150)
+  description   String?          @db.Text
+  price         Decimal          @db.Decimal(10, 2)
+  image         String?          @db.VarChar(255)
+  collection_id Int?
+  stock         Int?             @default(0)
+  status        products_status? @default(in_stock)
+  created_at    DateTime?        @default(now()) @db.DateTime(0)
+  edit_at       DateTime?        @default(now()) @db.DateTime(0)
+  cart_items    cart_items[]
+  notifications notifications[]
+  order_items   order_items[]
+  collections   collections?     @relation(fields: [collection_id], references: [id], onUpdate: Restrict, map: "products_ibfk_1")
+  reviews       reviews[]
+
+  @@index([collection_id], map: "collection_id")
+}
+
+model review_images {
+  id         Int       @id @default(autoincrement())
+  review_id  Int
+  image_path String    @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.DateTime(0)
+  reviews    reviews   @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "review_images_ibfk_1")
+
+  @@index([review_id], map: "review_id")
+}
+
+model reviews {
+  id               Int             @id @default(autoincrement())
+  user_id          Int
+  product_id       Int
+  rating           Int?
+  comment          String?         @db.Text
+  created_at       DateTime?       @default(now()) @db.DateTime(0)
+  admin_reply      String          @db.Text
+  admin_created_at DateTime?       @default(now()) @db.DateTime(0)
+  review_images    review_images[]
+  users            User            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reviews_ibfk_1")
+  products         products        @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "reviews_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model services {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  price       Decimal       @db.Decimal(10, 2)
+  image       String?       @db.VarChar(255)
+  description String?       @db.Text
+  cart_items  cart_items[]
+  order_items order_items[]
+}
+
+enum OrderStatus {
+  pending
+  shipped
+  delivered
+}
+
+enum notifications_type {
+  login
+  logout
+  order_status
+  review
+  admin_message
+}
+
+enum users_role {
+  admin
+  customer
+}
+
+enum products_status {
+  in_stock
+  out_of_stock
+}
