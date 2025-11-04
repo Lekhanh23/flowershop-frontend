@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,38 +16,14 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const {login} = useAuth();
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErr("");
     setLoading(true);
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // plain text compare như PHP cũ
-        body: JSON.stringify({ email, password, remember }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErr(data?.error || "Login failed");
-        return;
-      }
-
-      // Chỉ cho admin vào dashboard
-      if (data?.role === "admin") {
-        // nếu có ?redirect=... thì đi theo, không thì vào dashboard
-        if (redirect) {
-          router.replace(redirect);
-        } else {
-          router.replace("/admin/dashboard");
-        }
-      } else {
-        setErr("Only admin can access the dashboard.");
-      }
+      await login(email, password);
     } catch (e) {
       setErr("Server error. Please try again.");
     } finally {

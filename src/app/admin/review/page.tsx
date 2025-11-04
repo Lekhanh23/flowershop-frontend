@@ -3,6 +3,7 @@ import { fetchFilteredReviews } from './lib/data';
 import ReviewsTable from './components/ReviewsTable';
 import ReviewsFilter from './components/ReviewsFilter';
 import ReviewsPagination from './components/ReviewsPagination';
+export const dynamic = 'force-dynamic';
 
 
 // Định nghĩa props nhận từ URL search params
@@ -27,7 +28,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Dashboard &gt; Review Management</h1>
+            <h1 className="text-3xl font-bold text-pink-600 mb-2">Review Management</h1>
             <div className="mb-4">
                 <p className="text-lg">Total reviews: {totalReviews}</p>
             </div>
