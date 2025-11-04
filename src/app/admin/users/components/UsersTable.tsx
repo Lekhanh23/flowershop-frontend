@@ -2,23 +2,24 @@
 
 import { User } from '../lib/definitions';
 import UserRow from './UserRow';
+import styles from '../page.module.css';
 
 export default function UsersTable({ users }: { users: User[] }) {
     return (
-        <div className="overflow-x-auto shadow-md rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-pink-500 text-white">
+        <div className={styles.tableWrap}>
+            <table className={styles.table}>
+                <thead>
                     <tr>
-                        <th className="px-4 py-3 text-left">ID</th>
-                        <th className="px-4 py-3 text-left">Full Name</th>
-                        <th className="px-4 py-3 text-left">Email</th>
-                        <th className="px-4 py-3 text-left">Phone</th>
-                        <th className="px-4 py-3 text-left">Address</th>
-                        <th className="px-4 py-3 text-left">Role</th>
-                        <th className="px-4 py-3 text-left">Actions</th>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Role</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody>
                     {users.map((user) => (
                         <UserRow key={user.id} user={user} />
                     ))}

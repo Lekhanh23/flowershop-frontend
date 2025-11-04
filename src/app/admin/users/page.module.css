@@ -1,0 +1,109 @@
+.container {
+  padding: 24px;
+  background: #fff;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  color: #f06292;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.table thead th {
+  text-align: left;
+  padding: 12px 16px;
+  background: #fdf1f6;
+  color: #e91e63;
+  border-bottom: 1px solid #f0e6ea;
+}
+
+.table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f5f2f4;
+  color: #333;
+  vertical-align: middle;
+}
+
+.editBtn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  background: #ff6b81;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.saveBtn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.select {
+  padding: 6px 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  font-size: 14px;
+}
+
+.adminRow {
+  background: #fff0f7;
+}
+
+/* Disabled state */
+.editBtn:disabled,
+.deleteBtn:disabled,
+.saveBtn:disabled,
+.cancelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
