@@ -1,0 +1,137 @@
+/* Minimal styles to approximate the provided design */
+.container {
+  padding: 24px;
+  background: #fff;
+}
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.title {
+  color: #f06292; /* pink */
+  font-weight: 700;
+  margin: 0;
+}
+.addButton {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+.table thead th {
+  text-align: left;
+  padding: 12px 16px;
+  background: #fdf1f6; /* very light pink */
+  color: #e91e63;
+  border-bottom: 1px solid #f0e6ea;
+}
+.table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f5f2f4;
+  color: #333;
+  vertical-align: middle;
+}
+.thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+.name {
+  font-size: 14px;
+}
+.price {
+  color: #555;
+}
+.status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.statusIn {
+  background: #e8f5e9; /* light green */
+  color: #2e7d32; /* green */
+}
+.statusOut {
+  background: #fff0f0; /* light red */
+  color: #c62828; /* red */
+}
+.editBtn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+.deleteBtn {
+  background: #ff6b81;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .table { min-width: 700px; }
+  .title { font-size: 16px; }
+}
+
+/* Modal / form styles */
+.modalOverlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 320px;
+  max-width: 480px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.formRow {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+.formRow label {
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: #333;
+}
+.formRow input, .formRow select {
+  padding: 8px 10px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+}
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
