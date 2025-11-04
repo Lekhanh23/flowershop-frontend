@@ -1,0 +1,63 @@
+/* src/components/Sidebar.module.css */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    height: 100vh;
+    width: 16rem; /* 256px */
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  .sidebarLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem; /* 24px */
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .logoText {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 700;
+    color: #db2777; /* pink-600 */
+  }
+  .sidebarNav {
+    margin-top: 1.5rem; /* 24px */
+  }
+  .menuTitle {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.75rem; /* 12px */
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .navList {
+    padding: 0 1rem; /* 16px */
+  }
+  .navLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* 12px */
+    border-radius: 0.375rem; /* 6px */
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    color: #374151; /* gray-700 */
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .navLink:hover {
+    background-color: #f3f4f6; /* gray-100 */
+    color: #1f2937; /* gray-900 */
+  }
+  .navLink.active {
+    background-color: #fce7f3; /* pink-100 */
+    color: #db2777; /* pink-600 */
+  }
+  .navIcon {
+    height: 1.25rem; /* 20px */
+    width: 1.25rem;
+  }

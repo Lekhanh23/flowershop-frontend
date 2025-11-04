@@ -1,17 +1,20 @@
 // src/app/layout.tsx
 import './globals.css';
-import { Providers } from './providers';
+import { Providers } from './providers'; // <-- Import file providers
 
 export const metadata = {
   title: 'Flowershop Admin',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      {/* >>> thêm suppressHydrationWarning để bỏ qua attr lạ do extension <<< */}
-      <body suppressHydrationWarning>
-        <Providers>{children}</Providers>
+      <body>
+        <Providers>{children}</Providers> {/* <-- File này chứa AuthProvider */}
       </body>
     </html>
   );

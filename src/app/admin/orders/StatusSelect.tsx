@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useTransition } from 'react';
+import styles from "./page.module.css";
 
 export type OrderStatus = 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
 

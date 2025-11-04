@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
-      router.push('/admin'); // Chuyển hướng đến /admin (dashboard)
+      router.push('/admin/dashboard'); // Chuyển hướng đến /admin (dashboard)
     } catch (err) {
       console.error(err);
       alert('Login failed: Invalid credentials');
