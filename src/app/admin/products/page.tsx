@@ -24,7 +24,6 @@ const initialProducts: Product[] = [
 	{ id: 9, image: "https://via.placeholder.com/48", name: "Lavender Peace", price: 490000, status: "instock", createdAt: "2025-06-02 22:22:42" },
 	{ id: 10, image: "https://via.placeholder.com/48", name: "Daisy Freshness", price: 350000, status: "instock", createdAt: "2025-06-02 22:22:42" },
 ];
-
 function formatPrice(price: number) {
 	return new Intl.NumberFormat("en-US").format(price) + " VND";
 }
