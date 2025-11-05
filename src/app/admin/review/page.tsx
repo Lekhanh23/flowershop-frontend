@@ -3,8 +3,8 @@ import { fetchFilteredReviews } from './lib/data';
 import ReviewsTable from './components/ReviewsTable';
 import ReviewsFilter from './components/ReviewsFilter';
 import ReviewsPagination from './components/ReviewsPagination';
+import styles from './page.module.css';
 export const dynamic = 'force-dynamic';
-
 
 // Định nghĩa props nhận từ URL search params
 interface ReviewsPageProps {
@@ -27,27 +27,21 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
     const totalReviews = reviews.length > 0 ? reviews.length : 0; // Thay thế bằng tổng số review thực tế
 
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold text-pink-600 mb-2">Review Management</h1>
-            <div className="mb-4">
-                <p className="text-lg">Total reviews: {totalReviews}</p>
+        <div className={styles.container}>
+            <h1 className={styles.title}>Review Management</h1>
+            <div style={{ marginBottom: 16 }}>
+                <p style={{ color: '#e91e63', fontWeight: 500 }}>Total reviews: {totalReviews}</p>
             </div>
-            
-            {/* Thanh Filter/Tìm kiếm */}
-            <ReviewsFilter />
-
-            {/* Nút Delete (cho chức năng xóa nhiều, nếu cần) */}
-            <button className="px-4 py-2 mb-4 bg-red-500 text-white rounded hover:bg-red-600">
+            <div className={styles.filterRow}>
+                <ReviewsFilter />
+            </div>
+            <button className={styles.deleteBtn} style={{ marginBottom: 16 }}>
                 Delete
             </button>
-            
-            {/* Bảng Reviews */}
             <Suspense fallback={<div>Loading reviews...</div>}>
                 <ReviewsTable reviews={reviews} />
             </Suspense>
-
-            {/* Phân trang */}
-            <div className="mt-4">
+            <div style={{ marginTop: 16 }}>
                 <ReviewsPagination totalPages={totalPages} />
             </div>
         </div>
