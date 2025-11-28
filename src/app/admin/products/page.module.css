@@ -1,137 +1,217 @@
-/* Minimal styles to approximate the provided design */
+/* src/app/admin/products/page.module.css */
+
 .container {
   padding: 24px;
   background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+
 .headerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
+
 .title {
-  color: #f06292; /* pink */
+  color: #d81b60; /* Màu hồng đậm giống ảnh */
   font-weight: 700;
+  font-size: 24px;
   margin: 0;
 }
+
+/* Nút Add Product màu xanh lá */
 .addButton {
-  background: #4caf50;
+  background-color: #66bb6a; 
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s;
 }
+.addButton:hover {
+  background-color: #57a05b;
+}
+
 .tableWrap {
-  overflow-x: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  overflow: hidden;
 }
+
 .table {
   width: 100%;
   border-collapse: collapse;
   min-width: 900px;
 }
+
+/* Header bảng màu hồng nhạt, chữ đỏ */
 .table thead th {
   text-align: left;
-  padding: 12px 16px;
-  background: #fdf1f6; /* very light pink */
-  color: #e91e63;
-  border-bottom: 1px solid #f0e6ea;
+  padding: 14px 16px;
+  background-color: #fdf1f5; /* Nền hồng rất nhạt */
+  color: #d81b60; /* Chữ hồng đậm */
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f8bbd0;
 }
+
 .table tbody td {
   padding: 14px 16px;
-  border-bottom: 1px solid #f5f2f4;
+  border-bottom: 1px solid #f5f5f5;
   color: #333;
   vertical-align: middle;
-}
-.thumb {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
-}
-.name {
   font-size: 14px;
 }
-.price {
-  color: #555;
+
+/* Ảnh thumb */
+.thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #eee;
 }
-.status {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+
+.name {
+  font-weight: 500;
+  color: #222;
 }
+
+/* Trạng thái */
 .statusIn {
-  background: #e8f5e9; /* light green */
-  color: #2e7d32; /* green */
+  color: #43a047; /* Xanh lá đậm */
+  font-weight: 600;
 }
 .statusOut {
-  background: #fff0f0; /* light red */
-  color: #c62828; /* red */
+  color: #e53935; /* Đỏ */
+  font-weight: 600;
 }
+
+/* Nút Action */
 .editBtn {
-  background: #3498db;
+  background-color: #42a5f5; /* Xanh dương */
   color: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
   margin-right: 8px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
 }
+.editBtn:hover { background-color: #2196f3; }
+
 .deleteBtn {
-  background: #ff6b81;
+  background-color: #ef5350; /* Đỏ hồng */
   color: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
 }
+.deleteBtn:hover { background-color: #e53935; }
 
-@media (max-width: 800px) {
-  .table { min-width: 700px; }
-  .title { font-size: 16px; }
-}
-
-/* Modal / form styles */
+/* --- MODAL STYLES --- */
 .modalOverlay {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.4);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 1000;
 }
+
 .modal {
-  background: #fff;
-  padding: 20px;
+  background: white;
+  padding: 24px;
   border-radius: 8px;
-  min-width: 320px;
-  max-width: 480px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  width: 450px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
+
+.modalTitle {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #d81b60;
+  font-size: 20px;
+}
+
 .formRow {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
+.formGroup {
+    display: flex;
+    gap: 15px;
+}
+.formGroup .formRow {
+    flex: 1;
+}
+
 .formRow label {
-  font-size: 12px;
+  display: block;
   margin-bottom: 6px;
-  color: #333;
+  font-weight: 500;
+  font-size: 13px;
+  color: #555;
 }
+
 .formRow input, .formRow select {
+  width: 100%;
   padding: 8px 10px;
-  border: 1px solid #e6e6e6;
-  border-radius: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
+.formRow input:focus, .formRow select:focus {
+    outline: none;
+    border-color: #d81b60;
+}
+
+.fileInputWrapper {
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+.previewImg {
+    margin-top: 10px;
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 4px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .modalActions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.saveBtn {
+  background: #d81b60;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.cancelBtn {
+  background: #eee;
+  color: #333;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

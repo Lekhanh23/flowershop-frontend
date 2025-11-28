@@ -1,68 +1,190 @@
+/* src/app/admin/review/page.module.css */
+
 .container {
   padding: 24px;
   background: #fff;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .title {
-  color: #f06292;
+  color: #d81b60; /* Màu hồng đậm */
   font-weight: 700;
-  margin-bottom: 8px;
-  font-size: 28px;
+  font-size: 24px;
+  margin-bottom: 24px; /* Khoảng cách dưới */
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.totalCount {
+  font-weight: 600;
+  color: #d81b60;
+  font-size: 14px;
+}
+
+/* --- FILTER SECTION --- */
+.filterBar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input, .select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  min-width: 180px;
+}
+.input:focus, .select:focus {
+  border-color: #d81b60;
+}
+
+.filterBtn {
+  background-color: #d81b60;
+  color: white;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+}
+.filterBtn:hover { background-color: #ad1457; }
+
+/* --- BULK ACTIONS --- */
+.deleteBulkBtn {
+  background-color: #d81b60;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* --- TABLE --- */
 .tableWrap {
+  border: 1px solid #f0f0f0;
   overflow-x: auto;
+  width: 100%;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
 }
 
 .table thead th {
+  background-color: #fce4ec; /* Nền hồng nhạt giống ảnh */
+  color: #d81b60;
+  font-weight: 700;
   text-align: left;
-  padding: 12px 16px;
-  background: #fdf1f6;
-  color: #e91e63;
-  border-bottom: 1px solid #f0e6ea;
+  padding: 14px 16px;
   font-size: 14px;
+  border-bottom: 1px solid #f8bbd0;
 }
 
 .table tbody td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f5f2f4;
+  padding: 16px;
+  border-bottom: 1px solid #f5f5f5;
   color: #333;
-  vertical-align: middle;
-  font-size: 15px;
+  font-size: 14px;
+  vertical-align: top; /* Căn trên để đẹp khi nội dung dài */
 }
 
-.deleteBtn {
-  background: #ff6b81;
+.userName { font-weight: 600; color: #000; display: block; }
+.userEmail { font-size: 12px; color: #777; }
+
+.rating { color: #fbc02d; font-size: 16px; letter-spacing: 2px; }
+
+/* --- ACTION BUTTONS --- */
+.actionCell {
+  display: flex;
+  gap: 8px;
+}
+
+.iconBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s;
+}
+.iconBtn:hover {
+  background: #eee;
+  color: #333;
+}
+
+/* --- REPLY BOX (Khung trả lời) --- */
+.replyRow td {
+  background-color: #fafafa;
+  padding: 0 16px 16px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.replyBox {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: -10px; /* Kéo lên gần dòng trên */
+  max-width: 600px;
+  margin-left: auto; /* Căn phải giống ảnh */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.replyInput {
+  width: 100%;
+  border: 1px solid #3b82f6; /* Viền xanh dương giống ảnh */
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  outline: none;
+  font-family: monospace; /* Font giống ảnh */
+}
+
+.replyActions {
+  display: flex;
+  gap: 8px;
+}
+
+.sendBtn {
+  background: #66bb6a; /* Xanh lá */
   color: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 16px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.filterRow {
-  margin-bottom: 16px;
+.cancelBtn {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.ratingStars {
-  font-size: 18px;
-  color: #fbc02d;
-}
-
-.commentCell {
-  max-width: 220px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 900px) {
-  .table { min-width: 700px; }
-  .title { font-size: 20px; }
-}

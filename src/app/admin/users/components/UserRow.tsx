@@ -1,165 +1,132 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { User } from '../lib/definitions';
-import { updateUserDetails, deleteUser } from '../actions';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from '../page.module.css';
+import api from '@/lib/api';
+import styles from '../page.module.css'; // Import CSS từ trang cha
+import { useAuth } from '@/context/AuthContext';
 
-export default function UserRow({ user }: { user: User }) {
+interface User {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  address: string | null;
+  role: 'admin' | 'customer' | 'shipper';
+}
+
+interface UserRowProps {
+  user: User;
+  disableEdit?: boolean; // Prop để tắt tính năng sửa (dùng cho trang Shipper)
+}
+
+export default function UserRow({ user, disableEdit = false }: UserRowProps) {
+    const { user: currentUser } = useAuth(); // Lấy user đang đăng nhập để check quyền
+    const router = useRouter();
+    
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<User>(user);
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-    // Hàm thay đổi giá trị input
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Hàm xử lý lưu
-    const handleSave = () => {
-        startTransition(async () => {
-            const result = await updateUserDetails(formData);
-            if (result.success) {
-                setIsEditing(false); // Thoát khỏi chế độ Edit
-                // router.refresh(); // Tùy chọn: Next.js sẽ tự revalidatePath trong actions.ts
-            } else {
-                alert(`Error saving: ${result.message}`);
-            }
-        });
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            await api.patch(`/admin/users/${user.id}`, formData);
+            setIsEditing(false);
+            alert("Cập nhật thành công!");
+            // Refresh lại trang để đồng bộ dữ liệu nếu cần, 
+            // hoặc bạn có thể không cần reload vì formData đã update local
+            router.refresh(); 
+        } catch (error) {
+            console.error(error);
+            alert("Lỗi khi cập nhật user");
+        } finally {
+            setLoading(false);
+        }
     };
     
-    // Hàm xử lý xóa
-    const handleDelete = () => {
-        if (!confirm(`Are you sure you want to delete user ID ${user.id} (${user.full_name})?`)) return;
-        
-        startTransition(async () => {
-            const result = await deleteUser(user.id);
-            if (!result.success) {
-                alert(`Error deleting: ${result.message}`);
-            }
-            // revalidatePath đã được gọi trong actions.ts
-        });
+    const handleDelete = async () => {
+        if (!confirm(`Bạn có chắc chắn muốn xóa ${user.full_name}?`)) return;
+        try {
+            await api.delete(`/admin/users/${user.id}`);
+            alert("Xóa thành công!");
+            window.location.reload(); // Reload để mất dòng đã xóa
+        } catch (error) {
+            alert("Lỗi xóa user");
+        }
     };
 
-    // Hàm xử lý hủy
     const handleCancel = () => {
-        setFormData(user); // Đặt lại dữ liệu về ban đầu
+        setFormData(user);
         setIsEditing(false);
     };
 
-    // Xác định liệu người dùng hiện tại có phải là Admin hay không (theo ảnh mẫu)
-    const isAdmin = user.role === 'admin';
-    const isDeletable = user.id !== 3; // Giả sử Admin ID 3 không thể xóa
+    // --- LOGIC PHÂN QUYỀN ---
+    const isRowAdmin = user.role === 'admin';
+    const isMe = currentUser?.id === user.id;
+
+    // 1. Được sửa khi: Không bị disableEdit VÀ (Không phải Admin HOẶC Là chính mình)
+    const canEdit = !disableEdit && (!isRowAdmin || isMe);
+
+    // 2. Được xóa khi: Không phải là Admin (Admin không bao giờ được xóa, kể cả chính mình)
+    const canDelete = !isRowAdmin; 
+
+    // 3. Hiển thị "Restricted" khi: Là Admin khác
+    const showRestricted = isRowAdmin && !isMe; 
 
     return (
-        <tr className={isAdmin ? styles.adminRow : undefined}>
-            <td>{user.id}</td>
+        <tr className={isRowAdmin ? styles.adminRow : undefined}>
+            <td style={{fontWeight: 'bold'}}>{user.id}</td>
             
             {/* Full Name */}
-            <td>
-                {isEditing ? 
-                    <input 
-                        type="text" 
-                        name="full_name" 
-                        value={formData.full_name} 
-                        onChange={handleChange} 
-                        className={styles.input}
-                    /> : user.full_name}
-            </td>
+            <td>{isEditing ? <input name="full_name" value={formData.full_name} onChange={handleChange} className={styles.inputBox}/> : user.full_name}</td>
             
             {/* Email */}
-            <td>
-                {isEditing ? 
-                    <input 
-                        type="email" 
-                        name="email" 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        className={styles.input}
-                    /> : user.email}
-            </td>
+            <td>{isEditing ? <input name="email" value={formData.email} onChange={handleChange} className={styles.inputBox}/> : user.email}</td>
             
             {/* Phone */}
-            <td>
-                {isEditing ? 
-                    <input 
-                        type="text" 
-                        name="phone" 
-                        value={formData.phone || ''} 
-                        onChange={handleChange} 
-                        className={styles.input}
-                    /> : user.phone}
-            </td>
+            <td>{isEditing ? <input name="phone" value={formData.phone || ''} onChange={handleChange} className={styles.inputBox}/> : user.phone}</td>
             
             {/* Address */}
-            <td>
-                {isEditing ? 
-                    <input 
-                        type="text" 
-                        name="address" 
-                        value={formData.address || ''} 
-                        onChange={handleChange} 
-                        className={styles.input}
-                    /> : user.address}
-            </td>
+            <td>{isEditing ? <input name="address" value={formData.address || ''} onChange={handleChange} className={styles.inputBox}/> : user.address}</td>
             
             {/* Role */}
             <td>
-                {isEditing ? (
-                    <select 
-                        name="role" 
-                        value={formData.role} 
-                        onChange={handleChange} 
-                        className={styles.select}
-                    >
+                {isEditing && !isMe ? ( // Không cho tự sửa role của chính mình
+                    <select name="role" value={formData.role} onChange={handleChange} className={styles.inputBox} style={{padding: '6px'}}>
                         <option value="customer">customer</option>
                         <option value="admin">admin</option>
+                        <option value="shipper">shipper</option>
                     </select>
-                ) : user.role}
+                ) : (
+                    <span style={{fontWeight: isRowAdmin ? 'bold' : 'normal', color: isRowAdmin ? '#d81b60' : 'inherit'}}>
+                        {user.role}
+                    </span>
+                )}
             </td>
             
-            {/* Actions */}
+            {/* ACTIONS */}
             <td>
-                {isAdmin ? (
-                    <span style={{ color: '#f06292' }}>No action</span>
+                {showRestricted ? (
+                    <span className={styles.noAction}>Restricted</span>
                 ) : isEditing ? (
-                    <>
-                        <button 
-                            onClick={handleSave} 
-                            disabled={isPending}
-                            className={styles.saveBtn}
-                        >
-                            {isPending ? 'Saving...' : 'Save'}
-                        </button>
-                        <button 
-                            onClick={handleCancel} 
-                            disabled={isPending}
-                            className={styles.cancelBtn}
-                        >
-                            Cancel
-                        </button>
-                    </>
+                    <div className={styles.actions}>
+                        <button onClick={handleSave} disabled={loading} className={styles.saveBtn}>{loading ? '...' : 'Save'}</button>
+                        <button onClick={handleCancel} disabled={loading} className={styles.cancelBtn}>Cancel</button>
+                    </div>
                 ) : (
-                    <>
-                        <button 
-                            onClick={() => setIsEditing(true)}
-                            className={styles.editBtn}
-                        >
-                            Edit
-                        </button>
-                        <button 
-                            onClick={handleDelete}
-                            disabled={isPending || !isDeletable}
-                            className={styles.deleteBtn}
-                        >
-                            Delete
-                        </button>
-                    </>
+                    <div className={styles.actions}>
+                        {canEdit && (
+                            <button onClick={() => setIsEditing(true)} className={styles.editBtn}>Edit</button>
+                        )}
+                        {canDelete && (
+                            <button onClick={handleDelete} className={styles.deleteBtn}>Delete</button>
+                        )}
+                    </div>
                 )}
             </td>
         </tr>

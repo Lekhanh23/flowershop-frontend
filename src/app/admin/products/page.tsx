@@ -2,255 +2,257 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import api from "@/lib/api";
+import { getImageUrl, formatPrice } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
+// Định nghĩa kiểu dữ liệu Product khớp với Backend
 type Product = {
     id: number;
     image: string;
     name: string;
     price: number;
+    stock: number;
     status: string;
-    createdAt: string;
+    created_at: string;
 };
 
-<<<<<<< HEAD
-const initialProducts: Product[] = [
-	{ id: 1, image: "https://via.placeholder.com/48", name: "Red Rose Bouquet", price: 450000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 2, image: "https://via.placeholder.com/48", name: "White Lily Elegance", price: 520000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 3, image: "https://via.placeholder.com/48", name: "Sunflower Sunshine", price: 390000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 4, image: "https://via.placeholder.com/48", name: "Mixed Tulip Delight", price: 470000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 5, image: "https://via.placeholder.com/48", name: "Pink Carnation Love", price: 430000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 6, image: "https://via.placeholder.com/48", name: "Orchid Grace", price: 600000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 7, image: "https://via.placeholder.com/48", name: "Peony Bloom", price: 580000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 8, image: "https://via.placeholder.com/48", name: "Gerbera Fun Pack", price: 360000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 9, image: "https://via.placeholder.com/48", name: "Lavender Peace", price: 490000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-	{ id: 10, image: "https://via.placeholder.com/48", name: "Daisy Freshness", price: 350000, status: "instock", createdAt: "2025-06-02 22:22:42" },
-];
-=======
->>>>>>> 58f8ee4124f97680529b8ee1c5395b7d8fc39789
-function formatPrice(price: number) {
-    return new Intl.NumberFormat("en-US").format(price) + " VND";
-}
+// Hàm format ngày giờ giống trong ảnh (yyyy-mm-dd HH:mm:ss)
+const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleString('en-GB', { // Định dạng 24h
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).replace(',', '');
+};
 
-export default function Page() {
+export default function ProductsPage() {
+    const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(false);
+    
+    // State cho Modal & Form
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const [form, setForm] = useState({ name: "", price: "", image: "", status: "instock" });
-    const [loading, setLoading] = useState(false);
-    const [loadingList, setLoadingList] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [form, setForm] = useState({ name: "", price: "", stock: "", status: "in_stock", image: "" });
+    const [imageFile, setImageFile] = useState<File | null>(null); // File ảnh upload
+    const [previewImage, setPreviewImage] = useState<string | null>(null); // Xem trước ảnh
 
-    // Base API path — thay đổi nếu backend đặt ở path khác
-    const API_BASE = "/api/products";
-
-    async function fetchProducts() {
-        setLoadingList(true);
-        setError(null);
+    // 1. Fetch Data
+    const fetchProducts = async () => {
         try {
-            const res = await fetch(API_BASE);
-            if (!res.ok) throw new Error(`Fetch products failed: ${res.status}`);
-            const data = await res.json();
-            // assuming backend returns array of products
-            setProducts(Array.isArray(data) ? data : []);
+            const res = await api.get('/admin/products?limit=100');
+            setProducts(res.data.data || []);
         } catch (err) {
-            console.error(err);
-            setError("Không thể tải danh sách sản phẩm.");
-        } finally {
-            setLoadingList(false);
+            console.error("Failed to fetch products", err);
         }
-    }
+    };
 
-    useEffect(() => {
-        fetchProducts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    useEffect(() => { fetchProducts(); }, []);
 
-    function handleFormChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-        const { name, value } = e.target;
-        setForm((f) => ({ ...f, [name]: value }));
-    }
+    // 2. Handle File Change (Chọn ảnh từ máy tính)
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setImageFile(file);
+            setPreviewImage(URL.createObjectURL(file)); // Tạo url tạm để xem trước
+        }
+    };
 
-    function handleAddClick() {
-        setEditingProduct(null);
-        setForm({ name: "", price: "", image: "", status: "instock" });
-        setIsModalOpen(true);
-    }
-
-    function handleEdit(id: number) {
-        const p = products.find((x) => x.id === id);
-        if (!p) return;
-        setEditingProduct(p);
-        setForm({ name: p.name, price: String(p.price), image: p.image, status: p.status });
-        setIsModalOpen(true);
-    }
-
-    async function handleDelete(id: number) {
-        if (!confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+    // 3. Handle Save (Create / Update)
+    const handleSave = async () => {
+        if (!form.name || !form.price) return alert("Vui lòng nhập tên và giá sản phẩm");
         setLoading(true);
+
         try {
-            const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Delete failed");
-            // remove from UI
-            setProducts((prev) => prev.filter((p) => p.id !== id));
-        } catch (err) {
-            console.error(err);
-            alert("Xóa thất bại. Thử lại.");
-        } finally {
-            setLoading(false);
-        }
-    }
+            let finalImageName = form.image; // Giữ nguyên ảnh cũ nếu không chọn mới
 
-    function formatDateLocal(d = new Date()) {
-        const pad = (n: number) => String(n).padStart(2, "0");
-        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-    }
-
-    async function handleSave() {
-        if (!form.name.trim() || !form.price.trim()) {
-            alert("Vui lòng nhập tên và giá sản phẩm");
-            return;
-        }
-        const priceNum = Number(form.price.toString().replace(/[^0-9.-]+/g, ""));
-        if (isNaN(priceNum)) {
-            alert("Giá không hợp lệ");
-            return;
-        }
-
-        setLoading(true);
-        try {
-            if (editingProduct) {
-                // update
-                const body = {
-                    name: form.name,
-                    price: priceNum,
-                    image: form.image,
-                    status: form.status,
-                };
-                const res = await fetch(`${API_BASE}/${editingProduct.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body),
+            // Nếu có chọn file mới -> Upload lên Server trước
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                
+                const uploadRes = await api.post('/upload', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                if (!res.ok) throw new Error("Update failed");
-                const updated: Product = await res.json();
-                setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
-            } else {
-                // create
-                const body = {
-                    name: form.name,
-                    price: priceNum,
-                    image: form.image || "https://via.placeholder.com/48",
-                    status: form.status,
-                    createdAt: formatDateLocal(new Date()),
-                };
-                const res = await fetch(API_BASE, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body),
-                });
-                if (!res.ok) throw new Error("Create failed");
-                const created: Product = await res.json();
-                // add to top
-                setProducts((prev) => [created, ...prev]);
+                finalImageName = uploadRes.data.filename; // Lấy tên file từ server trả về
             }
-            setIsModalOpen(false);
-        } catch (err) {
-            console.error(err);
-            alert("Lưu thất bại. Kiểm tra server.");
+
+            const payload = {
+                name: form.name,
+                price: Number(form.price),
+                stock: Number(form.stock),
+                status: form.status,
+                image: finalImageName,
+                // collection_id: 1 // Bạn có thể thêm select collection nếu cần
+            };
+
+            if (editingProduct) {
+                // Update
+                const res = await api.patch(`/admin/products/${editingProduct.id}`, payload);
+                setProducts(prev => prev.map(p => p.id === editingProduct.id ? res.data : p));
+            } else {
+                // Create
+                const res = await api.post('/admin/products', payload);
+                setProducts(prev => [res.data, ...prev]); // Thêm mới vào đầu danh sách
+            }
+
+            handleCloseModal();
+        } catch (error) {
+            console.error(error);
+            alert("Lưu thất bại. Vui lòng thử lại.");
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    function handleCloseModal() {
+    // 4. Handle Delete
+    const handleDelete = async (id: number) => {
+        if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+        try {
+            await api.delete(`/admin/products/${id}`);
+            setProducts(prev => prev.filter(p => p.id !== id));
+        } catch (error) {
+            alert("Xóa thất bại.");
+        }
+    };
+
+    // Helpers
+    const handleAddClick = () => {
+        router.push('/admin/products/add');
+    };
+
+    const handleEditClick = (product: Product) => {
+        setEditingProduct(product);
+        setForm({
+            name: product.name,
+            price: String(product.price),
+            stock: String(product.stock),
+            status: product.status,
+            image: product.image
+        });
+        setPreviewImage(getImageUrl(product.image)); // Hiện ảnh cũ
+        setImageFile(null);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
         setIsModalOpen(false);
-    }
+        setPreviewImage(null);
+        setImageFile(null);
+    };
 
     return (
         <div className={styles.container}>
             <div className={styles.headerRow}>
                 <h2 className={styles.title}>Product Management</h2>
-                <button className={styles.addButton} onClick={handleAddClick} disabled={loading || loadingList}>
-                    + Add Product
-                </button>
+                <button className={styles.addButton} onClick={handleAddClick}>+ Add Product</button>
             </div>
 
-            {loadingList ? (
-                <div>Loading products...</div>
-            ) : error ? (
-                <div style={{ color: "red" }}>{error}</div>
-            ) : (
-                <div className={styles.tableWrap}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Image</th>
-                                <th>Name</th>
-                                <th>Price (VND)</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+            <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th style={{width: '5%'}}>ID</th>
+                            <th style={{width: '10%'}}>Image</th>
+                            <th style={{width: '25%'}}>Name</th>
+                            <th style={{width: '15%'}}>Price (VND)</th>
+                            <th style={{width: '10%'}}>Status</th>
+                            <th style={{width: '20%'}}>Created At</th>
+                            <th style={{width: '15%'}}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {products.map((p) => (
+                            <tr key={p.id}>
+                                <td style={{fontWeight: 'bold'}}>{p.id}</td>
+                                <td>
+                                <img 
+                                    src={getImageUrl(p.image)} // Dùng hàm này để lấy link đầy đủ từ backend
+                                    alt={p.name} 
+                                    className={styles.thumb} // Class css để chỉnh kích thước ảnh thumbnail
+                                    // Thêm ảnh dự phòng nếu ảnh lỗi hoặc chưa có
+                                    onError={(e) => e.currentTarget.src = "https://via.placeholder.com/50?text=No+Image"}
+                                />
+                                </td>
+                                <td className={styles.name}>{p.name}</td>
+                                <td style={{fontWeight: 500}}>{formatPrice(p.price)}</td>
+                                <td>
+                                    {p.status === 'in_stock' ? (
+                                        <span className={styles.statusIn}>In Stock</span>
+                                    ) : (
+                                        <span className={styles.statusOut}>Out Stock</span>
+                                    )}
+                                </td>
+                                <td style={{fontSize: '13px', color: '#555'}}>{formatDate(p.created_at)}</td>
+                                <td>
+                                    <button className={styles.editBtn} onClick={() => router.push(`/admin/products/edit/${p.id}`)}>Edit</button>
+                                    <button className={styles.deleteBtn} onClick={() => handleDelete(p.id)}>Delete</button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {products.map((p) => (
-                                <tr key={p.id}>
-                                    <td>{p.id}</td>
-                                    <td>
-                                        <img src={p.image} alt={p.name} className={styles.thumb} />
-                                    </td>
-                                    <td className={styles.name}>{p.name}</td>
-                                    <td className={styles.price}>{formatPrice(p.price)}</td>
-                                    <td>
-                                        <span className={p.status === "instock" ? styles.statusIn : styles.statusOut}>{p.status}</span>
-                                    </td>
-                                    <td>{p.createdAt}</td>
-                                    <td>
-                                        <button className={styles.editBtn} onClick={() => handleEdit(p.id)} disabled={loading}>
-                                            Edit
-                                        </button>
-                                        <button className={styles.deleteBtn} onClick={() => handleDelete(p.id)} disabled={loading}>
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
+            {/* MODAL ADD/EDIT */}
             {isModalOpen && (
                 <div className={styles.modalOverlay} onClick={handleCloseModal}>
-                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        <h3>{editingProduct ? "Edit Product" : "Add Product"}</h3>
+                    <div className={styles.modal} onClick={e => e.stopPropagation()}>
+                        <h3 className={styles.modalTitle}>{editingProduct ? "Edit Product" : "Add New Product"}</h3>
+                        
                         <div className={styles.formRow}>
-                            <label>Name</label>
-                            <input name="name" value={form.name} onChange={handleFormChange} />
+                            <label>Product Name</label>
+                            <input 
+                                value={form.name} 
+                                onChange={e => setForm({...form, name: e.target.value})} 
+                                placeholder="Enter product name"
+                            />
                         </div>
+
+                        <div className={styles.formGroup}>
+                            <div className={styles.formRow}>
+                                <label>Price</label>
+                                <input 
+                                    type="number" 
+                                    value={form.price} 
+                                    onChange={e => setForm({...form, price: e.target.value})} 
+                                />
+                            </div>
+                            <div className={styles.formRow}>
+                                <label>Stock</label>
+                                <input 
+                                    type="number" 
+                                    value={form.stock} 
+                                    onChange={e => setForm({...form, stock: e.target.value})} 
+                                />
+                            </div>
+                        </div>
+
                         <div className={styles.formRow}>
-                            <label>Price</label>
-                            <input name="price" value={form.price} onChange={handleFormChange} placeholder="e.g. 450000" />
+                            <label>Product Image</label>
+                            <div className={styles.fileInputWrapper}>
+                                <input type="file" onChange={handleFileChange} accept="image/*" />
+                                {previewImage && (
+                                    <img src={previewImage} alt="Preview" className={styles.previewImg} />
+                                )}
+                            </div>
                         </div>
-                        <div className={styles.formRow}>
-                            <label>Image URL</label>
-                            <input name="image" value={form.image} onChange={handleFormChange} placeholder="https://..." />
-                        </div>
+
                         <div className={styles.formRow}>
                             <label>Status</label>
-                            <select name="status" value={form.status} onChange={handleFormChange}>
-                                <option value="instock">instock</option>
-                                <option value="outstock">outstock</option>
+                            <select value={form.status} onChange={e => setForm({...form, status: e.target.value})}>
+                                <option value="in_stock">In Stock</option>
+                                <option value="out_of_stock">Out of Stock</option>
                             </select>
                         </div>
+
                         <div className={styles.modalActions}>
-                            <button className={styles.editBtn} onClick={handleSave} disabled={loading}>
-                                {editingProduct ? "Save" : "Add"}
+                            <button className={styles.saveBtn} onClick={handleSave} disabled={loading}>
+                                {loading ? "Saving..." : "Save Product"}
                             </button>
-                            <button className={styles.deleteBtn} onClick={handleCloseModal} disabled={loading}>
-                                Cancel
-                            </button>
+                            <button className={styles.cancelBtn} onClick={handleCloseModal}>Cancel</button>
                         </div>
                     </div>
                 </div>

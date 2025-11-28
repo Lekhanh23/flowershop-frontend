@@ -1,25 +1,74 @@
-// src/app/admin/orders/page.tsx
-import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
-import OrderStatusSelect from '@/components/OrderStatusSelect';
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import api from "@/lib/api";
 import styles from "./page.module.css";
-export const dynamic = 'force-dynamic';
+import { formatPrice } from "@/lib/utils";
 
-type OrderStatus = 'pending' | 'shipped' | 'delivered';
+// Hàm format ngày
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleString('en-GB', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  }).replace(',', '');
+};
 
-async function getOrders() {
-  return prisma.order.findMany({
-    orderBy: { orderDate: 'desc' },
-    include: {
-      user: {
-        select: { full_name: true, email: true, phone: true, addr: true },
-      },
-    },
-  });
-}
+export default function OrdersPage() {
+  const [orders, setOrders] = useState([]);
+  const [shippers, setShippers] = useState<any[]>([]); // Danh sách shipper để chọn
+  const [loading, setLoading] = useState(true);
 
-export default async function OrdersPage() {
-  const orders = await getOrders();
+  const fetchData = async () => {
+    try {
+      // 1. Lấy danh sách Orders
+      const resOrders = await api.get('/orders/admin/all?limit=100');
+      setOrders(resOrders.data.data);
+
+      // 2. Lấy danh sách Shippers (để hiển thị trong dropdown)
+      const resShippers = await api.get('/admin/users?role=shipper&limit=100');
+      setShippers(resShippers.data.data || []);
+      
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Hàm xử lý gán Shipper
+  const handleAssignShipper = async (orderId: number, shipperId: string) => {
+    if (!shipperId) return;
+    if (!confirm("Bạn muốn giao đơn này cho shipper đã chọn?")) return;
+
+    try {
+      await api.patch(`/orders/admin/${orderId}/assign`, { shipperId: Number(shipperId) });
+      alert("Đã giao việc thành công!");
+      fetchData(); // Refresh lại bảng
+    } catch (error) {
+      alert("Lỗi khi gán đơn hàng");
+    }
+  };
+
+  // Hàm xử lý đổi trạng thái đơn
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    try {
+      await api.patch(`/orders/admin/${id}/status`, { status: newStatus });
+      setOrders((prev: any) => prev.map((o: any) => 
+        o.id === id ? { ...o, status: newStatus } : o
+      ));
+    } catch (error) {
+      alert("Lỗi cập nhật trạng thái");
+    }
+  };
+
+  if (loading) return <div className="p-8">Loading Orders...</div>;
 
   return (
     <div className={styles.container}>
@@ -29,42 +78,73 @@ export default async function OrdersPage() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th>Action</th>
+              <th>ID</th>
+              <th>CUSTOMER</th>
+              <th>TOTAL</th>
+              <th>SHIPPER</th> 
+              <th>STATUS</th>
+              <th>CREATED AT</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
             {orders.map((o: any) => (
               <tr key={o.id}>
-                <td>{o.id}</td>
-                <td className = {styles.name}>{o.user?.full_name ?? `User #${o.userId}`}</td>
-                <td className = {styles.name}>{o.user?.email ?? '-'}</td>
-                <td className = {styles.name}>{o.user?.phone ?? '-'}</td>
-                <td className = {styles.name}>{o.user?.addr ?? '-'}</td>
-                <td className = {styles.name}>
-                  {o.totalAmount.toNumber().toLocaleString('vi-VN')} VND
+                <td style={{fontWeight: 'bold'}}>{o.id}</td>
+                <td>
+                    <div>{o.user?.full_name || "Guest"}</div>
+                    <div style={{fontSize: 12, color:'#888'}}>{o.user?.address}</div>
                 </td>
-                <td className = {styles.name}>
-                  <OrderStatusSelect
-                    orderId={o.id}
-                    defaultStatus={o.status as OrderStatus}
-                  />
+                <td style={{fontWeight: 600}}>{formatPrice(o.total_amount)}</td>
+                
+                {/* CỘT SHIPPER */}
+                <td>
+                  {o.shipper ? (
+                    // Nếu đã có shipper -> Hiện tên
+                    <span style={{color: '#2196f3', fontWeight: 500}}>
+                      {o.shipper.full_name}
+                    </span>
+                  ) : (
+                    // Nếu chưa có -> Hiện Dropdown chọn
+                    <select 
+                      className={styles.statusSelect}
+                      onChange={(e) => handleAssignShipper(o.id, e.target.value)}
+                      defaultValue=""
+                    >
+                      <option value="" disabled>-- Assign --</option>
+                      {shippers.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </td>
-                <td className = {styles.name}>
-                  {o.orderDate ? new Date(o.orderDate).toLocaleString('vi-VN') : '-'}
-                </td>
-                <td className = {styles.name}>
-                  <Link
-                    href={`/admin/orders/${o.id}`}
-                    className={styles.deleteBtn}
+
+                {/* CỘT STATUS */}
+                <td>
+                  <select
+                    className={styles.statusSelect}
+                    value={o.status}
+                    onChange={(e) => handleStatusChange(o.id, e.target.value)}
+                    style={{
+                        color: o.status === 'delivered' ? '#4caf50' : (o.status === 'shipped' ? '#2196f3' : '#333')
+                    }}
                   >
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  {/* Hiển thị trạng thái chi tiết vận chuyển */}
+                  <div style={{fontSize: 11, color: '#666', marginTop: 4}}>
+                  {(!o.deliveryStatus || o.deliveryStatus === 'unassigned') ? '' : `(${o.deliveryStatus})`}
+                  </div>
+                </td>
+
+                <td>{formatDate(o.order_date)}</td>
+                <td>
+                  <Link href={`/admin/orders/${o.id}`} className={styles.viewBtn}>
                     View
                   </Link>
                 </td>

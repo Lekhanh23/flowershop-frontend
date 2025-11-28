@@ -14,14 +14,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem; /* 24px */
+    padding: 0;
+    height: 170px;
+    overflow: hidden;
+    background-color: #fce4ec; 
     border-bottom: 1px solid #e5e7eb;
   }
-  .logoText {
-    font-size: 1.5rem; /* 24px */
-    font-weight: 700;
-    color: #db2777; /* pink-600 */
-  }
+  .logoImg {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; 
+    display: block;
+}
   .sidebarNav {
     margin-top: 1.5rem; /* 24px */
   }
@@ -36,6 +40,8 @@
   }
   .navList {
     padding: 0 1rem; /* 16px */
+    list-style: none;
+    margin: 0;
   }
   .navLink {
     display: flex;
@@ -60,4 +66,42 @@
   .navIcon {
     height: 1.25rem; /* 20px */
     width: 1.25rem;
+  }
+  .subMenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fafafa;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .subLink {
+    display: block;
+    padding: 10px 16px 10px 52px; /* Thụt lề sâu hơn */
+    font-size: 13px;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .subLink:hover {
+    color: #db2777; /* pink-600 */
+    background-color: #fce7f3;
+  }
+  
+  .subLink.active {
+    color: #db2777;
+    font-weight: 600;
+    background-color: #fce7f3;
+  }
+  
+  /* Mũi tên xoay */
+  .arrowIcon {
+    margin-left: auto;
+    transition: transform 0.3s;
+    color: #9ca3af;
+  }
+  .arrowIcon.open {
+    transform: rotate(180deg);
   }

@@ -3,7 +3,8 @@
 import { useAuth } from '@/context/AuthContext';
 import { RxMagnifyingGlass, RxAvatar } from 'react-icons/rx';
 import { FaBell } from 'react-icons/fa';
-import styles from './Header.module.css'; // <-- 1. Import CSS Module
+import styles from './Header.module.css';
+import Link from 'next/link';
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -25,7 +26,9 @@ export default function Header() {
 
         {/* Thông tin User và Logout */}
         <div className={styles.userSection}>
-          <FaBell className={styles.userIcon} />
+        <Link href="/admin/notifications">
+             <FaBell className={styles.userIcon} style={{ cursor: 'pointer' }} />
+        </Link>
           
           <div className={styles.userInfo}>
             <RxAvatar className={styles.userAvatar} />

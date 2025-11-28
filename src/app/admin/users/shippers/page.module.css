@@ -1,0 +1,267 @@
+/* src/app/admin/users/shippers/page.module.css */
+
+.container {
+    padding: 24px;
+    background: #fff;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  .title {
+    text-align: center;
+    color: #e91e63;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+  
+  /* --- TABS STYLE --- */
+  .tabs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  
+  .tabBtn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+  }
+  
+  .tabBtn:hover {
+    color: #e91e63;
+    background-color: #fce4ec; /* Hồng nhạt khi hover */
+    border-radius: 8px 8px 0 0;
+  }
+  
+  /* Tab đang chọn */
+  .activeTab {
+    color: #e91e63;
+    font-weight: 700;
+  }
+  
+  .activeTab::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; /* Đè lên border của container */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #e91e63;
+    border-radius: 3px 3px 0 0;
+  }
+  
+  /* --- TABLE STYLES --- */
+  .tableWrap {
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  
+  .table thead th {
+    background-color: #fce4ec; /* Nền hồng nhạt */
+    color: #d81b60; /* Chữ hồng đậm */
+    font-weight: 700;
+    text-align: left;
+    padding: 16px;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #f8bbd0;
+  }
+  
+  .table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #f5f5f5;
+    color: #333;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  
+  .name { font-weight: 600; color: #000; }
+  .email { font-size: 13px; color: #666; }
+  
+  /* Buttons */
+  .approveBtn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 8px;
+  }
+  .approveBtn:hover { background-color: #388e3c; }
+  
+  .rejectBtn {
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .rejectBtn:hover { background-color: #d32f2f; }
+  
+  .deleteBtn {
+    background-color: #bc6c7a;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .deleteBtn:hover { background-color: #a05a66; }
+
+  .viewBtn {
+    background-color: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 8px;
+    font-size: 12px;
+  }
+
+  .viewBtn:hover {
+    background-color: #0284c7;
+  }
+
+
+
+  /* Badge trạng thái */
+  .badgeApproved {
+    background-color: #e8f5e9; /* Nền xanh nhạt */
+    color: #2e7d32; /* Chữ xanh đậm */
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+  }
+  
+  .badgeRejected {
+    background-color: #ffebee; /* Nền đỏ nhạt */
+    color: #c62828; /* Chữ đỏ đậm */
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+  }
+
+  /* --- STATUS BADGES --- */
+.statusBadge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  
+  .statusAvailable {
+    background-color: #e8f5e9; /* Xanh lá nhạt */
+    color: #2e7d32;
+  }
+  
+  .statusUnavailable {
+    background-color: #f5f5f5; /* Xám */
+    color: #616161;
+  }
+  
+  .statusSuspended {
+    background-color: #ffebee; /* Đỏ nhạt */
+    color: #c62828;
+  }
+  /* --- MODAL STYLES --- */
+  .modalOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 600px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    position: relative;
+  }
+  
+  .modalTitle {
+    margin-top: 0;
+    color: #d81b60;
+    font-size: 22px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .infoItem label {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .infoItem p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    padding: 8px;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .closeBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+  }
+  .closeBtn:hover { color: #333; }
+  
+  .modalActions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }

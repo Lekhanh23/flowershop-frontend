@@ -1,0 +1,54 @@
+/* src/components/TargetChart.module.css */
+.wrapper {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .chartCenterText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none; /* Cho phép click xuyên qua */
+  }
+  
+  .percentValue {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    color: #1f2937; /* gray-800 */
+  }
+  
+  .percentLabel {
+    font-size: 1rem; /* 16px */
+    color: #6b7280; /* gray-500 */
+    margin-top: -5px;
+  }
+  
+  .footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    margin-top: 1.5rem; /* 24px */
+  }
+  
+  .footerItem {
+    text-align: center;
+  }
+  
+  .footerLabel {
+    font-size: 0.875rem; /* 14px */
+    color: #6b7280;
+  }
+  
+  .footerValue {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    color: #111827;
+  }

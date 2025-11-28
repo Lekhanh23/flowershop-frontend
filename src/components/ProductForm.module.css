@@ -1,0 +1,165 @@
+.container {
+    padding: 40px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+  }
+  
+  .title {
+    text-align: center;
+    color: #d81b60;
+    font-weight: 700;
+    margin-bottom: 40px;
+    font-size: 2rem;
+  }
+  
+  .contentWrapper {
+    display: flex;
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  /* FORM CHÍNH */
+  .form {
+    flex: 2;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+  
+  .field { margin-bottom: 20px; }
+  
+  .field label {
+    display: block;
+    color: #d81b60;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fdfdfd;
+    transition: border-color 0.2s;
+  }
+  
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: #d81b60;
+    background-color: white;
+  }
+  
+  .row {
+    display: flex;
+    gap: 20px;
+  }
+  .row .field { flex: 1; }
+  
+  /* IMAGE UPLOAD */
+  .imageUpload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  .placeholder {
+    width: 100px;
+    height: 100px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 12px;
+  }
+  .uploadMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    color: #555;
+  }
+  
+  /* ACTIONS BUTTONS */
+  .actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .saveBtn {
+    background-color: #d81b60; /* Hồng đậm */
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    flex: 1;
+  }
+  .saveBtn:hover { background-color: #c2185b; }
+  
+  .deleteBtnOutline {
+    background: transparent;
+    color: #d81b60;
+    border: 1px solid #d81b60;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+  }
+  .deleteBtnOutline:hover { background-color: #fff0f5; }
+  
+  .cancelBtn {
+    background: white;
+    color: #d81b60;
+    border: 1px solid #ddd;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  /* SIDEBAR (Info Box) */
+  .sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .metaBox, .historyBox {
+    background: #fff0f5; /* Hồng rất nhạt */
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .metaBox p {
+    margin: 8px 0;
+    font-size: 13px;
+    color: #444;
+  }
+  .metaBox strong { color: #d81b60; }
+  
+  .historyBox {
+    background: white;
+    border: 1px solid #eee;
+  }
+  .historyBox h4 {
+    color: #d81b60;
+    margin-top: 0;
+  }

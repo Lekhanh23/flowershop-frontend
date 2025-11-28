@@ -1,114 +1,200 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import api from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell
+} from 'recharts';
 
-// Sample counts taken from your DB screenshot (phpMyAdmin rows)
-const DB_COUNTS = {
-  users: 4, // customers
-  orders: 2,
-  products: 15,
-  reviews: 3,
+// Định nghĩa các màu sắc giống trong ảnh
+const COLORS = {
+  sales: "#c3e6cb", // Xanh nhạt (Sales Report)
+  bestSelling: ["#f48fb1", "#ffe082", "#64b5f6", "#ffb74d", "#ba68c8"], // Pink, Yellow, Blue...
+  status: {
+    pending: "#a5d6a7", // Xanh lá (Pending)
+    shipped: "#ef9a9a", // Đỏ nhạt (Shipped)
+    delivered: "#90caf9", // Xanh dương (Delivered)
+    cancelled: "#bdbdbd" // Xám
+  },
+  rating: "#f8c6a6" // Cam nhạt (Rating)
 };
 
-const monthlySales = [120, 320, 180, 220, 160, 140, 190, 230, 380, 300, 260, 80];
-
-function formatNumber(n: number) {
-  return n.toLocaleString();
-}
-
-function BarChart({ data }: { data: number[] }) {
-  const max = Math.max(...data);
-  return (
-    <div className={styles.barChart}>
-      {data.map((v, i) => (
-        <div key={i} className={styles.barWrap}>
-          <div className={styles.bar} style={{ height: `${(v / max) * 100}%` }} title={`${v}`} />
-          <div className={styles.barLabel}>{["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][i]}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Gauge({ value }: { value: number }) {
-  // value: 0-100
-  const angle = (value / 100) * 180;
-  return (
-    <div className={styles.gauge}>
-      <svg viewBox="0 0 200 100" width="200" height="100">
-        <path d="M10,90 A90,90 0 0,1 190,90" fill="none" stroke="#eee" strokeWidth="12" />
-        <path d={`M10,90 A90,90 0 0,1 ${10 + 180 * (value / 100)},90`} fill="none" stroke="#3b82f6" strokeWidth="12" strokeLinecap="round" />
-        <text x="100" y="55" textAnchor="middle" fontSize="18" fill="#111">{value.toFixed(2)}%</text>
-      </svg>
-      <div className={styles.gaugeNote}>Monthly Target</div>
-    </div>
-  );
-}
-
 export default function DashboardPage() {
-  // derive some simple KPIs from DB_COUNTS and monthly sales
-  const customers = DB_COUNTS.users;
-  const orders = DB_COUNTS.orders;
-  const revenue = monthlySales.reduce((a, b) => a + b, 0) * 100; // arbitrary multiplier to look realistic
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.get('/admin/dashboard/stats');
+        setStats(res.data);
+      } catch (error) {
+        console.error("Dashboard Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  if (loading) return <div className={styles.loading}>Loading Dashboard...</div>;
+  if (!stats) return <div className={styles.loading}>Không có dữ liệu.</div>;
+
+  // --- XỬ LÝ DỮ LIỆU CHO BIỂU ĐỒ ---
+
+  // 1. Sales Report
+  const salesData = (stats.charts?.salesReport || []).map((item: any) => ({
+    name: new Date(item.date).toLocaleDateString('en-GB').slice(0, 5), // dd/mm
+    sales: Number(item.total)
+  }));
+
+  // 2. Best Selling Products
+  const bestSellingData = (stats.charts?.bestSellingProducts || []).map((item: any) => ({
+    name: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name, // Cắt tên nếu dài
+    quantity: Number(item.sold_quantity),
+    fullName: item.name
+  }));
+
+  // 3. Order Status (Pie Chart)
+  const statusData = (stats.charts?.orderStatusDist || []).map((item: any) => ({
+    name: item.status.charAt(0).toUpperCase() + item.status.slice(1), // Viết hoa chữ cái đầu
+    value: Number(item.count)
+  }));
+  console.log("Status Data for Pie Chart:", statusData);
+  // 4. Average Rating
+  const ratingData = (stats.charts?.topRatedProducts || []).map((item: any) => ({
+    name: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name,
+    rating: Number(item.avg_rating),
+    fullName: item.name
+  }));
+
+  // Custom Tooltip để hiển thị số liệu đẹp hơn
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className={styles.customTooltip}>
+          <p className={styles.tooltipLabel}>{`${label || payload[0].payload.fullName}`}</p>
+          <p className={styles.tooltipValue}>{`${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className={styles.page}>
+      <h1 className={styles.pageTitle}>Admin Dashboard</h1>
+
+      {/* --- ROW 1: STAT CARDS --- */}
       <div className={styles.topRow}>
         <div className={styles.card}>
-          <div className={styles.cardLabel}>Customers</div>
-          <div className={styles.cardValue}>{formatNumber(customers)}</div>
-          <div className={styles.cardDelta}>+11.01%</div>
+          <div className={styles.cardLabel}>Total Revenue</div>
+          <div className={styles.cardValueRevenue}>{formatPrice(stats.cards.totalRevenue)}</div>
         </div>
-
         <div className={styles.card}>
-          <div className={styles.cardLabel}>Orders</div>
-          <div className={styles.cardValue}>{formatNumber(orders)}</div>
-          <div className={styles.cardDeltaNegative}>-9.05%</div>
+          <div className={styles.cardLabel}>Number of Products</div>
+          <div className={styles.cardValue}>{stats.cards.totalProducts}</div>
         </div>
-
-        <div className={styles.cardLarge}>
-          <div className={styles.cardLabel}>Monthly Sales</div>
-          <BarChart data={monthlySales} />
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Total Orders</div>
+          <div className={styles.cardValue}>{stats.cards.totalOrders}</div>
         </div>
-
-        <div className={styles.cardSmall}>
-          <Gauge value={75.55} />
-          <div className={styles.gaugeFoot}>
-            <div>Target<br/><strong>$20K</strong></div>
-            <div>Revenue<br/><strong>{formatNumber(revenue)}</strong></div>
-            <div>Today<br/><strong>$20K</strong></div>
-          </div>
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Low-stock Alerts</div>
+          <div className={styles.cardValue} style={{color: '#c62828'}}>{stats.cards.lowStockCount}</div>
         </div>
       </div>
 
-      <div className={styles.statsSection}>
-        <h3>Statistics</h3>
-        <div className={styles.statGrid}>
-          <div className={styles.statCard}>
-            <div className={styles.statTitle}>Products</div>
-            <div className={styles.statValue}>{DB_COUNTS.products}</div>
-          </div>
-          <div className={styles.statCard}>
-            <div className={styles.statTitle}>Reviews</div>
-            <div className={styles.statValue}>{DB_COUNTS.reviews}</div>
-          </div>
-          <div className={styles.statCardFull}>
-            <div className={styles.recentTitle}>Recent Orders</div>
-            <table className={styles.recentTable}>
-              <thead>
-                <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>1023</td><td>Nguyen A</td><td>$120</td><td>Completed</td></tr>
-                <tr><td>1022</td><td>Tran B</td><td>$85</td><td>Pending</td></tr>
-                <tr><td>1021</td><td>Le C</td><td>$230</td><td>Completed</td></tr>
-                <tr><td>1020</td><td>Pham D</td><td>$42</td><td>Cancelled</td></tr>
-                <tr><td>1019</td><td>Hoang E</td><td>$150</td><td>Completed</td></tr>
-              </tbody>
-            </table>
+      {/* --- ROW 2: CHARTS --- */}
+      <div className={styles.chartsGrid}>
+        
+        {/* Chart 1: Sales Report */}
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Sales Report <span className={styles.badge}>Daily</span></h3>
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <BarChart data={salesData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" tick={{fontSize: 12}} />
+                <YAxis tick={{fontSize: 12}} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="sales" name="Sales (VND)" fill={COLORS.sales} barSize={50} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Chart 2: Best Selling Products */}
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Best-selling Products</h3>
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <BarChart data={bestSellingData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" tick={{fontSize: 11}} interval={0} />
+                <YAxis allowDecimals={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="quantity" name="Sold Quantity">
+                  {bestSellingData.map((entry: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={COLORS.bestSelling[index % COLORS.bestSelling.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Chart 3: Order Status Distribution */}
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Order Status Distribution</h3>
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label
+                >
+                  {statusData.map((entry: any, index: number) => {
+                    const statusKey = entry.name.toLowerCase();
+                    // @ts-ignore
+                    const color = COLORS.status[statusKey] || "#8884d8";
+                    return <Cell key={`cell-${index}`} fill={color} />;
+                  })}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Chart 4: Average Rating */}
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Average Rating per Product</h3>
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <BarChart data={ratingData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" tick={{fontSize: 11}} interval={0} />
+                <YAxis domain={[0, 5]} ticks={[0, 1, 2, 3, 4, 5]} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="rating" name="Average Rating" fill={COLORS.rating} barSize={50} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
       </div>
     </div>
   );
