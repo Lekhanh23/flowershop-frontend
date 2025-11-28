@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { RxDashboard, RxArchive, RxBox, RxStar, RxPerson, RxChevronDown } from 'react-icons/rx';
+import { RxDashboard, RxArchive, RxBox, RxStar, RxPerson, RxChevronDown, RxStack } from 'react-icons/rx';
 import styles from './Sidebar.module.css';
 
 // Cấu trúc menu hỗ trợ children
@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: RxDashboard },
   { name: 'Manage Orders', href: '/admin/orders', icon: RxArchive },
   { name: 'Manage Products', href: '/admin/products', icon: RxBox },
+  { name: 'Manage Collections', href: '/admin/collections', icon: RxStack },
   { name: 'Manage Reviews', href: '/admin/review', icon: RxStar },
   { 
     name: 'Manage Users', 

@@ -11,15 +11,15 @@ import {
 
 // Định nghĩa các màu sắc giống trong ảnh
 const COLORS = {
-  sales: "#c3e6cb", // Xanh nhạt (Sales Report)
-  bestSelling: ["#f48fb1", "#ffe082", "#64b5f6", "#ffb74d", "#ba68c8"], // Pink, Yellow, Blue...
+  sales: "#c3e6cb", 
+  bestSelling: ["#f48fb1", "#ffe082", "#64b5f6", "#ffb74d", "#ba68c8"],
   status: {
-    pending: "#a5d6a7", // Xanh lá (Pending)
-    shipped: "#ef9a9a", // Đỏ nhạt (Shipped)
-    delivered: "#90caf9", // Xanh dương (Delivered)
-    cancelled: "#bdbdbd" // Xám
+    pending: "#a5d6a7", 
+    shipped: "#ef9a9a", 
+    delivered: "#90caf9", 
+    cancelled: "#bdbdbd" 
   },
-  rating: "#f8c6a6" // Cam nhạt (Rating)
+  rating: "#f8c6a6" 
 };
 
 export default function DashboardPage() {
@@ -97,6 +97,10 @@ export default function DashboardPage() {
         <div className={styles.card}>
           <div className={styles.cardLabel}>Number of Products</div>
           <div className={styles.cardValue}>{stats.cards.totalProducts}</div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Number of Collections</div>
+          <div className={styles.cardValue}>{stats.cards.totalCollections}</div>
         </div>
         <div className={styles.card}>
           <div className={styles.cardLabel}>Total Orders</div>
