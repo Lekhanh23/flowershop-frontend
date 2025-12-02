@@ -4,44 +4,39 @@ import React, { useState } from 'react';
 import styles from './page.module.css';
 
 export default function CheckoutPage() {
-  // --- 1. STATE QUẢN LÝ DỮ LIỆU FORM ---
+  // --- STATE DỮ LIỆU ---
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    country: 'Vietnam',
+    country: '',
     address: '',
-    zip: '',
+    postcode: '',
     city: '',
     phone: '',
     email: '',
     note: '',
-    paymentMethod: 'bank_transfer', // Mặc định: Chuyển khoản
+    paymentMethod: 'online', // Mặc định chọn Pay online theo mẫu
     termsAccepted: false,
+    privacyAccepted: false,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- 2. DỮ LIỆU GIỎ HÀNG (MẪU) ---
+  // --- SẢN PHẨM MẪU (Theo ảnh thiết kế) ---
   const cartItem = {
-    id: 101, // productId (Khớp với Backend)
-    name: "Bó Hoa Loa Kèn Hà Nội - Mua Bó Hoa Loa Kèn Tặng Sinh Nhật",
-    price: 500000,
+    id: 101, 
+    name: "A boutique of white rose",
+    price: 200000,
     quantity: 1
   };
   const totalAmount = cartItem.price * cartItem.quantity;
 
-  // --- 3. CÁC HÀM XỬ LÝ SỰ KIỆN ---
-  
-  // Xử lý khi nhập liệu
+  // --- HÀM XỬ LÝ ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Xử lý khi chọn Radio hoặc Checkbox
   const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked, value, type } = e.target;
     setFormData(prev => ({
@@ -50,195 +45,213 @@ export default function CheckoutPage() {
     }));
   };
 
-  // Xử lý khi bấm nút "ĐẶT HÀNG"
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.termsAccepted) {
-      alert("Vui lòng đồng ý với điều khoản và điều kiện.");
+    if (!formData.termsAccepted || !formData.privacyAccepted) {
+      alert("Vui lòng đồng ý với điều khoản và chính sách bảo mật.");
       return;
     }
 
     setIsSubmitting(true);
 
-    // --- CHUẨN BỊ PAYLOAD (Cấu trúc dữ liệu gửi đi) ---
-    const fullAddress = `${formData.address}, ${formData.city}, ${formData.country}`;
-    
+    // Payload chuẩn gửi Backend NestJS (Map theo DTO của bạn)
     const payload = {
-      // Thông tin khách hàng (Object 'customer')
       customer: {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        address: fullAddress,
+        address: `${formData.address}, ${formData.city}, ${formData.country} - Zip: ${formData.postcode}`,
       },
-
-      // Thông tin đơn hàng
       paymentMethod: formData.paymentMethod,
       note: formData.note,
       totalAmount: totalAmount,
-
-      // Danh sách sản phẩm (Mảng 'items')
       items: [
         {
-          productId: cartItem.id, // ID sản phẩm
+          productId: cartItem.id,
           quantity: cartItem.quantity,
-          price: cartItem.price 
+          price: cartItem.price
         }
       ]
     };
 
-    console.log("LOG: Dữ liệu gửi đi Backend:", payload);
+    console.log("Submitting Order:", payload);
 
     try {
-      // --- GỌI API (Bỏ comment khi chạy thật) ---
+      // Giả lập API call (Thay bằng fetch thật khi chạy)
       /*
-      const response = await fetch('http://localhost:3000/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      await fetch('http://localhost:3000/orders', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(payload)
       });
-
-      if (!response.ok) throw new Error('Lỗi khi gọi API đặt hàng');
       */
-
-      // Giả lập delay 1.5s
       await new Promise(resolve => setTimeout(resolve, 1500));
-      alert(`Đặt hàng thành công!\n(Dữ liệu JSON đã được log trong Console F12)`);
-      
+      alert("Đặt hàng thành công!");
     } catch (error) {
-      console.error("Lỗi:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại sau.");
+      console.error(error);
+      alert("Có lỗi xảy ra khi đặt hàng.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // --- 4. GIAO DIỆN (JSX) ---
   return (
     <div className={styles.container}>
+      {/* Tiêu đề chính căn giữa */}
+      <h1 className={styles.pageTitle}>Complete your purchase</h1>
+
       <form onSubmit={handleSubmit} className={styles.wrapper}>
         
-        {/* --- CỘT TRÁI: FORM NHẬP THÔNG TIN --- */}
+        {/* --- CỘT TRÁI: FORM NHẬP LIỆU --- */}
         <div className={styles.leftColumn}>
-          <h2 className={styles.heading}>Thông tin thanh toán</h2>
+          <h2 className={styles.sectionTitle}>Payment Information</h2>
           
           <div className={styles.row}>
             <div className={styles.inputGroup}>
-              <label>Tên *</label>
-              <input type="text" name="firstName" required placeholder="Nhập tên" value={formData.firstName} onChange={handleChange} />
+              <input type="text" name="firstName" placeholder="First name" required value={formData.firstName} onChange={handleChange} />
             </div>
             <div className={styles.inputGroup}>
-              <label>Họ *</label>
-              <input type="text" name="lastName" required placeholder="Nhập họ" value={formData.lastName} onChange={handleChange} />
+              <input type="text" name="lastName" placeholder="Last name" required value={formData.lastName} onChange={handleChange} />
             </div>
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Quốc gia/Khu vực *</label>
-            <select name="country" value={formData.country} onChange={handleChange} className={styles.select}>
-              <option value="Vietnam">Việt Nam</option>
-              <option value="Other">Khác</option>
-            </select>
+            <input type="text" name="country" placeholder="Country/ Area" required value={formData.country} onChange={handleChange} />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Địa chỉ *</label>
-            <input type="text" name="address" placeholder="Số nhà, tên đường..." required value={formData.address} onChange={handleChange} />
+            <input type="text" name="address" placeholder="Address" required value={formData.address} onChange={handleChange} />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Mã bưu điện</label>
-            <input type="text" name="zip" value={formData.zip} onChange={handleChange} />
+            <input type="text" name="postcode" placeholder="Postcode" value={formData.postcode} onChange={handleChange} />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Tỉnh / Thành phố *</label>
-            <input type="text" name="city" required value={formData.city} onChange={handleChange} />
+            <input type="text" name="city" placeholder="State/ City" required value={formData.city} onChange={handleChange} />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Số điện thoại *</label>
-            <input type="tel" name="phone" required placeholder="Ví dụ: 0912345678" value={formData.phone} onChange={handleChange} />
+            <input type="tel" name="phone" placeholder="Phone number" required value={formData.phone} onChange={handleChange} />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Địa chỉ email *</label>
-            <input type="email" name="email" required placeholder="email@example.com" value={formData.email} onChange={handleChange} />
+            <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} />
           </div>
 
-          <h2 className={styles.heading} style={{marginTop: '30px'}}>Thông tin bổ sung</h2>
-          <div className={styles.inputGroup} style={{marginBottom: 0}}>
-            <textarea name="note" rows={5} placeholder="Ghi chú về đơn hàng..." value={formData.note} onChange={handleChange}></textarea>
+          {/* Additional Info Section */}
+          <h2 className={styles.sectionTitle} style={{marginTop: '40px'}}>Additional Information</h2>
+          <div className={styles.inputGroup}>
+            <textarea 
+              name="note" 
+              placeholder="Note about the order, for instance delivery time or detailed delivery address"
+              rows={5}
+              value={formData.note}
+              onChange={handleChange}
+            ></textarea>
           </div>
         </div>
 
-        {/* --- CỘT PHẢI: THÔNG TIN ĐƠN HÀNG --- */}
+        {/* --- CỘT PHẢI: YOUR ORDER (Box viền hồng) --- */}
         <div className={styles.rightColumn}>
           <div className={styles.orderBox}>
-            <h2 className={styles.heading}>Đơn hàng của bạn</h2>
+            <h2 className={styles.boxTitle}>Your order</h2>
             
             <table className={styles.orderTable}>
               <thead>
                 <tr>
-                  <th style={{textAlign: 'left'}}>SẢN PHẨM</th>
-                  <th style={{textAlign: 'right'}}>TẠM TÍNH</th>
+                  <th align="left">Products</th>
+                  <th align="center">Quantity</th>
+                  <th align="right">Price</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className={styles.productName}>
-                    {cartItem.name} <strong style={{whiteSpace: 'nowrap'}}>× {cartItem.quantity}</strong>
-                  </td>
-                  <td className={styles.productPrice}>
-                    {cartItem.price.toLocaleString('vi-VN')}₫
-                  </td>
-                </tr>
-                <tr className={styles.subtotalRow}>
-                  <td>Tạm tính</td>
-                  <td><strong>{totalAmount.toLocaleString('vi-VN')}₫</strong></td>
+                  <td className={styles.prodName}>{cartItem.name}</td>
+                  <td align="center">{cartItem.quantity}</td>
+                  <td align="right" className={styles.price}>{cartItem.price.toLocaleString('vi-VN')}₫</td>
                 </tr>
                 <tr className={styles.totalRow}>
-                  <td>Tổng</td>
-                  <td className={styles.productPrice}>{totalAmount.toLocaleString('vi-VN')}₫</td>
+                  <td colSpan={2}>Total</td>
+                  <td align="right" className={styles.totalPrice}>{totalAmount.toLocaleString('vi-VN')}₫</td>
                 </tr>
               </tbody>
             </table>
 
-            {/* PHƯƠNG THỨC THANH TOÁN */}
-            <div className={styles.paymentMethods}>
-              <div className={styles.radioGroup}>
-                <input type="radio" id="bank" name="paymentMethod" value="bank_transfer" checked={formData.paymentMethod === 'bank_transfer'} onChange={handleCheckChange} />
-                <label htmlFor="bank">Chuyển khoản ngân hàng</label>
+            <h3 className={styles.paymentTitle}>Payment method</h3>
+
+            {/* Radio: Pay online */}
+            <div className={styles.paymentOption}>
+              <div className={styles.radioRow}>
+                <input 
+                  type="radio" 
+                  id="online" 
+                  name="paymentMethod" 
+                  value="online"
+                  checked={formData.paymentMethod === 'online'}
+                  onChange={handleCheckChange}
+                />
+                <label htmlFor="online">Pay online</label>
               </div>
               
-              {formData.paymentMethod === 'bank_transfer' && (
-                <div className={styles.paymentDesc}>
-                  Thực hiện thanh toán vào ngay tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung thanh toán.
+              {/* Hiển thị QR Code nếu chọn Pay online */}
+              {formData.paymentMethod === 'online' && (
+                <div className={styles.qrContainer}>
+                  <p className={styles.qrNote}>
+                    Make a transfer to our bank account immediately. Please use your Order ID in the Payment Details section. Your order will be shipped after the payment transaction is completed.
+                  </p>
+                  {/* Link ảnh VietQR mẫu, bạn thay bằng ảnh thật trong thư mục public */}
+                  <img 
+                    src="https://img.vietqr.io/image/VCB-123456789-compact2.png" 
+                    alt="VietQR Code" 
+                    className={styles.qrImage} 
+                  />
                 </div>
               )}
+            </div>
 
-              <div className={styles.radioGroup} style={{marginTop: '15px'}}>
-                <input type="radio" id="cod" name="paymentMethod" value="cod" checked={formData.paymentMethod === 'cod'} onChange={handleCheckChange} />
-                <label htmlFor="cod">Trả tiền mặt khi nhận hàng</label>
+            {/* Radio: Cash */}
+            <div className={styles.paymentOption}>
+              <div className={styles.radioRow}>
+                <input 
+                  type="radio" 
+                  id="cash" 
+                  name="paymentMethod" 
+                  value="cash"
+                  checked={formData.paymentMethod === 'cash'}
+                  onChange={handleCheckChange}
+                />
+                <label htmlFor="cash">Cash</label>
               </div>
             </div>
 
-            <div className={styles.terms}>
-              <input type="checkbox" id="terms" name="termsAccepted" checked={formData.termsAccepted} onChange={handleCheckChange} />
-              <label htmlFor="terms">Tôi đã đọc và đồng ý với <a href="#">điều khoản và điều kiện</a> *</label>
+            {/* Checkboxes Terms */}
+            <div className={styles.termsGroup}>
+              <div className={styles.checkboxRow}>
+                <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleCheckChange} />
+                <label>I have read and agree to the website <a href="#">terms and conditions</a></label>
+              </div>
+              <div className={styles.checkboxRow}>
+                <input type="checkbox" name="privacyAccepted" checked={formData.privacyAccepted} onChange={handleCheckChange} />
+                <label>I have read and agree to the website <a href="#">privacy policy</a></label>
+              </div>
             </div>
 
+            {/* Button */}
             <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-              {isSubmitting ? 'ĐANG XỬ LÝ...' : 'ĐẶT HÀNG'}
+              {isSubmitting ? 'Processing...' : 'Place order'}
             </button>
             
-            <p className={styles.privacyText}>
-              Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng và cho các mục đích khác được mô tả trong <a href="#">chính sách riêng tư</a>.
-            </p>
           </div>
+          
+          {/* Footer note */}
+          <p className={styles.footerNote}>
+            Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <a href="#">privacy policy</a>.
+          </p>
         </div>
+
       </form>
     </div>
   );
