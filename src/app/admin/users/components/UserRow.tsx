@@ -18,9 +18,10 @@ interface User {
 interface UserRowProps {
   user: User;
   disableEdit?: boolean; // Prop để tắt tính năng sửa (dùng cho trang Shipper)
+  index: number;
 }
 
-export default function UserRow({ user, disableEdit = false }: UserRowProps) {
+export default function UserRow({ user, disableEdit = false, index }: UserRowProps) {
     const { user: currentUser } = useAuth(); // Lấy user đang đăng nhập để check quyền
     const router = useRouter();
     
@@ -80,7 +81,7 @@ export default function UserRow({ user, disableEdit = false }: UserRowProps) {
 
     return (
         <tr className={isRowAdmin ? styles.adminRow : undefined}>
-            <td style={{fontWeight: 'bold'}}>{user.id}</td>
+            <td style={{fontWeight: 'bold'}}>{index + 1}</td>
             
             {/* Full Name */}
             <td>{isEditing ? <input name="full_name" value={formData.full_name} onChange={handleChange} className={styles.inputBox}/> : user.full_name}</td>
@@ -98,9 +99,9 @@ export default function UserRow({ user, disableEdit = false }: UserRowProps) {
             <td>
                 {isEditing && !isMe ? ( // Không cho tự sửa role của chính mình
                     <select name="role" value={formData.role} onChange={handleChange} className={styles.inputBox} style={{padding: '6px'}}>
-                        <option value="customer">customer</option>
-                        <option value="admin">admin</option>
-                        <option value="shipper">shipper</option>
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                        <option value="shipper">Shipper</option>
                     </select>
                 ) : (
                     <span style={{fontWeight: isRowAdmin ? 'bold' : 'normal', color: isRowAdmin ? '#d81b60' : 'inherit'}}>
