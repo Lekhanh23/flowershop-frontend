@@ -1,0 +1,319 @@
+/* Sử dụng font stack hiện đại của hệ thống thay vì chỉ Arial */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px; /* Tăng padding trên dưới */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1a1a1a; /* Màu chữ đậm hơn một chút cho dễ đọc */
+  background-color: #f8f9fa; /* Thêm màu nền xám rất nhạt cho cả trang để làm nổi bật các box trắng */
+}
+
+/* Flexbox để chia 2 cột */
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px; /* Tăng khoảng cách giữa 2 cột */
+  align-items: flex-start; /* Căn hàng đầu tiên bằng nhau */
+}
+
+/* --- CỘT TRÁI (Form nhập liệu) --- */
+.leftColumn {
+  flex: 1;
+  min-width: 320px;
+  background: white; /* Nền trắng cho khu vực form */
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03); /* Đổ bóng rất nhẹ */
+}
+
+/* --- CỘT PHẢI (Đơn hàng) --- */
+.rightColumn {
+  flex: 0.7; /* Điều chỉnh tỷ lệ cột phải nhỏ hơn chút nữa */
+  min-width: 320px;
+  position: sticky; /* Giữ cột phải khi cuộn trang (nếu cột trái dài) */
+  top: 20px;
+}
+
+/* Tiêu đề section */
+.heading {
+  font-size: 22px; /* To hơn chút */
+  font-weight: 700;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee; /* Viền mỏng hơn */
+  padding-bottom: 15px;
+  color: #111;
+}
+
+/* Layout cho các ô input nằm cùng 1 dòng */
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+/* Nhóm input */
+.inputGroup {
+  margin-bottom: 24px; /* Tăng khoảng cách giữa các input */
+  width: 100%;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600; /* Label đậm hơn chút */
+}
+
+.inputGroup input,
+.inputGroup select,
+.inputGroup textarea {
+  width: 100%;
+  padding: 14px 16px; /* Input cao và thoáng hơn */
+  border: 1px solid #e0e0e0; /* Viền màu xám nhạt hơn */
+  border-radius: 6px; /* Bo góc mềm mại hơn */
+  font-size: 15px;
+  color: #333;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+/* Hiệu ứng khi click vào input */
+.inputGroup input:focus,
+.inputGroup select:focus,
+.inputGroup textarea:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1); /* Hiệu ứng focus lan tỏa nhẹ */
+}
+
+.select {
+  background-color: white;
+  cursor: pointer;
+  appearance: none; /* Ẩn mũi tên mặc định trình duyệt để custom nếu cần (ở đây giữ đơn giản) */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23999%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px top 50%;
+  background-size: 12px auto;
+}
+
+/* --- KHUNG ĐƠN HÀNG (Cột phải) - Giao diện thẻ (Card) --- */
+.orderBox {
+  border: 1px solid #eee; /* Thay viền đậm bằng viền mỏng */
+  padding: 35px; /* Tăng padding bên trong */
+  background-color: white;
+  border-radius: 12px; /* Bo góc lớn hơn */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Đổ bóng tạo chiều sâu */
+}
+
+/* Bảng sản phẩm */
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+}
+
+.orderTable th {
+  font-size: 13px;
+  color: #777;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.orderTable td {
+  padding: 18px 0; /* Tăng khoảng cách giữa các dòng sản phẩm */
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+/* Tên sản phẩm */
+.productName {
+  line-height: 1.6;
+  padding-right: 15px;
+}
+
+/* Giá tiền */
+.productPrice {
+  text-align: right;
+  font-weight: 700;
+  color: #e91e63;
+  white-space: nowrap;
+  font-size: 16px;
+}
+
+/* Dòng tạm tính */
+.subtotalRow td {
+  border-top: 2px solid #eee; /* Viền ngăn cách đậm hơn chút */
+  padding-top: 20px;
+  color: #555;
+}
+
+/* Dòng tổng cộng */
+.totalRow td {
+  font-size: 20px;
+  padding-top: 20px;
+  color: #111;
+  font-weight: 800;
+}
+
+.totalRow .productPrice {
+  font-size: 24px; /* Giá tổng to hẳn lên */
+  color: #e91e63;
+}
+
+/* --- PHƯƠNG THỨC THANH TOÁN --- */
+.paymentMethods {
+  margin: 30px 0;
+  padding-top: 25px;
+  border-top: 1px solid #eee;
+}
+
+.radioGroup {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer; /* Con trỏ tay khi hover cả cụm */
+}
+
+.radioGroup input {
+  margin-right: 12px;
+  margin-top: 4px;
+  accent-color: #e91e63;
+  transform: scale(1.2); /* Radio button to hơn chút */
+  cursor: pointer;
+}
+
+.radioGroup label {
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Hộp ghi chú cho chuyển khoản ngân hàng */
+.paymentDesc {
+  margin-top: 10px;
+  margin-left: 28px;
+  padding: 15px;
+  background-color: #fff0f5; /* Nền hồng rất nhạt cho hợp tông */
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #ffd6e0;
+}
+
+/* Mũi tên nhỏ trỏ lên của hộp ghi chú */
+.paymentDesc::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 12px;
+  border-width: 0 7px 7px;
+  border-style: solid;
+  border-color: #ffd6e0 transparent;
+  display: block;
+  width: 0;
+}
+
+/* Checkbox điều khoản */
+.terms {
+  margin-bottom: 25px;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+  color: #555;
+}
+
+.terms input {
+  margin-right: 12px;
+  margin-top: 3px;
+  accent-color: #e91e63;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.terms a, .privacyText a {
+  color: #e91e63;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.terms a:hover, .privacyText a:hover {
+  border-bottom-color: #e91e63;
+}
+
+/* Nút Đặt hàng */
+.submitBtn {
+  width: 100%;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  padding: 18px; /* Nút cao hơn */
+  font-size: 18px;
+  font-weight: 800; /* Chữ đậm hơn */
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3); /* Đổ bóng cho nút */
+  letter-spacing: 1px;
+}
+
+.submitBtn:hover {
+  background-color: #d81b60;
+  transform: translateY(-2px); /* Hiệu ứng nhấn nút nhẹ */
+  box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+}
+
+.submitBtn:disabled {
+  background-color: #ccc;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* Text chính sách bên dưới */
+.privacyText {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  text-align: center; /* Căn giữa text phụ */
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) { /* Đổi breakpoint sớm hơn chút */
+  .wrapper {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .leftColumn, .rightColumn {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .rightColumn {
+    position: static; /* Tắt sticky trên mobile */
+    order: -1; /* Đẩy cột đơn hàng lên trên cột form trên mobile (thường UX tốt hơn) */
+  }
+
+  .orderBox, .leftColumn {
+    padding: 25px;
+  }
+  
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
