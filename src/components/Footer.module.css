@@ -1,0 +1,148 @@
+/* src/components/Footer.module.css */
+
+.footer {
+    background-color: #FCDBD4;
+    padding-top: 2.5rem; 
+    padding-bottom: 1.5rem; 
+    color: #1f2937; 
+  }
+  
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  @media (min-width: 640px) { .container { padding: 0 1.5rem; } }
+  @media (min-width: 1024px) { .container { padding: 0 2rem; } }
+  
+  /* --- TOP ROW --- */
+  .topRow {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .topRow {
+      flex-direction: row;
+    }
+  }
+  
+  .logoImage {
+    height: 3.5rem; 
+    object-fit: contain;
+    margin-bottom: 1rem;
+  }
+  @media (min-width: 768px) { .logoImage { margin-bottom: 0; } }
+  
+  /* Social Icons */
+  .socials {
+    display: flex;
+    gap: 0.75rem; 
+  }
+  
+  .socialLink {
+    background-color: white;
+    padding: 0.375rem; 
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+    transition: opacity 0.2s;
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .socialLink:hover { opacity: 0.8; }
+  
+  /* Màu riêng cho từng icon  */
+  .insta { color: #E1306C; }
+  .facebook { color: #1877F2; }
+  .twitter { color: #000000; }
+  .youtube { color: #FF0000; }
+  .mail { color: #0072C6; }
+  
+  .xIcon {
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1;
+    display: block;
+    margin-top: -1px;
+  }
+  
+  /* --- MAIN GRID --- */
+  .mainGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem; 
+    margin-bottom: 2.5rem; 
+    border-top: 1px solid rgba(249, 168, 212, 0.5); 
+    padding-top: 2rem;
+  }
+  
+  @media (min-width: 768px) { .mainGrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .mainGrid { grid-template-columns: repeat(4, 1fr); } }
+  
+  .columnTitle {
+    font-weight: 700;
+    font-size: 0.875rem; 
+    margin-bottom: 0.75rem; 
+    color: #111827; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .columnList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; 
+    font-size: 0.75rem; 
+    color: #374151; 
+  }
+  
+  .linkItem {
+    color: inherit;
+    text-decoration: none;
+  }
+  .linkItem:hover { text-decoration: underline; }
+  
+  /* Sub-columns layout for Delivery */
+  .deliveryColumns {
+    display: flex;
+    gap: 1.5rem; 
+  }
+  
+  /* --- BOTTOM BAR --- */
+  .bottomBar {
+    border-top: 1px solid rgba(249, 168, 212, 0.5);
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-size: 10px;
+    color: #4b5563; 
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  
+  @media (min-width: 768px) {
+    .bottomBar {
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+  }
+  
+  .bottomLink {
+    color: inherit;
+    text-decoration: none;
+  }
+  .bottomLink:hover { color: black; }

@@ -7,12 +7,12 @@ import styles from './page.module.css';
 
 const COLLECTIONS = [
   { id: 1, name: 'All Occasions', title: 'All Occasions', imageUrl: '/images/collection-all.jpg' },
-  { id: 2, name: 'Birthday', title: 'Birthday', imageUrl: '/images/collection-birthday.jpg' },
-  { id: 3, name: 'Anniversary', title: 'Anniversary', imageUrl: '/images/collection-anniversary.jpg' },
-  { id: 4, name: 'Congratulation', title: 'Congratulation', imageUrl: '/images/collection-congratulation.jpg' },
-  { id: 5, name: "Parent's Day", title: "Parent's Day", imageUrl: '/images/collection-parents-day.jpg' },
-  { id: 6, name: "Teacher's Day", title: "Teacher's Day", imageUrl: '/images/collection-teachers-day.jpg' },
-  { id: 7, name: "International Women's Day", title: "International Women's Day", imageUrl: '/images/collection-women-day.jpg' },
+  { id: 2, name: 'Birthday', title: 'Birthday', imageUrl: '/images/collection1.jpg' },
+  { id: 3, name: 'Anniversary', title: 'Anniversary', imageUrl: '/images/collection2.jpg' },
+  { id: 4, name: 'Congratulation', title: 'Congratulation', imageUrl: '/images/collection3.jpg' },
+  { id: 5, name: "Parent's Day", title: "Parent's Day", imageUrl: '/images/collection4.jpg' },
+  { id: 6, name: "Teacher's Day", title: "Teacher's Day", imageUrl: '/images/collection5.jpg' },
+  { id: 7, name: "International Women's Day", title: "International Women's Day", imageUrl: '/images/collection6.jpg' },
 ];
 
 const FOOTER_SHOP_LINKS = [

@@ -1,12 +1,8 @@
 import styles from './page.module.css';
-import Image from 'next/image';
-import { Header } from '../../../components/HeaderCustomer';
-import { Footer } from '../../../components/Footer';
 
 export default function AboutPage() {
 	return (
 		<div>
-			<Header />
 			<div className={styles.pageWrapper}>
 				<div className={styles.aboutCard}>
 				<h1 className={styles.heading}>About Flower Shop</h1>
@@ -51,9 +47,6 @@ export default function AboutPage() {
 				</div>
 				</div>
 			</div>
-
-			{/* Footer for About page */}
-			<Footer />
 		</div>
 	);
 }

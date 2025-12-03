@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import styles from "./page.module.css";
+import { useRouter } from "next/navigation";
 
 // Định nghĩa kiểu dữ liệu
 interface Collection {
@@ -12,6 +13,7 @@ interface Collection {
 }
 
 export default function CollectionsPage() {
+  const router = useRouter();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -110,8 +112,11 @@ export default function CollectionsPage() {
                 <td style={{fontWeight: 500}}>{col.name}</td>
                 <td style={{color: '#666'}}>{col.description}</td>
                 <td>
+                  <div className={styles.actions}>
+                  <button className={styles.editBtn} style={{backgroundColor: '#0ea5e9'}} onClick={() => router.push(`/admin/collections/${col.id}`)}>View</button>
                   <button className={styles.editBtn} onClick={() => handleEditClick(col)}>Edit</button>
                   <button className={styles.deleteBtn} onClick={() => handleDelete(col.id)}>Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}

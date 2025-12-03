@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
-import { Header } from "../../../components/HeaderCustomer";
+import { HeaderCustomer } from "../../../components/HeaderCustomer";
 import { Footer } from "@/components/Footer";
 import styles from "./page.module.css";
 
@@ -53,7 +53,7 @@ export default function NotificationsPage() {
 
   if (loading) return (
     <div>
-      <Header />
+      <HeaderCustomer />
       <div className={styles.container}>Loading notifications...</div>
       <Footer />
     </div>
@@ -63,7 +63,7 @@ export default function NotificationsPage() {
   if (notifs.length === 0) {
     return (
       <div>
-        <Header />
+        <HeaderCustomer />
         <div className={styles.container}>
           <h1 className={styles.title}>Notifications</h1>
           <div className={styles.emptyState}>
@@ -78,7 +78,7 @@ export default function NotificationsPage() {
 
   return (
     <div>
-      <Header />
+      <HeaderCustomer />
       <div className={styles.container}>
       <h1 className={styles.title}>Notifications</h1>
 
