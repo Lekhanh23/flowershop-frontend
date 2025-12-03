@@ -25,7 +25,7 @@ export default function BouquetPage() {
       try {
         setLoading(true);
         // TODO: Đảm bảo Backend (NestJS) đang chạy ở port 3000 và đã có route GET /products
-        const response = await fetch('http://localhost:3000/products');
+        const response = await fetch('http://localhost:3000/api/products');
         
         if (!response.ok) {
           throw new Error(`Lỗi kết nối: ${response.statusText}`);
