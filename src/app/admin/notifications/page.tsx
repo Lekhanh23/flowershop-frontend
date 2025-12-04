@@ -53,7 +53,7 @@ export default function NotificationsPage() {
   console.log("Data Notification:", notifs);
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Manage Notifications</h1>
+      <h1 className={styles.title}>Notifications</h1>
 
       <div className={styles.tableWrap}>
         <table className={styles.table}>

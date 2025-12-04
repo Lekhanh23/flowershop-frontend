@@ -106,9 +106,9 @@ export default function CollectionsPage() {
             </tr>
           </thead>
           <tbody>
-            {collections.map((col) => (
+            {collections.map((col, index) => (
               <tr key={col.id}>
-                <td style={{fontWeight: 'bold'}}>{col.id}</td>
+                <td style={{fontWeight: 'bold'}}>{index + 1}</td>
                 <td style={{fontWeight: 500}}>{col.name}</td>
                 <td style={{color: '#666'}}>{col.description}</td>
                 <td>

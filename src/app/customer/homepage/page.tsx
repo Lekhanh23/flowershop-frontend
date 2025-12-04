@@ -1,12 +1,10 @@
 "use client";
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import { getImageUrl, formatPrice } from '@/lib/utils';
-import { HeaderCustomer } from '@/components/HeaderCustomer';
-import { Footer } from '@/components/Footer';
+
 
 // --- Dữ liệu Bestsellers (Vẫn lấy từ SQL/Backend nên dùng tên file ngắn để getImageUrl xử lý) ---
 const FALLBACK_BESTSELLERS = [
@@ -116,11 +114,10 @@ export default function HomePage() {
       <section className={styles.heroSection}>
         <div className={styles.heroContainer}>
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>Blossom Flower Shop</h1>
+            <h1 className={styles.heroTitle}><b>Blossom Flower Shop</b></h1>
             <p className={styles.heroSubtitle}>Simple & Elegant.</p>
             <p className={styles.heroDescription}>
-              Trao gửi yêu thương qua những bó hoa tươi thắm được thiết kế thủ công tỉ mỉ.
-              Chúng tôi mang đến vẻ đẹp thiên nhiên cho mọi khoảnh khắc đặc biệt của bạn.
+            Welcome to our flower shop! Explore our beautiful collection of flowers. We offer a wide variety of fresh flowers for every occasion. From elegant roses to vibrant sunflowers, we have something for everyone.
             </p>
             <div className={styles.heroButtons}>
               <Link href="/customer/collection" className={styles.heroPrimaryBtn}>Shop Now</Link>
@@ -137,7 +134,6 @@ export default function HomePage() {
                 className="object-cover w-full h-full rounded-lg shadow-lg"
                 onError={(e) => e.currentTarget.src = "https://images.unsplash.com/photo-1562690868-60bbe7293e94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"}
                 />
-                <div className={styles.heroImagePlaceholder}>Fresh Flowers</div>
             </div>
           </div>
         </div>
@@ -197,19 +193,18 @@ export default function HomePage() {
       <section className={styles.contentSection}>
         <h2 className={styles.contentSectionTitle}>ABOUT BLOSSOM FLOWER SHOP</h2>
         <p className={styles.contentSectionDescription}>
-          Chúng tôi không chỉ bán hoa, chúng tôi trao gửi cảm xúc. 
-          Mỗi bó hoa là một câu chuyện, một lời nhắn gửi chân thành đến người nhận.
+        We don't just sell flowers, we deliver emotions. Each bouquet tells a story, a sincere message to the recipient.
         </p>
 
         <div className={styles.accordionContainer}>
           <div className={styles.accordionItem}>
-            <h3 className={styles.accordionItemTitle}>Dịch vụ giao hoa hỏa tốc trong 2h</h3>
+            <h3 className={styles.accordionItemTitle}>Express flower delivery service within 2 hours</h3>
           </div>
           <div className={styles.accordionItem}>
-            <h3 className={styles.accordionItemTitle}>Cam kết hoa tươi 100% trong ngày</h3>
+            <h3 className={styles.accordionItemTitle}>100% fresh flower commitment within the day</h3>
           </div>
           <div className={styles.accordionItem}>
-            <h3 className={styles.accordionItemTitle}>Tặng kèm thiệp và banner miễn phí</h3>
+            <h3 className={styles.accordionItemTitle}>Free card and banner included</h3>
           </div>
         </div>
       </section>

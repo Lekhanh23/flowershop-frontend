@@ -9,10 +9,8 @@ import styles from './HeaderCustomer.module.css';
 export const HeaderCustomer = () => {
   const { logout } = useAuth();
   
-  // State quản lý hover cho cả 2 menu
-  const [isCollectionHover, setIsCollectionHover] = useState(false);
-  const [isStoryHover, setIsStoryHover] = useState(false);
-
+  // Không cần state hover phức tạp nữa vì đã xử lý bằng CSS :hover
+  
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -39,44 +37,32 @@ export const HeaderCustomer = () => {
           </div>
 
           {/* COLLECTION DROPDOWN */}
-          <div 
-            className={styles.navItemWrapper}
-            onMouseEnter={() => setIsCollectionHover(true)}
-            onMouseLeave={() => setIsCollectionHover(false)}
-          >
+          <div className={styles.navItemWrapper}>
             <Link href="/customer/collection" className={styles.navLink}>
               Collection
             </Link>
             
-            {isCollectionHover && (
-              <div className={styles.dropdownMenu}>
+            <div className={styles.dropdownMenu}>
                 <Link href="/customer/collection" className={styles.dropdownItem}>All collections</Link>
-                <Link href="/customer/collection/birthday" className={styles.dropdownItem}>Birthday</Link>
-                <Link href="/customer/collection/anniversary" className={styles.dropdownItem}>Anniversary</Link>
-                <Link href="/customer/collection/congratulations" className={styles.dropdownItem}>Congratulations</Link>
-                <Link href="/customer/collection/parents-day" className={styles.dropdownItem}>Parent's Day</Link>
-                <Link href="/customer/collection/teachers-day" className={styles.dropdownItem}>Teacher's Day</Link>
-                <Link href="/customer/collection/internationals-day" className={styles.dropdownItem}>International's Day</Link>
-              </div>
-            )}
+                <Link href="/customer/collection/1" className={styles.dropdownItem}>Birthday</Link>
+                <Link href="/customer/collection/2" className={styles.dropdownItem}>Anniversary</Link>
+                <Link href="/customer/collection/3" className={styles.dropdownItem}>Congratulations</Link>
+                <Link href="/customer/collection/4" className={styles.dropdownItem}>Parent's Day</Link>
+                <Link href="/customer/collection/5" className={styles.dropdownItem}>Teacher's Day</Link>
+                <Link href="/customer/collection/6" className={styles.dropdownItem}>Women's Day</Link>
+            </div>
           </div>
 
           {/* OUR STORY DROPDOWN */}
-          <div 
-            className={styles.navItemWrapper}
-            onMouseEnter={() => setIsStoryHover(true)}
-            onMouseLeave={() => setIsStoryHover(false)}
-          >
+          <div className={styles.navItemWrapper}>
             <Link href="/customer/about_us" className={styles.navLink}>
               Our Story
             </Link>
 
-            {isStoryHover && (
-              <div className={styles.dropdownMenu}>
+            <div className={styles.dropdownMenu}>
                 <Link href="/customer/about_us" className={styles.dropdownItem}>About Us</Link>
                 <Link href="/customer/meet_our_team" className={styles.dropdownItem}>Our Team</Link>
-              </div>
-            )}
+            </div>
           </div>
         </nav>
 
@@ -84,7 +70,8 @@ export const HeaderCustomer = () => {
         <div className={styles.rightSection}>
           <div className={styles.phoneWrapper}>
             <div className={styles.phoneIconBox}>
-               <Phone className={styles.phoneIcon} />
+               {/* Icon điện thoại tô đặc giống thiết kế */}
+               <Phone fill="currentColor" className={styles.phoneIcon} />
             </div>
             <div className={styles.phoneInfo}>
                <span className={styles.callToOrder}>CALL TO ORDER</span>
@@ -93,10 +80,10 @@ export const HeaderCustomer = () => {
           </div>
 
           <div className={styles.iconsWrapper}>
-            <button className={styles.iconBtn}>
+            <Link href="/customer/notification" className={styles.iconBtn}>
               <Bell className={styles.iconSize} />
               <span className={styles.notificationDot}></span>
-            </button>
+            </Link>
             
             <Link href="/customer/cart" className={styles.iconBtn}>
               <ShoppingCart className={styles.iconSize} />

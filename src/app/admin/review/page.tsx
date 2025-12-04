@@ -85,7 +85,7 @@ export default function ReviewsPage() {
     <div className={styles.container}>
       <h2 className={styles.title}>Review Management</h2>
       <div className={styles.headerRow}>
-        <div>Total reviews: <span className={styles.totalCount}>{filteredReviews.length}</span></div>
+        <div><b>TOTAL REVIEWS:</b> <span className={styles.totalCount}>{filteredReviews.length}</span></div>
       </div>
 
       {/* --- FILTER BAR --- */}
@@ -122,15 +122,11 @@ export default function ReviewsPage() {
         </select>
         <button className={styles.filterBtn}>Filter</button>
       </div>
-
-      <button className={styles.deleteBulkBtn} onClick={handleBulkDelete}>Delete</button>
-
       {/* --- TABLE --- */}
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th style={{width: '40px'}}><input type="checkbox" /></th>
               <th style={{width: '60px'}}>ID</th>
               <th>CUSTOMER</th>
               <th>PRODUCT</th>
@@ -141,17 +137,10 @@ export default function ReviewsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredReviews.map((r) => (
+            {filteredReviews.map((r, index) => (
               <React.Fragment key={r.id}>
                 <tr>
-                  <td>
-                    <input 
-                      type="checkbox" 
-                      checked={selectedIds.includes(r.id)}
-                      onChange={() => toggleSelect(r.id)}
-                    />
-                  </td>
-                  <td>{r.id}</td>
+                  <td style={{fontWeight: 'bold'}}>{index + 1}</td>
                   <td>
                     <span className={styles.userName}>{r.user?.full_name}</span>
                     <span className={styles.userEmail}>{r.user?.email}</span>

@@ -5,12 +5,25 @@ import { RxMagnifyingGlass, RxAvatar } from 'react-icons/rx';
 import { FaBell } from 'react-icons/fa';
 import styles from './Header.module.css';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import api from '@/lib/api';
 
 export default function Header() {
   const { user, logout } = useAuth();
-
+  const router = useRouter();
+  const handleLogout =async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      router.push("/login");
+    }
+  }
   return (
-    <header className={styles.header}> {/* <-- 2. Dùng styles.className */}
+    <header className={styles.header}> 
       <div className={styles.headerContent}>
         {/* Thanh Tìm kiếm */}
         <div className={styles.searchBar}>
@@ -37,7 +50,7 @@ export default function Header() {
             </span>
           </div>
 
-          <button onClick={logout} className={styles.logoutButton}>
+          <button onClick={handleLogout} className={styles.logoutButton}>
             Logout
           </button>
         </div>

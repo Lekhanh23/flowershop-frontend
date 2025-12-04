@@ -1,263 +1,134 @@
-'use client';
+"use client";
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, User, Phone, ChevronDown, Bell, LogOut, Instagram, Facebook, Twitter, Youtube, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
+import { getImageUrl, formatPrice } from '@/lib/utils';
 
-const COLLECTIONS = [
-  { id: 1, name: 'All Occasions', title: 'All Occasions', imageUrl: '/images/collection-all.jpg' },
-  { id: 2, name: 'Birthday', title: 'Birthday', imageUrl: '/images/collection1.jpg' },
-  { id: 3, name: 'Anniversary', title: 'Anniversary', imageUrl: '/images/collection2.jpg' },
-  { id: 4, name: 'Congratulation', title: 'Congratulation', imageUrl: '/images/collection3.jpg' },
-  { id: 5, name: "Parent's Day", title: "Parent's Day", imageUrl: '/images/collection4.jpg' },
-  { id: 6, name: "Teacher's Day", title: "Teacher's Day", imageUrl: '/images/collection5.jpg' },
-  { id: 7, name: "International Women's Day", title: "International Women's Day", imageUrl: '/images/collection6.jpg' },
-];
+interface Collection {
+  id: number;
+  name: string;
+}
 
-const FOOTER_SHOP_LINKS = [
-  { href: "/bouquets", label: "All Bouquets" },
-  { href: "/signature", label: "Signature Bouquets" },
-  { href: "/preserved", label: "Preserved Roses" },
-  { href: "/roses", label: "Roses" },
-  { href: "/gifts", label: "Flowers and Gifts" },
-];
-
-const FOOTER_ABOUT_LINKS = [
-  { href: "/admin/users/customers/about%20us", label: "About Us" },
-  { href: "/admin/users/customers/meet%20our%20team", label: "Our Team" },
-  { href: "/careers", label: "Careers" },
-  { href: "/press", label: "Press" },
-];
-
-const FOOTER_SAME_DAY_DELIVERY = [
-  "Cau Giay", "Ba Dinh", 
-  "Dong Da", "Tay Ho", 
-  "Thanh Xuan", "Nam Tu Liem", 
-  "Bac Tu Liem", "Ha Dong",
-];
-
-const FOOTER_NEXT_DAY_DELIVERY = [
-  "Hoai Duc", "Hai Duong", 
-  "Son Tay", "Ha Nam", 
-  "Dan Phuong", "Ninh Binh", 
-  "Chuong My", "Hung Yen", 
-  "Thach That", "Soc Son",
-];
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+}
 
 export default function CollectionPage() {
-  const [isCollectionOpen, setIsCollectionOpen] = useState(false);
-  const [isStoryOpen, setIsStoryOpen] = useState(false);
-  const collectionDropdownRef = useRef<HTMLDivElement>(null);
-  const storyDropdownRef = useRef<HTMLDivElement>(null);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  
+  // State quản lý tab đang chọn. Mặc định là 'all'
+  const [activeTab, setActiveTab] = useState<number | 'all'>('all'); 
+  const [activeTabName, setActiveTabName] = useState("All Occasions");
+  const [loading, setLoading] = useState(true);
 
-  const collectionItems = [
-    { label: 'All Collections', href: '/admin/users/customers/collection' },
-    { label: 'Birthday', href: '/admin/users/customers/collection/birthday' },
-    { label: 'Anniversary', href: '/admin/users/customers/collection/anniversary' },
-    { label: 'Congratulations', href: '/admin/users/customers/collection/congratulations' },
-    { label: "Parent's Day", href: '/admin/users/customers/collection/parents-day' },
-    { label: "Teacher's Day", href: '/admin/users/customers/collection/teachers-day' },
-    { label: "International Women's Day", href: '/admin/users/customers/collection/women-day' },
-  ];
-
-  const storyItems = [
-    { label: 'About Us', href: '/admin/users/customers/about%20us' },
-    { label: 'Our Team', href: '/admin/users/customers/meet%20our%20team' },
-  ];
-
+  // 1. Lấy danh sách Tabs (Menu)
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (collectionDropdownRef.current && !collectionDropdownRef.current.contains(event.target as Node)) {
-        setIsCollectionOpen(false);
+    const fetchCollections = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/api/collections');
+        const data = await res.json();
+        setCollections(Array.isArray(data) ? data : (data.data || []));
+      } catch (error) {
+        console.error("Lỗi tải menu:", error);
       }
-      if (storyDropdownRef.current && !storyDropdownRef.current.contains(event.target as Node)) {
-        setIsStoryOpen(false);
+    };
+    fetchCollections();
+  }, []);
+
+  // 2. Lấy danh sách SẢN PHẨM dựa theo Tab đang chọn
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        let url = 'http://localhost:3000/api/products?limit=100';
+        
+        // Nếu không phải "All Occasions", thêm tham số lọc theo ID
+        if (activeTab !== 'all') {
+          url += `&collection_id=${activeTab}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+        // Backend trả về { data: [...] }
+        setProducts(Array.isArray(data.data) ? data.data : []);
+      } catch (error) {
+        console.error("Lỗi tải sản phẩm:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    fetchProducts();
+  }, [activeTab]); // Chạy lại khi activeTab thay đổi
+
+  // Hàm xử lý khi bấm vào Tab
+  const handleTabClick = (id: number | 'all', name: string) => {
+    setActiveTab(id);
+    setActiveTabName(name);
+  };
 
   return (
-    <div className={styles.pageWrapper}>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerContainer}>
-          <Link href="/admin/users/customers/homepage" className={styles.logo}>
-            <span>Blossom</span>
-          </Link>
+    <div className={styles.container}>
+      
+      {/* --- MENU TABS --- */}
+      <div className={styles.tabsWrapper}>
+        <button 
+          className={`${styles.tabItem} ${activeTab === 'all' ? styles.tabActive : ''}`}
+          onClick={() => handleTabClick('all', "All Occasions")}
+        >
+          All Occasions
+        </button>
 
-          <nav className={styles.nav}>
-            <Link href="/bouquet" className={styles.navItem}>BOUQUET</Link>
-
-            <div className={styles.dropdownWrapper} ref={collectionDropdownRef}
-                 onMouseEnter={() => setIsCollectionOpen(true)}
-                 onMouseLeave={() => setIsCollectionOpen(false)}>
-              <button
-                onClick={() => setIsCollectionOpen(!isCollectionOpen)}
-                className={styles.navItem}
-              >
-                COLLECTION
-                <ChevronDown className={styles.chevron} />
-              </button>
-
-              <div className={`${styles.dropdown} ${isCollectionOpen ? styles.dropdownOpen : ''}`}>
-                {collectionItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className={`${styles.dropdownItem} ${index === 0 ? styles.dropdownItemTop : ''}`}
-                    onClick={() => setIsCollectionOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.dropdownWrapper} ref={storyDropdownRef}
-                 onMouseEnter={() => setIsStoryOpen(true)}
-                 onMouseLeave={() => setIsStoryOpen(false)}>
-              <button
-                onClick={() => setIsStoryOpen(!isStoryOpen)}
-                className={styles.navItem}
-              >
-                OUR STORY
-                <ChevronDown className={styles.chevron} />
-              </button>
-
-              <div className={`${styles.dropdown} ${isStoryOpen ? styles.dropdownOpen : ''}`}>
-                {storyItems.map((item, index) => (
-                  <Link
-                    key={index}
-                    href={item.href}
-                    className={styles.dropdownItem}
-                    onClick={() => setIsStoryOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </nav>
-
-          <div className={styles.headerRight}>
-            <span className={styles.phone}>
-              <Phone className={styles.phoneIcon} />
-              CALL US: +84 9001090
-            </span>
-            <Bell className={styles.icon} />
-            <ShoppingCart className={styles.icon} />
-            <User className={styles.icon} />
-            <button className={styles.logoutBtn}>
-              <LogOut className={styles.logoutIcon} />
-              LOGOUT
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Collection Tabs */}
-      <div className={styles.tabsContainer}>
-        {COLLECTIONS.map((collection, index) => (
-          <button key={index} className={`${styles.tab} ${index === 0 ? styles.tabActive : ''}`}>
-            {collection.title}
+        {collections.map(col => (
+          <button
+            key={col.id}
+            className={`${styles.tabItem} ${activeTab === col.id ? styles.tabActive : ''}`}
+            onClick={() => handleTabClick(col.id, col.name)}
+          >
+            {col.name}
           </button>
         ))}
       </div>
 
-      {/* Main Title */}
-      <div className={styles.mainTitleSection}>
-        <h1 className={styles.mainTitle}>EXPLORE OUR FLOWER COLLECTION<br />FOR ALL OCCASIONS</h1>
+      {/* --- TIÊU ĐỀ LỚN --- */}
+      <div className={styles.titleSection}>
+        <h1 className={styles.mainTitle}>
+          EXPLORE OUR FLOWER COLLECTION<br />
+          FOR {activeTabName.toUpperCase()}
+        </h1>
       </div>
 
-      {/* Collections Grid */}
-      <div className={styles.collectionsGrid}>
-        {COLLECTIONS.map((collection, index) => (
-          <div key={index} className={styles.collectionCard}>
-            <div className={styles.collectionImageWrapper}>
-              <img
-                src={collection.imageUrl}
-                alt={collection.title}
-                className={styles.collectionImage}
-              />
-              <div className={styles.collectionOverlay}>
-                <div className={styles.collectionLabel}>COLLECTIONS</div>
-                <div className={styles.collectionName}>{collection.title}</div>
-              </div>
+      {/* --- GRID SẢN PHẨM --- */}
+      <div className={styles.productGrid}>
+        {loading ? (
+          <p className={styles.loadingText}>Loading flowers...</p>
+        ) : products.length === 0 ? (
+          <p className={styles.emptyText}>No products found for this occasion.</p>
+        ) : (
+          products.map((product) => (
+            <div key={product.id} className={styles.productCard}>
+              <Link href={`/customer/bouquet/${product.id}`}> {/* Link tới chi tiết */}
+                <div className={styles.imageWrapper}>
+                  <img
+                    src={getImageUrl(product.image)}
+                    alt={product.name}
+                    className={styles.productImage}
+                    onError={(e) => e.currentTarget.src = "https://placehold.co/400x500?text=No+Image"}
+                  />
+                </div>
+                {/* Tên sản phẩm gạch chân hồng như thiết kế */}
+                <h3 className={styles.productName}>{product.name}</h3>
+              </Link>
+              <p className={styles.price}>{formatPrice(product.price)}</p> 
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-
-      {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerContainer}>
-          <div className={styles.footerColumn}>
-            <h3 className={styles.footerTitle}>Shop</h3>
-            {FOOTER_SHOP_LINKS.map((link, idx) => (
-              <Link key={idx} href={link.href} className={styles.footerLink}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className={styles.footerColumn}>
-            <h3 className={styles.footerTitle}>About</h3>
-            {FOOTER_ABOUT_LINKS.map((link, idx) => (
-              <Link key={idx} href={link.href} className={styles.footerLink}>
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className={styles.footerColumn}>
-            <h3 className={styles.footerTitle}>Same-day Delivery</h3>
-            {FOOTER_SAME_DAY_DELIVERY.map((link) => (
-              <Link key={link} href={`/delivery/${link.toLowerCase().replace(' ', '-')}`} className={styles.footerLink}>
-                {link}
-              </Link>
-            ))}
-          </div>
-
-          <div className={styles.footerColumn}>
-            <h3 className={styles.footerTitle}>Next-day Delivery</h3>
-            {FOOTER_NEXT_DAY_DELIVERY.map((link) => (
-              <Link key={link} href={`/delivery/${link.toLowerCase().replace(' ', '-')}`} className={styles.footerLink}>
-                {link}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.footerBottom}>
-          <div className={styles.socialIcons}>
-            <Link href="https://instagram.com" target="_blank" className={styles.socialIcon}>
-              <Instagram />
-            </Link>
-            <Link href="https://facebook.com" target="_blank" className={styles.socialIcon}>
-              <Facebook />
-            </Link>
-            <Link href="https://twitter.com" target="_blank" className={styles.socialIcon}>
-              <Twitter />
-            </Link>
-            <Link href="https://youtube.com" target="_blank" className={styles.socialIcon}>
-              <Youtube />
-            </Link>
-          </div>
-
-          <div className={styles.bottomLinks}>
-            <Link href="/privacy" className={styles.bottomLink}>Privacy Policy</Link>
-            <Link href="/terms" className={styles.bottomLink}>Terms of Service</Link>
-            <Link href="mailto:hello@flowershop.com" className={styles.bottomLink}>
-              <Mail className={styles.mailIcon} />
-              hello@flowershop.com
-            </Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

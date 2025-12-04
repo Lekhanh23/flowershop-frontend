@@ -1,0 +1,119 @@
+.container {
+    background-color: #fff;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    font-family: "Playfair Display", "Times New Roman", serif;
+  }
+  
+  /* --- TABS --- */
+  .tabsWrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 35px;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+  }
+  
+  .tabItem {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    padding-bottom: 8px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .tabItem:hover { color: #000; }
+  
+  .tabActive {
+    color: #000;
+    border-bottom: 2px solid #ec6b8b; /* Gạch chân màu hồng */
+    font-weight: 600;
+  }
+  
+  /* --- TITLE --- */
+  .titleSection {
+    text-align: center;
+    padding: 0 20px;
+    margin-bottom: 60px;
+  }
+  
+  .mainTitle {
+    font-size: 32px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    font-weight: 400;
+    margin: 0;
+  }
+  
+  /* --- GRID --- */
+  .productGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .loadingText, .emptyText {
+    text-align: center;
+    width: 100%;
+    grid-column: span 3;
+    color: #888;
+    margin-top: 40px;
+    font-family: sans-serif;
+  }
+  
+  /* --- CARD --- */
+  .productCard {
+    text-align: center;
+  }
+  
+  .productCard a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .imageWrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Ảnh vuông */
+    overflow: hidden;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+  }
+  
+  .productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  
+  .imageWrapper:hover .productImage {
+    transform: scale(1.05);
+  }
+  
+  .productName {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ec6b8b; /* Chữ màu hồng */
+    margin: 10px 0 5px;
+    text-decoration: underline;
+    text-underline-offset: 4px; /* Gạch chân cách chữ 1 chút */
+  }
+  
+  @media (max-width: 900px) {
+    .productGrid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .productGrid { grid-template-columns: 1fr; }
+  }

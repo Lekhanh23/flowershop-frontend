@@ -95,7 +95,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* SCOPED CSS – giữ nguyên style của bạn */}
+      {/* SCOPED CSS  */}
       <style jsx>{`
         .login-bg {
           height: 100vh; /* full screen */

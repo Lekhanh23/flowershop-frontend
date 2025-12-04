@@ -79,6 +79,7 @@ export default function OrdersPage() {
         <table className={styles.table}>
           <thead>
             <tr>
+              <th>STT</th>
               <th>ID</th>
               <th>CUSTOMER</th>
               <th>TOTAL</th>
@@ -89,9 +90,10 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o: any) => (
+            {orders.map((o: any, index: number) => (
               <tr key={o.id}>
-                <td style={{fontWeight: 'bold'}}>{o.id}</td>
+                <td style={{fontWeight: 'bold', textAlign: 'center', color: '#666'}}>{index + 1}</td>
+                <td style={{fontWeight: 'bold', textAlign: 'center'}}>#{o.id}</td>
                 <td>
                     <div>{o.user?.full_name || "Guest"}</div>
                     <div style={{fontSize: 12, color:'#888'}}>{o.user?.address}</div>
