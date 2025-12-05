@@ -55,11 +55,12 @@ export default function UsersTable({ role, title, disableEdit = false }: UsersTa
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
+                    {users.map((user, index) => (
                         <UserRow 
                             key={user.id} 
                             user={user} 
                             disableEdit={disableEdit} 
+                            index={index}
                         />
                     ))}
                 </tbody>

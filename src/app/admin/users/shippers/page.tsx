@@ -80,9 +80,9 @@ export default function ManageShippersPage() {
               </thead>
               <tbody>
                 {applications.length === 0 ? <tr><td colSpan={6} style={{textAlign:'center', padding:20}}>No pending applications</td></tr> :
-                 applications.map(app => (
+                 applications.map((app, index) => (
                   <tr key={app.id}>
-                    <td style={{fontWeight:'bold'}}>{app.id}</td>
+                    <td style={{fontWeight:'bold'}}>{index + 1}</td>
                     <td className={styles.name}>{app.user?.full_name}</td>
                     <td className={styles.email}>{app.user?.email}</td>
                     <td>{new Date(app.createdAt).toLocaleDateString('vi-VN')}</td>
@@ -108,11 +108,11 @@ export default function ManageShippersPage() {
               </thead>
               <tbody>
                 {activeShippers.length === 0 ? <tr><td colSpan={7} style={{textAlign:'center', padding:20}}>No active shippers</td></tr> :
-                 activeShippers.map(s => {
+                 activeShippers.map((s, index) => {
                   const status = s.shipperProfile?.status || 'unavailable';
                   return (
                     <tr key={s.id}>
-                      <td style={{fontWeight:'bold'}}>{s.id}</td>
+                      <td style={{fontWeight:'bold'}}>{index + 1}</td>
                       <td className={styles.name}>{s.full_name}</td>
                       <td className={styles.email}>{s.email}</td>
                       <td>{s.phone || "-"}</td>

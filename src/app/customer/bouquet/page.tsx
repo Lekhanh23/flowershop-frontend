@@ -1,0 +1,252 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import styles from './page.module.css';
+import Link from 'next/link';
+
+// 1. Định nghĩa kiểu dữ liệu
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  description?: string;
+  isBestSeller?: boolean;
+  occasion?: string; // Ví dụ: 'birthday', 'wedding' (nếu API có trả về)
+}
+
+// Kiểu dữ liệu cho bộ lọc
+interface FilterState {
+  priceRange: string | null; // 'under500', '500to1000', 'above1000'
+  occasion: string[];        // ['birthday', 'anniversary']
+}
+
+export default function BouquetPage() {
+  // --- STATE ---
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // State quản lý UI: Cái nào đang mở? (price, occasion, type...)
+  const [expandedFilter, setExpandedFilter] = useState<string | null>('price'); 
+
+  // State quản lý Logic: Đang chọn filter nào?
+  const [filters, setFilters] = useState<FilterState>({
+    priceRange: null,
+    occasion: []
+  });
+
+  // --- GỌI API ---
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/api/products');
+        
+        if (!response.ok) throw new Error(`Lỗi kết nối: ${response.statusText}`);
+
+        const data = await response.json();
+        
+        // Kiểm tra xem data trả về là Mảng hay Object chứa mảng
+        const productsArray = Array.isArray(data) ? data : data.data || [];
+        setProducts(productsArray);
+
+      } catch (err: any) {
+        console.error("Lỗi:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // --- HÀM XỬ LÝ FILTER UI (Đóng/Mở) ---
+  const toggleFilterUI = (section: string) => {
+    setExpandedFilter(expandedFilter === section ? null : section);
+  };
+
+  // --- HÀM XỬ LÝ LOGIC FILTER ---
+  const handlePriceChange = (range: string) => {
+    // Nếu click lại cái đang chọn thì bỏ chọn, ngược lại thì chọn cái mới
+    setFilters(prev => ({
+      ...prev,
+      priceRange: prev.priceRange === range ? null : range
+    }));
+  };
+
+  const handleOccasionChange = (occ: string) => {
+    setFilters(prev => {
+      const exists = prev.occasion.includes(occ);
+      return {
+        ...prev,
+        occasion: exists 
+          ? prev.occasion.filter(o => o !== occ) // Bỏ chọn
+          : [...prev.occasion, occ]              // Thêm vào
+      };
+    });
+  };
+
+  // --- LOGIC LỌC SẢN PHẨM (Client-side) ---
+  // Tính toán danh sách hiển thị dựa trên state `products` gốc và `filters`
+  const displayedProducts = products.filter(p => {
+    // 1. Lọc theo giá
+    if (filters.priceRange === 'under500' && p.price >= 500000) return false;
+    if (filters.priceRange === '500to1000' && (p.price < 500000 || p.price > 1000000)) return false;
+    if (filters.priceRange === 'above1000' && p.price <= 1000000) return false;
+
+    // 2. Lọc theo Occasion (Nếu API có trả về trường occasion)
+    // Nếu user có chọn occasion, và sản phẩm này không thuộc occasion đó -> false
+    if (filters.occasion.length > 0 && p.occasion) {
+       // Logic đơn giản: Check xem occasion của sản phẩm có nằm trong list đã chọn k
+       if (!filters.occasion.includes(p.occasion.toLowerCase())) return false;
+    }
+
+    return true; // Giữ lại sản phẩm nếu vượt qua các bài test trên
+  });
+
+  // --- RENDER ---
+  return (
+    <div className={styles.container}>
+      <div className={styles.breadcrumb}>
+        <Link href="/">Home</Link> &gt; <span>All Bouquets</span>
+      </div>
+
+      <div className={styles.headerSection}>
+        <h1 className={styles.pageTitle}>ALL BOUQUETS</h1>
+        <p className={styles.subtitle}>
+          We design bouquets the French way, using seasons and our Parisian roots as inspiration.
+        </p>
+      </div>
+
+      <div className={styles.layoutWrapper}>
+        {/* --- SIDEBAR --- */}
+        <div className={styles.sidebar}>
+          <div className={styles.totalCount}>{displayedProducts.length} bouquets</div>
+          <div className={styles.filterTitle}>FILTER</div>
+
+          {/* 1. Price Filter */}
+          <div className={styles.filterGroup}>
+            <div className={styles.filterHeader} onClick={() => toggleFilterUI('price')}>
+              <span>Price</span>
+              <span className={styles.arrow}>{expandedFilter === 'price' ? '−' : '+'}</span>
+            </div>
+            {expandedFilter === 'price' && (
+              <div className={styles.filterContent}>
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    checked={filters.priceRange === 'under500'}
+                    onChange={() => handlePriceChange('under500')}
+                  /> 
+                  Under 500.000đ
+                </label>
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    checked={filters.priceRange === '500to1000'}
+                    onChange={() => handlePriceChange('500to1000')}
+                  /> 
+                  500.000đ - 1.000.000đ
+                </label>
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    checked={filters.priceRange === 'above1000'}
+                    onChange={() => handlePriceChange('above1000')}
+                  /> 
+                  Above 1.000.000đ
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Occasion Filter */}
+          <div className={styles.filterGroup}>
+            <div className={styles.filterHeader} onClick={() => toggleFilterUI('occasion')}>
+              <span>Occasion</span>
+              <span className={styles.arrow}>{expandedFilter === 'occasion' ? '−' : '+'}</span>
+            </div>
+            {expandedFilter === 'occasion' && (
+              <div className={styles.filterContent}>
+                {['Birthday', 'Anniversary', 'Love'].map((occ) => (
+                  <label key={occ} className={styles.checkboxLabel}>
+                    <input 
+                      type="checkbox" 
+                      checked={filters.occasion.includes(occ.toLowerCase())}
+                      onChange={() => handleOccasionChange(occ.toLowerCase())}
+                    /> 
+                    {occ}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Nút Reset Filter */}
+          {(filters.priceRange || filters.occasion.length > 0) && (
+             <button 
+               className={styles.resetBtn}
+               onClick={() => setFilters({ priceRange: null, occasion: [] })}
+             >
+               Clear Filters
+             </button>
+          )}
+        </div>
+
+        {/* --- MAIN CONTENT --- */}
+        <div className={styles.mainContent}>
+          {loading && <p className={styles.statusText}>Đang tải danh sách hoa...</p>}
+          
+          {error && (
+            <div className={styles.errorBox}>
+              <p>{error}</p>
+              <small>Vui lòng kiểm tra backend (Port 3000) hoặc CORS.</small>
+            </div>
+          )}
+
+          {!loading && !error && displayedProducts.length === 0 && (
+            <p className={styles.statusText}>Không tìm thấy sản phẩm nào phù hợp.</p>
+          )}
+
+          {!loading && !error && displayedProducts.length > 0 && (
+            <div className={styles.productGrid}>
+              {displayedProducts.map((product) => (
+                <div key={product.id} className={styles.productCard}>
+                  <div className={styles.imageWrapper}>
+                    <img 
+                      src={product.image || "https://placehold.co/400x500?text=No+Image"} 
+                      alt={product.name} 
+                      className={styles.productImage} 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error";
+                      }}
+                    />
+                    <span className={styles.productNameOnImage}>{product.name}</span>
+                    <button className={styles.heartBtn}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className={styles.productInfo}>
+                    {product.isBestSeller && (
+                      <div className={styles.bestSeller}>
+                        <span className={styles.starIcon}>✪</span> Best Seller
+                      </div>
+                    )}
+                    <div className={styles.price}>
+                      From {Number(product.price).toLocaleString('vi-VN')} VNĐ
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

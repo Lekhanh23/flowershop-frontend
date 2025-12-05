@@ -1,0 +1,224 @@
+/* src/components/HeaderCustomer.module.css */
+
+.header {
+    padding: 15px 0;
+    background-color: #fad2cb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 60px; 
+  }
+  
+  /* --- LOGO --- */
+  .logoWrapper {
+    flex-shrink: 0;
+  }
+  
+  .logoBox {
+    width: 50px;
+    height: auto;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logoImage {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  /* --- NAVIGATION --- */
+  .nav {
+    display: none;
+  }
+  
+  @media (min-width: 900px) {
+    .nav {
+      display: flex;
+      gap: 40px; 
+      align-items: center;
+    }
+  }
+  
+  .navItemWrapper {
+    position: relative;
+    padding: 10px 0;
+  }
+  
+  .navLink {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+  }
+  
+  .navLink:hover {
+    color: #d81b60;
+  }
+  
+  /* --- RIGHT SECTION --- */
+  .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-left: auto; 
+  }
+  
+  /* Phone Number */
+  .phoneWrapper {
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  @media (min-width: 1024px) {
+    .phoneWrapper {
+      display: flex;
+    }
+  }
+  
+  .phoneIconBox {
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .phoneIcon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+  
+  .phoneInfo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  
+  .callToOrder {
+    font-size: 10px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .phoneNumber {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+  }
+  
+  /* Icons Group */
+  .iconsWrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .iconBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #111;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s;
+  }
+  
+  .iconBtn:hover {
+    transform: scale(1.1);
+    color: #d81b60;
+  }
+  
+  .iconSize {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2px;
+  }
+  
+  .notificationDot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d81b60;
+    border: 1px solid #fae8e8;
+  }
+  
+  .logoutBtn {
+    font-size: 12px;
+    font-weight: 700;
+    color: #d32f2f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: opacity 0.2s;
+  }
+  
+  .logoutBtn:hover {
+    opacity: 0.7;
+  }
+  
+  /* Dropdown Menu */
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 10px 0;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    border: 1px solid #eee;
+  }
+  
+  .navItemWrapper:hover .dropdownMenu {
+    opacity: 1;
+    visibility: visible;
+    top: 100%;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .dropdownItem {
+    display: block;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #444;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    text-align: left;
+  }
+  
+  .dropdownItem:hover {
+    background-color: #fff0f5;
+    color: #d81b60;
+  }

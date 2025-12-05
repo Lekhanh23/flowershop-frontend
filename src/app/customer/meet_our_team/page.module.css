@@ -1,0 +1,83 @@
+.wrapper{
+	--heading-pink: #ec6b8b;
+	--card-pink: #fff2f2;
+	--accent: #d96f7f;
+	--muted: #6b7280;
+	background: #f7f7f7;
+	padding: 28px 16px 80px;
+	min-height: 100vh;
+}
+
+.container{
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+.heading{
+	text-align: center;
+	color: var(--heading-pink);
+	font-family: ui-serif, Georgia, 'Times New Roman', serif;
+	font-size: 28px;
+	font-weight: 700;
+	margin-bottom: 22px;
+}
+
+.cardWrap{
+	background: white;
+	border-radius: 10px;
+	padding: 34px 36px;
+	box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.teamGrid{
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 18px;
+	margin-top: 12px;
+}
+
+.teamCard{
+	background: var(--card-pink);
+	border-radius: 10px;
+	padding: 22px;
+	text-align: center;
+}
+
+.flowerIcon{
+	width: 84px;
+	height: 84px;
+	margin: 0 auto 12px auto;
+	border-radius: 12px;
+	background: #fde6e8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.name{
+	color: var(--accent);
+	font-weight: 700;
+	margin-top: 6px;
+}
+
+.role{
+	color: var(--heading-pink);
+	font-size: 13px;
+	margin-bottom: 10px;
+}
+
+.desc{
+	color: var(--muted);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+@media (max-width: 900px){
+	.teamGrid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width: 600px){
+	.teamGrid{grid-template-columns:1fr}
+	.heading{font-size:22px}
+}
+

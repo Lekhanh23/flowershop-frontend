@@ -17,17 +17,15 @@ const formatDate = (dateString: string) => {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
-  const [shippers, setShippers] = useState<any[]>([]); // Danh sách shipper để chọn
+  const [orders, setOrders] = useState<any[]>([]); // Thêm type any[] để tránh lỗi TS
+  const [shippers, setShippers] = useState<any[]>([]); 
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
-      // 1. Lấy danh sách Orders
       const resOrders = await api.get('/orders/admin/all?limit=100');
       setOrders(resOrders.data.data);
 
-      // 2. Lấy danh sách Shippers (để hiển thị trong dropdown)
       const resShippers = await api.get('/admin/users?role=shipper&limit=100');
       setShippers(resShippers.data.data || []);
       
@@ -42,7 +40,6 @@ export default function OrdersPage() {
     fetchData();
   }, []);
 
-  // Hàm xử lý gán Shipper
   const handleAssignShipper = async (orderId: number, shipperId: string) => {
     if (!shipperId) return;
     if (!confirm("Bạn muốn giao đơn này cho shipper đã chọn?")) return;
@@ -50,13 +47,12 @@ export default function OrdersPage() {
     try {
       await api.patch(`/orders/admin/${orderId}/assign`, { shipperId: Number(shipperId) });
       alert("Đã giao việc thành công!");
-      fetchData(); // Refresh lại bảng
+      fetchData(); 
     } catch (error) {
       alert("Lỗi khi gán đơn hàng");
     }
   };
 
-  // Hàm xử lý đổi trạng thái đơn
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await api.patch(`/orders/admin/${id}/status`, { status: newStatus });
@@ -68,6 +64,11 @@ export default function OrdersPage() {
     }
   };
 
+  // --- Tìm các shipper đang bận (có đơn hàng trạng thái 'shipped') ---
+  const busyShipperIds = orders
+    .filter((o: any) => o.status === 'shipped' && o.shipper)
+    .map((o: any) => o.shipper.id);
+
   if (loading) return <div className="p-8">Loading Orders...</div>;
 
   return (
@@ -78,6 +79,7 @@ export default function OrdersPage() {
         <table className={styles.table}>
           <thead>
             <tr>
+              <th>STT</th>
               <th>ID</th>
               <th>CUSTOMER</th>
               <th>TOTAL</th>
@@ -88,9 +90,10 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o: any) => (
+            {orders.map((o: any, index: number) => (
               <tr key={o.id}>
-                <td style={{fontWeight: 'bold'}}>{o.id}</td>
+                <td style={{fontWeight: 'bold', textAlign: 'center', color: '#666'}}>{index + 1}</td>
+                <td style={{fontWeight: 'bold', textAlign: 'center'}}>#{o.id}</td>
                 <td>
                     <div>{o.user?.full_name || "Guest"}</div>
                     <div style={{fontSize: 12, color:'#888'}}>{o.user?.address}</div>
@@ -100,23 +103,30 @@ export default function OrdersPage() {
                 {/* CỘT SHIPPER */}
                 <td>
                   {o.shipper ? (
-                    // Nếu đã có shipper -> Hiện tên
                     <span style={{color: '#2196f3', fontWeight: 500}}>
                       {o.shipper.full_name}
                     </span>
                   ) : (
-                    // Nếu chưa có -> Hiện Dropdown chọn
                     <select 
                       className={styles.statusSelect}
                       onChange={(e) => handleAssignShipper(o.id, e.target.value)}
                       defaultValue=""
                     >
                       <option value="" disabled>-- Assign --</option>
-                      {shippers.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.full_name}
-                        </option>
-                      ))}
+                      {shippers.map((s) => {
+                        // Kiểm tra xem shipper này có đang bận không
+                        const isBusy = busyShipperIds.includes(s.id);
+                        return (
+                          <option 
+                            key={s.id} 
+                            value={s.id} 
+                            disabled={isBusy} // Disable nếu đang bận
+                            style={isBusy ? {color: '#999', fontStyle: 'italic'} : {}}
+                          >
+                            {s.full_name} {isBusy ? '(Busy)' : ''}
+                          </option>
+                        );
+                      })}
                     </select>
                   )}
                 </td>
@@ -136,7 +146,6 @@ export default function OrdersPage() {
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
-                  {/* Hiển thị trạng thái chi tiết vận chuyển */}
                   <div style={{fontSize: 11, color: '#666', marginTop: 4}}>
                   {(!o.deliveryStatus || o.deliveryStatus === 'unassigned') ? '' : `(${o.deliveryStatus})`}
                   </div>

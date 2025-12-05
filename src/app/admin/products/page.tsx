@@ -164,9 +164,9 @@ export default function ProductsPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((p) => (
+                        {products.map((p, index) => (
                             <tr key={p.id}>
-                                <td style={{fontWeight: 'bold'}}>{p.id}</td>
+                                <td style={{fontWeight: 'bold'}}>{index + 1}</td>
                                 <td>
                                 <img 
                                     src={getImageUrl(p.image)} // Dùng hàm này để lấy link đầy đủ từ backend
