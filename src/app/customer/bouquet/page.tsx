@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
+import { getImageUrl } from '@/lib/utils';
 
 // 1. Định nghĩa kiểu dữ liệu
 interface Product {
@@ -41,13 +42,9 @@ export default function BouquetPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${BACKEND_URL}/api/products`);
-        
+        const response = await fetch('http://localhost:3000/api/products');
         if (!response.ok) throw new Error(`Lỗi kết nối: ${response.statusText}`);
-
         const data = await response.json();
-        
-        // Xử lý data trả về (phòng trường hợp API trả về { data: [...] } hoặc [...])
         const productsArray = Array.isArray(data) ? data : data.data || [];
         setProducts(productsArray);
 
@@ -61,22 +58,6 @@ export default function BouquetPage() {
 
     fetchProducts();
   }, []);
-
-  // --- HÀM XỬ LÝ ĐƯỜNG DẪN ẢNH ---
-  const getImageUrl = (imageName: string) => {
-    if (!imageName) return "https://placehold.co/400x500?text=No+Image";
-    
-    // Nếu trong DB đã lưu full link (vd: https://imgur.com/...) thì dùng luôn
-    if (imageName.startsWith('http')) return imageName;
-
-    // Nếu chỉ lưu tên file (vd: "rose.jpg") thì nối với đường dẫn backend
-    // Kết quả sẽ là: http://localhost:3000/img/rose.jpg
-    
-    // Xử lý trường hợp DB lưu có sẵn dấu '/' ở đầu hoặc không
-    const cleanName = imageName.startsWith('/') ? imageName.slice(1) : imageName;
-    
-    return `${IMAGE_BASE_URL}${cleanName}`;
-  };
 
   // --- HÀM XỬ LÝ FILTER UI (Đóng/Mở) ---
   const toggleFilterUI = (section: string) => {
