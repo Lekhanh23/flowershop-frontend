@@ -4,21 +4,27 @@ import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
 
+// --- CẤU HÌNH ĐƯỜNG DẪN ẢNH ---
+// Backend chạy ở port 3000. 
+// Backend cần "static serve" folder img ra đường dẫn /img
+const BACKEND_URL = 'http://localhost:3000';
+const IMAGE_BASE_URL = `${BACKEND_URL}/img/`;
+
 // 1. Định nghĩa kiểu dữ liệu
 interface Product {
   id: number;
   name: string;
   price: number;
-  image: string;
+  image: string; // Tên file trong DB (ví dụ: "hoa-hong.jpg")
   description?: string;
   isBestSeller?: boolean;
-  occasion?: string; // Ví dụ: 'birthday', 'wedding' (nếu API có trả về)
+  occasion?: string; 
 }
 
 // Kiểu dữ liệu cho bộ lọc
 interface FilterState {
-  priceRange: string | null; // 'under500', '500to1000', 'above1000'
-  occasion: string[];        // ['birthday', 'anniversary']
+  priceRange: string | null;
+  occasion: string[];
 }
 
 export default function BouquetPage() {
@@ -27,10 +33,10 @@ export default function BouquetPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // State quản lý UI: Cái nào đang mở? (price, occasion, type...)
+  // State quản lý UI
   const [expandedFilter, setExpandedFilter] = useState<string | null>('price'); 
 
-  // State quản lý Logic: Đang chọn filter nào?
+  // State quản lý Logic Filter
   const [filters, setFilters] = useState<FilterState>({
     priceRange: null,
     occasion: []
@@ -41,13 +47,13 @@ export default function BouquetPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch(`${BACKEND_URL}/api/products`);
         
         if (!response.ok) throw new Error(`Lỗi kết nối: ${response.statusText}`);
 
         const data = await response.json();
         
-        // Kiểm tra xem data trả về là Mảng hay Object chứa mảng
+        // Xử lý data trả về (phòng trường hợp API trả về { data: [...] } hoặc [...])
         const productsArray = Array.isArray(data) ? data : data.data || [];
         setProducts(productsArray);
 
@@ -62,6 +68,22 @@ export default function BouquetPage() {
     fetchProducts();
   }, []);
 
+  // --- HÀM XỬ LÝ ĐƯỜNG DẪN ẢNH ---
+  const getImageUrl = (imageName: string) => {
+    if (!imageName) return "https://placehold.co/400x500?text=No+Image";
+    
+    // Nếu trong DB đã lưu full link (vd: https://imgur.com/...) thì dùng luôn
+    if (imageName.startsWith('http')) return imageName;
+
+    // Nếu chỉ lưu tên file (vd: "rose.jpg") thì nối với đường dẫn backend
+    // Kết quả sẽ là: http://localhost:3000/img/rose.jpg
+    
+    // Xử lý trường hợp DB lưu có sẵn dấu '/' ở đầu hoặc không
+    const cleanName = imageName.startsWith('/') ? imageName.slice(1) : imageName;
+    
+    return `${IMAGE_BASE_URL}${cleanName}`;
+  };
+
   // --- HÀM XỬ LÝ FILTER UI (Đóng/Mở) ---
   const toggleFilterUI = (section: string) => {
     setExpandedFilter(expandedFilter === section ? null : section);
@@ -69,7 +91,6 @@ export default function BouquetPage() {
 
   // --- HÀM XỬ LÝ LOGIC FILTER ---
   const handlePriceChange = (range: string) => {
-    // Nếu click lại cái đang chọn thì bỏ chọn, ngược lại thì chọn cái mới
     setFilters(prev => ({
       ...prev,
       priceRange: prev.priceRange === range ? null : range
@@ -82,28 +103,25 @@ export default function BouquetPage() {
       return {
         ...prev,
         occasion: exists 
-          ? prev.occasion.filter(o => o !== occ) // Bỏ chọn
-          : [...prev.occasion, occ]              // Thêm vào
+          ? prev.occasion.filter(o => o !== occ) 
+          : [...prev.occasion, occ] 
       };
     });
   };
 
-  // --- LOGIC LỌC SẢN PHẨM (Client-side) ---
-  // Tính toán danh sách hiển thị dựa trên state `products` gốc và `filters`
+  // --- LOGIC LỌC SẢN PHẨM ---
   const displayedProducts = products.filter(p => {
     // 1. Lọc theo giá
     if (filters.priceRange === 'under500' && p.price >= 500000) return false;
     if (filters.priceRange === '500to1000' && (p.price < 500000 || p.price > 1000000)) return false;
     if (filters.priceRange === 'above1000' && p.price <= 1000000) return false;
 
-    // 2. Lọc theo Occasion (Nếu API có trả về trường occasion)
-    // Nếu user có chọn occasion, và sản phẩm này không thuộc occasion đó -> false
+    // 2. Lọc theo Occasion
     if (filters.occasion.length > 0 && p.occasion) {
-       // Logic đơn giản: Check xem occasion của sản phẩm có nằm trong list đã chọn k
        if (!filters.occasion.includes(p.occasion.toLowerCase())) return false;
     }
 
-    return true; // Giữ lại sản phẩm nếu vượt qua các bài test trên
+    return true;
   });
 
   // --- RENDER ---
@@ -202,7 +220,7 @@ export default function BouquetPage() {
           {error && (
             <div className={styles.errorBox}>
               <p>{error}</p>
-              <small>Vui lòng kiểm tra backend (Port 3000) hoặc CORS.</small>
+              <small>Vui lòng kiểm tra Server (Port 3000) đã bật chưa.</small>
             </div>
           )}
 
@@ -215,12 +233,13 @@ export default function BouquetPage() {
               {displayedProducts.map((product) => (
                 <div key={product.id} className={styles.productCard}>
                   <div className={styles.imageWrapper}>
+                    {/* Sử dụng hàm getImageUrl để lấy link ảnh từ backend */}
                     <img 
-                      src={product.image || "https://placehold.co/400x500?text=No+Image"} 
+                      src={getImageUrl(product.image)} 
                       alt={product.name} 
                       className={styles.productImage} 
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error";
+                        (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error+Loading";
                       }}
                     />
                     <span className={styles.productNameOnImage}>{product.name}</span>
