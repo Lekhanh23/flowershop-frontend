@@ -3,13 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { getImageUrl } from '@/lib/utils';
-
-// --- CẤU HÌNH ĐƯỜNG DẪN ẢNH ---
-// Backend chạy ở port 3000. 
-// Backend cần "static serve" folder img ra đường dẫn /img
-const BACKEND_URL = 'http://localhost:3000';
-const IMAGE_BASE_URL = `${BACKEND_URL}/img/`;
 
 // 1. Định nghĩa kiểu dữ liệu
 interface Product {
