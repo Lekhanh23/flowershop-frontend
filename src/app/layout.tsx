@@ -3,7 +3,10 @@ import './globals.css';
 import { Providers } from './providers'; // <-- Import file providers
 
 export const metadata = {
-  title: 'FlowerShop',
+  title: 'Blossom Flower Shop',
+  icons: {
+    icon: "/images/logo.png"
+  }
 };
 
 export default function RootLayout({

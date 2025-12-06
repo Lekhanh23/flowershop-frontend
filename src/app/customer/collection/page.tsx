@@ -112,7 +112,7 @@ export default function CollectionPage() {
         ) : (
           products.map((product) => (
             <div key={product.id} className={styles.productCard}>
-              <Link href={`/customer/bouquet/${product.id}`}> {/* Link tới chi tiết */}
+              <Link href={`/customer/bouquet/${product.id}`}>
                 <div className={styles.imageWrapper}>
                   <img
                     src={getImageUrl(product.image)}
