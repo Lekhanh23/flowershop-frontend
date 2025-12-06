@@ -10,7 +10,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  image: string; // Tên file trong DB (ví dụ: "hoa-hong.jpg")
+  image: string; 
   description?: string;
   isBestSeller?: boolean;
   occasion?: string; 
