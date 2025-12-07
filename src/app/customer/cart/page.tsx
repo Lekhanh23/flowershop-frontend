@@ -18,8 +18,18 @@ interface CartItem {
 export default function CheckoutPage() {
   // State Form
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', country: '', address: '', postcode: '', city: '', phone: '', email: '', note: '',
-    paymentMethod: 'online', termsAccepted: false, privacyAccepted: false,
+    firstName: '',
+    lastName: '',
+    country: '',
+    address: '',
+    postcode: '',
+    city: '',
+    phone: '',
+    email: '',
+    note: '',
+    paymentMethod: 'online',
+    termsAccepted: false,
+    privacyAccepted: false,
   });
 
   // State Giỏ hàng (Đọc từ localStorage)
@@ -165,7 +175,7 @@ export default function CheckoutPage() {
             <div className={styles.termsGroup}>
               <div className={styles.checkboxRow}>
                 <input type="checkbox" name="termsAccepted" onChange={handleCheckChange} />
-                <label>I agree to terms & conditions</label>
+                <label>I agree to terms & cogitnditions</label>
               </div>
               <div className={styles.checkboxRow}>
                 <input type="checkbox" name="privacyAccepted" onChange={handleCheckChange} />
