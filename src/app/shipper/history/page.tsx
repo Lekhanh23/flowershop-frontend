@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type HistoryItem = {
   id: number;
@@ -40,32 +41,30 @@ export default function HistoryPage() {
   }, [range]);
 
   return (
-    <main className="p-4 max-w-3xl mx-auto">
+    <main className="max-w-3xl mx-auto p-4">
       <header className="mb-4">
-        <h2 className="text-xl font-semibold">Delivery History</h2>
-        <div className="text-sm text-gray-500">Filter by period</div>
+        <h1 className="text-xl font-semibold">Delivery History</h1>
+        <p className="text-sm text-gray-500">Filter and review past deliveries</p>
       </header>
 
       <div className="flex gap-2 mb-4">
-        <button onClick={() => setRange("7")} className={`px-3 py-1 rounded ${range==="7" ? "bg-pink-500 text-white" : "bg-white border"}`}>7 days</button>
-        <button onClick={() => setRange("30")} className={`px-3 py-1 rounded ${range==="30" ? "bg-pink-500 text-white" : "bg-white border"}`}>30 days</button>
-        <button onClick={() => setRange("90")} className={`px-3 py-1 rounded ${range==="90" ? "bg-pink-500 text-white" : "bg-white border"}`}>90 days</button>
+        <button onClick={() => setRange("7")} className={`px-3 py-1 rounded ${range==="7" ? "bg-pink-500 text-white" : "bg-white border"}`}>7d</button>
+        <button onClick={() => setRange("30")} className={`px-3 py-1 rounded ${range==="30" ? "bg-pink-500 text-white" : "bg-white border"}`}>30d</button>
+        <button onClick={() => setRange("90")} className={`px-3 py-1 rounded ${range==="90" ? "bg-pink-500 text-white" : "bg-white border"}`}>90d</button>
       </div>
 
       {loading ? <div>Loading...</div> : (
         <div className="space-y-3">
+          {items.length === 0 && <div className="text-sm text-gray-500">No records</div>}
           {items.map(it => (
-            <div key={it.id} className="bg-white rounded shadow p-3 flex items-center justify-between">
+            <article key={it.id} className="bg-white rounded-lg shadow p-3 flex items-center justify-between">
               <div>
                 <div className="font-semibold">{it.order_code}</div>
-                <div className="text-sm text-gray-500">{it.date} • {it.status}</div>
+                <div className="text-xs text-gray-500">{it.date} • {it.status}</div>
               </div>
-              {it.proof_url ? (
-                <img src={it.proof_url} alt="proof" className="w-20 h-20 object-cover rounded" />
-              ) : null}
-            </div>
+              {it.proof_url ? <Link href={it.proof_url}><img src={it.proof_url} alt="proof" className="w-16 h-16 object-cover rounded" /></Link> : null}
+            </article>
           ))}
-          {items.length === 0 && <div className="text-sm text-gray-500">No history found</div>}
         </div>
       )}
     </main>

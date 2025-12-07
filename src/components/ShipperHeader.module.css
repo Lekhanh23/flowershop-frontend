@@ -1,0 +1,258 @@
+/* Mobile-first header styles for ShipperHeader */
+.header {
+  padding: 12px 0;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Logo */
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoBox {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff0f3;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Title text next to logo (hidden on very small screens) */
+.brandText {
+  display: none;
+}
+@media (min-width: 480px) {
+  .brandText {
+    display: block;
+    line-height: 1;
+  }
+  .brandName {
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
+  }
+  .brandSub {
+    font-size: 11px;
+    color: #666;
+  }
+}
+
+/* Nav (desktop) */
+.nav {
+  display: none;
+  margin-left: 8px;
+  gap: 24px;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .nav {
+    display: flex;
+  }
+}
+
+.navLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.navLink:hover {
+  color: #d81b60;
+}
+
+/* Right area */
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+
+/* Notification badge */
+.badge {
+  position: relative;
+}
+.badgeCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: #d81b60;
+  color: white;
+  border-radius: 999px;
+  border: 1px solid #fff6f9;
+}
+
+/* Status badge & toggle */
+.statusBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: #fff9fb;
+  border: 1px solid #ffe8f0;
+}
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e; /* green for available */
+}
+.statusText {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+.statusText.busy {
+  color: #777;
+}
+
+/* user name (hidden on small) */
+.userName {
+  display: none;
+  text-align: right;
+}
+@media (min-width: 640px) {
+  .userName {
+    display: block;
+    font-size: 13px;
+    color: #222;
+    font-weight: 600;
+  }
+  .userPhone {
+    font-size: 11px;
+    color: #666;
+  }
+}
+
+/* compact layout adjustments */
+@media (min-width: 1024px) {
+  .container { padding: 0 24px; }
+}
+
+/* Mobile menu (hidden by default) */
+.hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #333;
+}
+
+/* show hamburger on small screens, hide on large */
+@media (min-width: 900px) {
+  .hamburger { display: none; }
+}
+
+/* mobile menu panel - absolute below header on small screens */
+.mobileMenu {
+  display: none;
+  position: absolute;
+  top: 64px; /* header height approx */
+  right: 12px;
+  width: 220px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  z-index: 250;
+  transform-origin: top right;
+  transform: scale(.95);
+  opacity: 0;
+  transition: all 160ms ease;
+  overflow: hidden;
+}
+
+/* open state */
+.mobileMenuOpen {
+  display: block;
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* inner list */
+.mobileMenuInner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px;
+}
+
+.mobileLink {
+  display: block;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.mobileLink:hover {
+  background: #fff0f5;
+  color: #d81b60;
+}
+
+/* ensure menu is full-width under header in phone frame */
+@media (max-width: 600px) {
+  .mobileMenu {
+    left: 8px;
+    right: 8px;
+    top: 56px;
+    width: auto;
+    border-radius: 10px;
+  }
+}
+
+/* Tweak for ~430px preview */
+@media (min-width: 400px) and (max-width: 480px) {
+  .logoBox { width: 48px; height: 48px; border-radius: 10px; }
+  .brandName { font-size: 14px; }
+  .navLink { font-size: 13px; }
+  .container { gap: 12px; padding: 0 14px; }
+  .iconBtn { width: 36px; height: 36px; }
+  .statusText { font-size: 13px; }
+}

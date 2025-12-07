@@ -1,124 +1,139 @@
 // src/app/shipper/page.tsx
+// Dashboard shipper - pink/white theme, mobile-first card layout
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useAuth } from "@/context/AuthContext"; // Adjust the import based on your context path
 
-export default function ShipperDashboard() {
-  const [available, setAvailable] = useState(true);
+export default function ShipperDashboardPage() {
+  const { user } = useAuth();
   const [summary, setSummary] = useState({ pending: 0, deliveredToday: 0, incomeToday: 0 });
-  const [notifications, setNotifications] = useState<Array<{id:number, text:string, time:string}>>([]);
+  const [notifications, setNotifications] = useState<Array<{ id: number; text: string; time: string }>>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load initial summary + notifications (replace endpoints)
     async function load() {
+      setLoading(true);
       try {
-        const res = await fetch("/api/shipper/dashboard"); // implement backend
+        const res = await fetch("/api/shipper/dashboard");
         if (res.ok) {
           const data = await res.json();
           setSummary({
-            pending: data.pending || 0,
-            deliveredToday: data.deliveredToday || 0,
-            incomeToday: data.incomeToday || 0,
+            pending: data.pending ?? 0,
+            deliveredToday: data.deliveredToday ?? 0,
+            incomeToday: data.incomeToday ?? 0,
           });
-          setNotifications(data.notifications || []);
-          setAvailable(typeof data.available === "boolean" ? data.available : true);
+          setNotifications(data.notifications ?? []);
         } else {
-          // fallback sample
-          setSummary({ pending: 2, deliveredToday: 5, incomeToday: 0 });
-          setNotifications([{id:1, text:"New assigned order #123", time:"2m ago"}]);
+          setSummary({ pending: 2, deliveredToday: 4, incomeToday: 0 });
+          setNotifications([{ id: 1, text: "Assigned order ORD-123", time: "2m" }]);
         }
       } catch (e) {
-        setSummary({ pending: 2, deliveredToday: 5, incomeToday: 0 });
-        setNotifications([{id:1, text:"New assigned order #123", time:"2m ago"}]);
+        setSummary({ pending: 0, deliveredToday: 0, incomeToday: 0 });
+        setNotifications([]);
+      } finally {
+        setLoading(false);
       }
     }
+
     load();
   }, []);
 
-  async function toggleAvailable(next: boolean) {
-    setAvailable(next);
-    // send to backend
-    try {
-      await fetch("/api/shipper/status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ available: next }),
-      });
-    } catch (e) {
-      // ignore
-    }
-  }
+  const handleAccept = () => {
+    // Logic to accept the order
+    alert("Order accepted!");
+  };
+
+  const handleDecline = () => {
+    // Logic to decline the order
+    alert("Order declined.");
+  };
 
   return (
-    <main className="p-4 sm:p-6">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-6">
-          <h2 className="text-2xl font-semibold">Dashboard</h2>
-          <p className="text-sm text-gray-600">Overview of your delivery performance</p>
-        </header>
-
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">Assigned</div>
-            <div className="mt-2 text-2xl font-bold">{summary.pending}</div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">Delivered Today</div>
-            <div className="mt-2 text-2xl font-bold">{summary.deliveredToday}</div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-500">Income Today</div>
-            <div className="mt-2 text-2xl font-bold">{summary.incomeToday} VND</div>
+    <main className="bg-gradient-to-b from-pink-50 to-white min-h-full">
+      <div className="max-w-lg mx-auto px-6 py-8 pb-12 shadow-lg rounded-lg bg-white">
+        {/* Welcome + Status badge (compact) */}
+        <section className="mb-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-800">Welcome, {user.name}</h1>
           </div>
         </section>
 
-        <section className="flex items-center justify-between bg-white rounded-lg shadow p-4 mb-6">
-          <div>
-            <div className="text-sm text-gray-500">Status</div>
-            <div className="mt-1 font-medium">{available ? "Available" : "Busy / Unavailable"}</div>
+        <div className="mb-6 border-t border-pink-200" />
+
+        {/* Stats cards (3-column grid) */}
+        <section className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Dashboard Overview</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-pink-100 p-4 rounded-lg shadow-md text-center transition-transform transform hover:scale-105">
+              <h3 className="text-lg font-semibold text-pink-600">Pending</h3>
+              <p className="text-3xl font-bold">{summary.pending}</p>
+            </div>
+            <div className="bg-pink-100 p-4 rounded-lg shadow-md text-center transition-transform transform hover:scale-105">
+              <h3 className="text-lg font-semibold text-pink-600">Delivered Today</h3>
+              <p className="text-3xl font-bold">{summary.deliveredToday}</p>
+            </div>
+            <div className="bg-pink-100 p-4 rounded-lg shadow-md text-center transition-transform transform hover:scale-105">
+              <h3 className="text-lg font-semibold text-pink-600">Income Today</h3>
+              <p className="text-3xl font-bold">${summary.incomeToday}</p>
+            </div>
           </div>
-          <label className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">Toggle</span>
-            <button
-              onClick={() => toggleAvailable(!available)}
-              className={`w-14 h-8 rounded-full p-1 transition ${available ? "bg-pink-500" : "bg-gray-300"}`}
-              aria-pressed={available}
-            >
-              <span
-                className={`block w-6 h-6 rounded-full bg-white transform transition ${available ? "translate-x-6" : "translate-x-0"}`}
-              />
-            </button>
-          </label>
         </section>
 
-        <section className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold">Notifications</h3>
-            <Link href="/shipper/assigned" className="text-pink-600 text-sm">View Assigned</Link>
+        <div className="mb-6 border-t border-pink-200" />
+
+        {/* Quick Actions */}
+        <section className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-md font-semibold text-gray-800 mb-2">Assigned Orders</h3>
+            <div className="flex justify-between">
+              <button
+                onClick={handleAccept}
+                className="bg-green-500 text-white p-3 rounded-lg shadow-md hover:bg-green-600 transition-colors w-full mr-2"
+              >
+                Accept
+              </button>
+              <button
+                onClick={handleDecline}
+                className="bg-red-500 text-white p-3 rounded-lg shadow-md hover:bg-red-600 transition-colors w-full"
+              >
+                Decline
+              </button>
+            </div>
           </div>
-          {notifications.length === 0 ? (
-            <div className="text-sm text-gray-500">No notifications</div>
+        </section>
+
+        <div className="mb-6 border-t border-pink-200" />
+
+        {/* Notifications */}
+        <section className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Notifications</h3>
+          {loading ? (
+            <p className="text-center">Loading...</p>
+          ) : notifications.length === 0 ? (
+            <p className="text-center">No notifications</p>
           ) : (
             <ul className="space-y-2">
-              {notifications.map((n) => (
-                <li key={n.id} className="text-sm text-gray-700 flex justify-between">
-                  <span>{n.text}</span>
-                  <span className="text-xs text-gray-400">{n.time}</span>
+              {notifications.map((notification) => (
+                <li key={notification.id} className="bg-white p-3 rounded-lg shadow-md">
+                  <p className="text-gray-700">{notification.text}</p>
+                  <span className="text-sm text-gray-500">{notification.time}</span>
                 </li>
               ))}
             </ul>
           )}
         </section>
 
-        <section className="flex gap-3">
-          <Link href="/shipper/assigned" className="flex-1 bg-pink-500 text-white rounded-lg px-4 py-2 text-center font-semibold hover:bg-pink-600">
-            Assigned Deliveries
-          </Link>
-          <Link href="/shipper/history" className="flex-1 bg-white border rounded-lg px-4 py-2 text-center font-semibold">
-            Delivery History
-          </Link>
+        <div className="mb-6 border-t border-pink-200" />
+
+        {/* Delivery Flow */}
+        <section className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Delivery Flow</h3>
+          {/* Add your delivery flow content here */}
         </section>
+
+        <div className="h-4" />
       </div>
     </main>
   );

@@ -5,139 +5,100 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-type OrderDetail = {
-  id: number;
-  order_code: string;
-  customer_name: string;
-  customer_phone: string;
-  address: string;
-  notes?: string;
-  items: Array<{name:string, qty:number}>;
-  status: string;
-};
-
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
-  const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
         const res = await fetch(`/api/shipper/orders/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setOrder(data);
-        } else {
-          // sample fallback
-          setOrder({
-            id: Number(id),
-            order_code: `ORD-${id}`,
-            customer_name: "Nguyễn Văn A",
-            customer_phone: "090xxxxxxx",
-            address: "123 Example Street, District 1",
-            notes: "Leave at gate if nobody home",
-            items: [{name: "Red Roses Bouquet", qty: 1}],
-            status: "Ready to Pick up",
-          });
-        }
+        if (res.ok) setOrder(await res.json());
       } catch (e) {
-        setOrder(null);
-      } finally {
-        setLoading(false);
-      }
+        // fallback sample
+        setOrder({
+          id,
+          order_code: `ORD-${id}`,
+          customer_name: "Nguyen Van A",
+          customer_phone: "090xxx",
+          address: "123 Example St",
+          notes: "Leave at gate",
+          items: [{name:"Red Roses", qty:1}],
+          status: "Ready to Pick up",
+        });
+      } finally { setLoading(false); }
     }
     load();
   }, [id]);
 
-  async function updateStatus(nextStatus: string, proofFile?: File | null) {
+  async function updateStatus(nextStatus: string, proof?: File) {
     if (!order) return;
-    // For Delivered, require proofFile
-    if (nextStatus === "Delivered" && !proofFile) {
-      // trigger file input
+    if (nextStatus === "Delivered" && !proof) {
       fileRef.current?.click();
       return;
     }
 
-    const body = new FormData();
-    body.append("status", nextStatus);
-    if (proofFile) body.append("proof", proofFile);
+    const fd = new FormData();
+    fd.append("status", nextStatus);
+    if (proof) fd.append("proof", proof);
 
     setUploading(true);
     try {
-      const res = await fetch(`/api/shipper/orders/${order.id}/status`, {
-        method: "POST",
-        body,
-      });
+      const res = await fetch(`/api/shipper/orders/${order.id}/status`, { method: "POST", body: fd });
       if (res.ok) {
-        // refresh or update local state
-        setOrder((o) => o ? {...o, status: nextStatus} : o);
-        if (nextStatus === "Delivered") {
-          // after delivered redirect to history or assigned list
-          router.push("/shipper/assigned");
-        }
+        setOrder({...order, status: nextStatus});
+        if (nextStatus === "Delivered") router.push("/shipper/assigned");
       } else {
-        alert("Failed to update status");
+        alert("Failed");
       }
     } catch (e) {
       alert("Network error");
-    } finally {
-      setUploading(false);
-    }
+    } finally { setUploading(false); }
   }
 
-  function onProofSelected(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    updateStatus("Delivered", f);
+  function onProof(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (f) updateStatus("Delivered", f);
   }
 
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!order) return <div className="p-6">Order not found</div>;
+  if (loading) return <div className="p-4">Loading...</div>;
+  if (!order) return <div className="p-4">Order not found</div>;
 
   return (
-    <main className="p-4 max-w-3xl mx-auto">
-      <header className="mb-4">
-        <Link href="/shipper/assigned" className="text-sm text-pink-600">← Back</Link>
-        <h2 className="text-xl font-semibold mt-2">{order.order_code}</h2>
-        <div className="text-sm text-gray-500">{order.status}</div>
-      </header>
+    <main className="max-w-3xl mx-auto p-4">
+      <Link href="/shipper/assigned" className="text-sm text-pink-600">← Back</Link>
+      <h1 className="text-xl font-semibold mt-3">{order.order_code}</h1>
+      <div className="text-sm text-gray-500 mb-3">{order.status}</div>
 
-      <section className="bg-white rounded-lg shadow p-4 mb-4">
-        <h3 className="font-semibold">Customer</h3>
-        <div className="mt-2">
-          <div className="text-sm">{order.customer_name} • <a href={`tel:${order.customer_phone}`} className="text-pink-600">{order.customer_phone}</a></div>
-          <div className="text-sm text-gray-600 mt-1">{order.address}</div>
-          {order.notes && <div className="text-sm text-gray-600 mt-1">Notes: {order.notes}</div>}
-        </div>
+      <section className="bg-white rounded-lg shadow p-4 mb-3">
+        <div className="font-semibold">Customer</div>
+        <div className="text-sm mt-1">{order.customer_name} • <a href={`tel:${order.customer_phone}`} className="text-pink-600">{order.customer_phone}</a></div>
+        <div className="text-sm text-gray-600 mt-1">{order.address}</div>
+        {order.notes && <div className="text-sm text-gray-600 mt-1">Notes: {order.notes}</div>}
       </section>
 
-      <section className="bg-white rounded-lg shadow p-4 mb-4">
-        <h3 className="font-semibold">Items</h3>
-        <ul className="mt-2 space-y-2">
-          {order.items.map((it, idx) => (
-            <li key={idx} className="text-sm">{it.qty} × {it.name}</li>
-          ))}
+      <section className="bg-white rounded-lg shadow p-4 mb-3">
+        <div className="font-semibold">Items</div>
+        <ul className="mt-2 space-y-1">
+          {order.items.map((it:any,i:number) => <li key={i} className="text-sm">{it.qty}× {it.name}</li>)}
         </ul>
       </section>
 
-      <section className="flex gap-3">
-        {order.status !== "Picked Up" && (
-          <button onClick={() => updateStatus("Picked Up")} className="flex-1 bg-white border rounded-md py-2 font-semibold">Picked Up</button>
-        )}
-        {order.status !== "Out for Delivery" && (
-          <button onClick={() => updateStatus("Out for Delivery")} className="flex-1 bg-yellow-500 text-white rounded-md py-2 font-semibold">Out for Delivery</button>
-        )}
-        <button onClick={() => fileRef.current?.click()} className="flex-1 bg-green-600 text-white rounded-md py-2 font-semibold">Delivered (Take Photo)</button>
-        <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={onProofSelected} className="hidden" />
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <button onClick={() => updateStatus("Picked Up")} className="py-2 rounded bg-white border text-sm">Picked Up</button>
+        <button onClick={() => updateStatus("Out for Delivery")} className="py-2 rounded bg-yellow-400 text-white text-sm">Out for Delivery</button>
+        <button onClick={() => fileRef.current?.click()} className="py-2 rounded bg-green-600 text-white text-sm">Delivered (Photo)</button>
       </section>
 
-      <section className="mt-4">
-        <button onClick={() => updateStatus("Delivery Failed")} className="w-full bg-red-50 text-red-700 border border-red-100 rounded-md py-2">Delivery Failed / Request Reassignment</button>
-      </section>
+      <div className="mt-3">
+        <button onClick={() => updateStatus("Delivery Failed")} className="w-full py-2 rounded border text-red-600">Delivery Failed / Request Reassignment</button>
+      </div>
+
+      <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={onProof} className="hidden" />
     </main>
   );
 }
