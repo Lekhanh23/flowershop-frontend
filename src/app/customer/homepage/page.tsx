@@ -170,7 +170,7 @@ export default function HomePage() {
           {collections.map((collection) => (
             <Link 
               key={collection.id} 
-              href={`/customer/collection/${collection.id}`} 
+              href={`/customer/collection?id=${collection.id}`} 
               className={styles.collectionCard}
             >
               <div className={styles.collectionCardImage}>
