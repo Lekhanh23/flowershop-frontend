@@ -2,110 +2,171 @@
 
 import { useState, ChangeEvent, FormEvent, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./page.module.css";
 
-// Interface matches Table 11 (shipper_profile) & Table 12 (shipper_applications)
+// Interface matches shipper_applications table schema
 interface ShipperApplicationForm {
-  national_id: string;      
-  license_number: string;   
-  vehicle_type: string;     
-  vehicle_plate: string;    
-  bank_account: string;     
-  resume_text: string;      
+  // application_data (JSON): contains vehicle & identity info
+  application_data: {
+    national_id: string;
+    license_number: string;
+    vehicle_type: string;
+    vehicle_plate: string;
+    bank_account: string;
+  };
+  // resume_text: experience & self-introduction
+  resume_text: string;
+  // documents: file uploads
+  documents: FileList | null;
 }
 
 export default function ShipperJoinPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // State for loading and notifications
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
-  // State for text inputs
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
   const [formData, setFormData] = useState<ShipperApplicationForm>({
-    national_id: "",
-    license_number: "",
-    vehicle_type: "",
-    vehicle_plate: "",
-    bank_account: "",
+    application_data: {
+      national_id: "",
+      license_number: "",
+      vehicle_type: "",
+      vehicle_plate: "",
+      bank_account: "",
+    },
     resume_text: "",
+    documents: null,
   });
 
-  // State for file uploads (documents)
-  const [documents, setDocuments] = useState<FileList | null>(null);
-
-  // Handle text changes
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    field?: keyof ShipperApplicationForm["application_data"]
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
-  // Handle file changes
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setDocuments(e.target.files);
+    if (field) {
+      // Update nested application_data
+      setFormData((prev) => ({
+        ...prev,
+        application_data: {
+          ...prev.application_data,
+          [field]: value,
+        },
+      }));
+    } else {
+      // Update resume_text or other top-level fields
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
-  // Handle upload click
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        documents: e.target.files,
+      }));
+    }
+  };
+
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setNotification(null);
 
-    // Validate: Check if files are uploaded
-    if (!documents || documents.length === 0) {
-      setNotification({ type: 'error', message: "Please upload your ID and Driver's License for verification." });
+    // Validate required fields
+    if (
+      !formData.application_data.national_id.trim() ||
+      !formData.application_data.license_number.trim() ||
+      !formData.application_data.vehicle_type ||
+      !formData.application_data.vehicle_plate.trim() ||
+      !formData.application_data.bank_account.trim() ||
+      !formData.resume_text.trim()
+    ) {
+      setNotification({
+        type: "error",
+        message: "Please fill in all required fields.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.documents || formData.documents.length === 0) {
+      setNotification({
+        type: "error",
+        message: "Please upload your ID and Driver's License for verification.",
+      });
       setIsSubmitting(false);
       return;
     }
 
     try {
-      // Create FormData to send multipart/form-data
+      // Create FormData for multipart/form-data submission
       const data = new FormData();
 
-      // Append text fields
-      data.append("national_id", formData.national_id);
-      data.append("license_number", formData.license_number);
-      data.append("vehicle_type", formData.vehicle_type);
-      data.append("vehicle_plate", formData.vehicle_plate);
-      data.append("bank_account", formData.bank_account);
-      data.append("resume_text", formData.resume_text);
-
-      // Append files
-      for (let i = 0; i < documents.length; i++) {
-        data.append("documents", documents[i]);
+      // Append user_id (from auth context)
+      if (user?.id) {
+        data.append("user_id", String(user.id));
       }
 
-      // --- MOCK API CALL ---
-      // In production: await axios.post('/api/shipper/apply', data);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate delay
+      // Append application_data as JSON
+      data.append("application_data", JSON.stringify(formData.application_data));
 
-      // Success Message
+      // Append resume_text
+      data.append("resume_text", formData.resume_text);
+
+      // Append documents
+      for (let i = 0; i < formData.documents.length; i++) {
+        data.append("documents", formData.documents[i]);
+      }
+
+      // POST to API endpoint
+      const res = await fetch("/api/shipper/applications", {
+        method: "POST",
+        body: data,
+        // NOTE: Do NOT set Content-Type header - browser will set it with correct boundary
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: "Submission failed" }));
+        throw new Error(err.message || "Failed to submit application");
+      }
+
       setNotification({
-        type: 'success',
-        message: "Application submitted successfully! Please wait for Admin approval."
+        type: "success",
+        message: "Application submitted successfully! Please wait for Admin approval.",
       });
 
       // Reset form
       setFormData({
-        national_id: "",
-        license_number: "",
-        vehicle_type: "",
-        vehicle_plate: "",
-        bank_account: "",
+        application_data: {
+          national_id: "",
+          license_number: "",
+          vehicle_type: "",
+          vehicle_plate: "",
+          bank_account: "",
+        },
         resume_text: "",
+        documents: null,
       });
-      setDocuments(null);
-
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
-      setNotification({ type: 'error', message: "An error occurred while submitting. Please try again." });
+      const errorMessage = error instanceof Error ? error.message : "An error occurred while submitting.";
+      setNotification({
+        type: "error",
+        message: errorMessage,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -116,12 +177,8 @@ export default function ShipperJoinPage() {
       <div className={styles.wrapper}>
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>
-            Become a Shipper
-          </h1>
-          <p className={styles.subtitle}>
-            Join the Blossom Flower Shop delivery team today
-          </p>
+          <h1 className={styles.title}>Become a Shipper</h1>
+          <p className={styles.subtitle}>Join the Blossom Flower Shop delivery team today</p>
         </div>
 
         {/* Content */}
@@ -130,7 +187,9 @@ export default function ShipperJoinPage() {
           {notification && (
             <div
               className={`${styles.notification} ${
-                notification.type === "success" ? styles.notificationSuccess : styles.notificationError
+                notification.type === "success"
+                  ? styles.notificationSuccess
+                  : styles.notificationError
               }`}
             >
               <span className={styles.notificationIcon}>
@@ -143,9 +202,7 @@ export default function ShipperJoinPage() {
           <form className={styles.form} onSubmit={handleSubmit}>
             {/* Section 1: Identity & Vehicle Info */}
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                1. Identity & Vehicle Information
-              </h3>
+              <h3 className={styles.sectionTitle}>1. Identity & Vehicle Information</h3>
 
               <div className={styles.grid}>
                 <div className={styles.formGroup}>
@@ -157,8 +214,8 @@ export default function ShipperJoinPage() {
                     type="text"
                     name="national_id"
                     required
-                    value={formData.national_id}
-                    onChange={handleInputChange}
+                    value={formData.application_data.national_id}
+                    onChange={(e) => handleInputChange(e, "national_id")}
                     placeholder="Enter National ID"
                     className={styles.input}
                   />
@@ -173,8 +230,8 @@ export default function ShipperJoinPage() {
                     type="text"
                     name="license_number"
                     required
-                    value={formData.license_number}
-                    onChange={handleInputChange}
+                    value={formData.application_data.license_number}
+                    onChange={(e) => handleInputChange(e, "license_number")}
                     placeholder="Enter License Number"
                     className={styles.input}
                   />
@@ -188,8 +245,8 @@ export default function ShipperJoinPage() {
                   <select
                     name="vehicle_type"
                     required
-                    value={formData.vehicle_type}
-                    onChange={handleInputChange}
+                    value={formData.application_data.vehicle_type}
+                    onChange={(e) => handleInputChange(e, "vehicle_type")}
                     className={styles.select}
                   >
                     <option value="">-- Select Type --</option>
@@ -208,8 +265,8 @@ export default function ShipperJoinPage() {
                     type="text"
                     name="vehicle_plate"
                     required
-                    value={formData.vehicle_plate}
-                    onChange={handleInputChange}
+                    value={formData.application_data.vehicle_plate}
+                    onChange={(e) => handleInputChange(e, "vehicle_plate")}
                     placeholder="e.g., 29H1-123.45"
                     className={styles.input}
                   />
@@ -224,8 +281,8 @@ export default function ShipperJoinPage() {
                     type="text"
                     name="bank_account"
                     required
-                    value={formData.bank_account}
-                    onChange={handleInputChange}
+                    value={formData.application_data.bank_account}
+                    onChange={(e) => handleInputChange(e, "bank_account")}
                     placeholder="Bank Name - Account Number - Account Holder"
                     className={styles.input}
                   />
@@ -235,9 +292,7 @@ export default function ShipperJoinPage() {
 
             {/* Section 2: Profile & Documents */}
             <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>
-                2. Profile & Experience
-              </h3>
+              <h3 className={styles.sectionTitle}>2. Profile & Experience</h3>
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>
@@ -279,8 +334,10 @@ export default function ShipperJoinPage() {
                   </p>
                   <p className={styles.uploadHint}>PNG, JPG, PDF up to 10MB</p>
 
-                  {documents && documents.length > 0 && (
-                    <div className={styles.fileList}>✓ {documents.length} file(s) selected</div>
+                  {formData.documents && formData.documents.length > 0 && (
+                    <div className={styles.fileList}>
+                      ✓ {formData.documents.length} file(s) selected
+                    </div>
                   )}
 
                   <input
