@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 ﻿/* Hero Section */
-=======
-/* Hero Section */
->>>>>>> Stashed changes
 .heroSection {
   background-color: #ffe8ee;
   position: relative;
@@ -15,17 +11,10 @@
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
-<<<<<<< Updated upstream
-  gap: 1rem;
-}
-
-@media (min-width: 680px) {
-=======
   gap: 2rem;
 }
 
 @media (min-width: 768px) {
->>>>>>> Stashed changes
   .heroContainer {
     flex-direction: row;
     align-items: flex-start;
@@ -34,13 +23,8 @@
 
 .heroContent {
   flex: 1;
-<<<<<<< Updated upstream
-  padding-top: 2rem;
-  padding-bottom: 1rem;
-=======
   padding-top: 3rem;
   padding-bottom: 2rem;
->>>>>>> Stashed changes
   position: relative;
   z-index: 10;
 }
@@ -56,13 +40,8 @@
   font-weight: 500;
   font-family: serif;
   color: #333;
-<<<<<<< Updated upstream
-  letter-spacing: 0.02em;
-  margin-bottom: 0.75rem;
-=======
   letter-spacing: 0.05em;
   margin-bottom: 1rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 640px) {
@@ -75,44 +54,26 @@
   font-size: 1.125rem;
   color: #ec6b8b;
   font-weight: 600;
-<<<<<<< Updated upstream
-  margin-bottom: 1rem;
-=======
   margin-bottom: 1.5rem;
->>>>>>> Stashed changes
 }
 
 .heroDescription {
   color: #666;
-<<<<<<< Updated upstream
-  max-width: 24rem;
-  margin-bottom: 1rem;
-=======
   max-width: 28rem;
   margin-bottom: 2rem;
->>>>>>> Stashed changes
 }
 
 .heroButtons {
   display: flex;
-<<<<<<< Updated upstream
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-=======
   gap: 1rem;
   margin-bottom: 1rem;
->>>>>>> Stashed changes
 }
 
 .heroPrimaryBtn {
   background-color: #ec6b8b;
   color: white;
   font-weight: 600;
-<<<<<<< Updated upstream
-  padding: 0.6rem 1.5rem;
-=======
   padding: 0.75rem 2rem;
->>>>>>> Stashed changes
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -127,11 +88,7 @@
   border: 2px solid #ec6b8b;
   color: #ec6b8b;
   font-weight: 600;
-<<<<<<< Updated upstream
-  padding: 0.6rem 1.5rem;
-=======
   padding: 0.75rem 2rem;
->>>>>>> Stashed changes
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -150,11 +107,7 @@
   flex: 1;
   position: relative;
   height: 400px;
-<<<<<<< Updated upstream
-  margin-top: 1rem;
-=======
   margin-top: 2rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 768px) {
@@ -176,223 +129,72 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< Updated upstream
-/* --- Bestsellers Section (SỬA ĐỔI LAYOUT VIEW ALL) --- */
-.bestsellersSection {
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 2.5rem 1rem;
-  display: flex; 
-  flex-direction: column;
-  align-items: flex-start; 
-=======
 /* Bestsellers Section */
 .bestsellersSection {
   max-width: 80rem;
   margin: 0 auto;
   padding: 4rem 1rem;
->>>>>>> Stashed changes
 }
 
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
-<<<<<<< Updated upstream
-  margin-bottom: 1rem;
-  padding-bottom: 0.25rem;
-=======
   margin-bottom: 2rem;
   padding-bottom: 0.5rem;
->>>>>>> Stashed changes
   border-bottom: 2px solid #333;
   display: inline-block;
 }
 
-<<<<<<< Updated upstream
-/* Đổi tên class cũ (productGrid) thành bestsellersProductGrid (chỉ chứa 4 ảnh) */
-.bestsellersProductGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  width: 100%; 
-  margin-bottom: 2rem; 
-}
-
-/* Allow children to shrink inside grid columns and make product cards responsive */
-.bestsellersProductGrid > * {
-  min-width: 0;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.productCard {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.bestsellersProductGrid img,
-.productCard img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Stronger shrink rules: ensure no descendant can force column to grow */
-.bestsellersProductGrid, .bestsellersProductGrid * {
-  min-width: 0 !important;
-  max-width: 100% !important;
-}
-
-.collectionGrid, .collectionGrid * {
-  min-width: 0 !important;
-  max-width: 100% !important;
-}
-
-@media (min-width: 768px) {
-  .bestsellersProductGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-=======
 .productGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(3, 1fr);
->>>>>>> Stashed changes
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 2rem;
+	margin-bottom: 40px; 
   }
-}
-
-@media (min-width: 1024px) {
-<<<<<<< Updated upstream
-  .bestsellersProductGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
-  }
-}
-
-/* Make product cards equal-height and cap image height so cards stay uniform */
-.bestsellersProductGrid {
-  align-items: start;
-  grid-auto-rows: 1fr;
-}
-
-.productCard {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-width: 100%;
-}
-
-.productCardImage {
-  width: 100%;
-  height: 220px; /* default image box height on desktop */
-  overflow: hidden;
-}
-
-.productCardImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-@media (min-width: 1200px) {
-  .productCardImage { height: 260px; }
-}
-
-/* Ensure product meta (title, price) doesn't add unexpected width */
-.productCard .meta, .productCard .title, .productCard .price {
-  max-width: 100%;
-  overflow-wrap: break-word;
-}
-
-/* Ensure product card layout doesn't force extra width on desktop */
-.productCard {
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.productCard > * {
-  flex: 0 1 auto;
-}
-
-@media (min-width: 1200px) {
-  /* extra-wide desktops: keep 4 columns and slightly reduce gap */
-  .bestsellersProductGrid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-}
-
-/* VIEW ALL BLOCK MỚI - Đã sửa lỗi hiển thị khối trắng */
-.viewAllBlock { 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; 
-  text-align: center;
-  justify-self: center; /* center the block inside its grid cell */
-  align-self: center;
   
-  /* KHẮC PHỤC LỖI VIỀN/KHỐI TRẮNG */
-  padding: 0; 
-  border: none;
-  background-color: transparent;
-=======
-  .productGrid {
-    grid-template-columns: repeat(4, 1fr);
+@media (min-width: 768px) {
+	.productGrid {
+	  grid-template-columns: repeat(4, 1fr); 
+	}
   }
+  
+.viewAllWrapper {
+	text-align: center; 
+	margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
 }
-
-.viewAllCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: 3 / 4;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
->>>>>>> Stashed changes
-}
-
+  
 .viewAllText {
-  font-size: 0.875rem;
-  color: #999;
-  margin-bottom: 1rem;
-  text-align: center;
+	font-size: 0.95rem;
+	color: #666;
+	max-width: 400px; 
 }
-
+  
 .viewAllBtn {
-  background-color: #333;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.5rem 1.5rem;
-<<<<<<< Updated upstream
-=======
-  border: none;
->>>>>>> Stashed changes
-  cursor: pointer;
-  transition: background-color 0.2s;
+	background-color: #333;
+	color: white;
+	font-size: 1rem;
+	font-weight: 600;
+	padding: 12px 40px; 
+	border: none;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	border-radius: 4px; 
+	display: inline-block;
 }
-
+  
 .viewAllBtn:hover {
-  background-color: #ec6b8b;
+	background-color: #e91e63; 
+	transform: translateY(-2px); 
+	box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
 }
+  
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 /* Collections Section */
 .collectionsSection {
   max-width: 80rem;
@@ -417,56 +219,19 @@
 }
 
 .collectionTitleText {
-<<<<<<< Updated upstream
-  letter-spacing: 0.08em;
-=======
   letter-spacing: 0.15em;
->>>>>>> Stashed changes
 }
 
 .collectionGrid {
   display: grid;
-<<<<<<< Updated upstream
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-/* Ensure grid children can shrink and don't force columns to wrap */
-.collectionGrid > * {
-  min-width: 0;
-  box-sizing: border-box;
-=======
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 768px) {
   .collectionGrid {
-<<<<<<< Updated upstream
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Make collection cards/images fill their grid cell and keep aspect ratio */
-.collectionCard {
-  position: relative;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  cursor: pointer;
-  display: block;
-}
-
-.collectionCardImage,
-.collectionCardImage img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-=======
     grid-template-columns: repeat(3, 1fr);
   }
->>>>>>> Stashed changes
 }
 
 .collectionCard {

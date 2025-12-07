@@ -147,13 +147,14 @@ export default function HomePage() {
           {bestsellers.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
-          
-          <div className={styles.viewAllCard}>
+        </div>
+        <div className={styles.viewAllWrapper}>
             <p className={styles.viewAllText}>
-              Khám phá trọn bộ các sản phẩm bán chạy nhất của chúng tôi
+            Explore our full range of best-selling products
             </p>
-            <Link href="/customer/collection" className={styles.viewAllBtn}>View all</Link>
-          </div>
+            <Link href="/customer/collection" className={styles.viewAllBtn}>
+              View all
+            </Link>
         </div>
       </section>
 
