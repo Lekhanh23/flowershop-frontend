@@ -1,344 +1,442 @@
-/* ... (Các class Hero khác không đổi) ... */
-/* Hero Section (Không đổi) */
+﻿/* Hero Section */
 .heroSection {
-	background-color: #ffe8ee;
-	position: relative;
-	padding-top: 40px;
+  background-color: #ffe8ee;
+  position: relative;
+  padding-top: 40px;
 }
 
-/* ... (Các class Hero khác không đổi) ... */
 .heroContainer {
-	max-width: 80rem;
-	margin: 0 auto;
-	padding: 0 1rem;
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-@media (min-width: 768px) {
-	.heroContainer {
-		flex-direction: row;
-		align-items: flex-start;
-	}
+@media (min-width: 680px) {
+  .heroContainer {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
 
 .heroContent {
-	flex: 1;
-	padding-top: 3rem;
-	padding-bottom: 2rem;
-	position: relative;
-	z-index: 10;
+  flex: 1;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 @media (min-width: 768px) {
-	.heroContent {
-		padding-bottom: 0;
-	}
+  .heroContent {
+    padding-bottom: 0;
+  }
 }
 
 .heroTitle {
-	font-size: 2.25rem;
-	font-weight: 500;
-	font-family: serif;
-	color: #333;
-	letter-spacing: 0.05em;
-	margin-bottom: 1rem;
+  font-size: 2.25rem;
+  font-weight: 500;
+  font-family: serif;
+  color: #333;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.75rem;
 }
 
 @media (min-width: 640px) {
-	.heroTitle {
-		font-size: 3rem;
-	}
+  .heroTitle {
+    font-size: 3rem;
+  }
 }
 
 .heroSubtitle {
-	font-size: 1.125rem;
-	color: #ec6b8b;
-	font-weight: 600;
-	margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  color: #ec6b8b;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
 .heroDescription {
-	color: #666;
-	max-width: 28rem;
-	margin-bottom: 2rem;
+  color: #666;
+  max-width: 24rem;
+  margin-bottom: 1rem;
 }
 
 .heroButtons {
-	display: flex;
-	gap: 1rem;
-	margin-bottom: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .heroPrimaryBtn {
-	background-color: #ec6b8b;
-	color: white;
-	font-weight: 600;
-	padding: 0.75rem 2rem;
-	border: none;
-	cursor: pointer;
-	transition: background-color 0.2s;
+  background-color: #ec6b8b;
+  color: white;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .heroPrimaryBtn:hover {
-	background-color: #d45a7a;
+  background-color: #d45a7a;
 }
 
 .heroSecondaryBtn {
-	background-color: transparent;
-	border: 2px solid #ec6b8b;
-	color: #ec6b8b;
-	font-weight: 600;
-	padding: 0.75rem 2rem;
-	cursor: pointer;
-	transition: background-color 0.2s;
+  background-color: transparent;
+  border: 2px solid #ec6b8b;
+  color: #ec6b8b;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .heroSecondaryBtn:hover {
-	background-color: #fef9f9;
+  background-color: #fef9f9;
 }
 
 .heroDiscount {
-	margin-top: 1rem;
-	font-size: 0.875rem;
-	color: #999;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #999;
 }
 
 .heroImage {
-	flex: 1;
-	position: relative;
-	height: 400px;
-	margin-top: 2rem;
+  flex: 1;
+  position: relative;
+  height: 400px;
+  margin-top: 1rem;
 }
 
 @media (min-width: 768px) {
-	.heroImage {
-		height: 500px;
-		margin-top: 0;
-	}
+  .heroImage {
+    height: 500px;
+    margin-top: 0;
+  }
 }
 
 .heroImagePlaceholder {
-	position: absolute;
-	bottom: 1rem;
-	right: 1rem;
-	background-color: white;
-	color: #666;
-	font-size: 0.75rem;
-	font-weight: 600;
-	padding: 0.25rem 0.75rem;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: white;
+  color: #666;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-/* --- Bestsellers Section (SỬA LỖI 4 CỘT) --- */
+/* --- Bestsellers Section (SỬA ĐỔI LAYOUT VIEW ALL) --- */
 .bestsellersSection {
-	max-width: 80rem;
-	margin: 0 auto;
-	padding: 4rem 1rem;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+  display: flex; 
+  flex-direction: column;
+  align-items: flex-start; 
 }
 
 .sectionTitle {
-	font-size: 1.5rem;
-	font-weight: 600;
-	color: #333;
-	margin-bottom: 2rem;
-	padding-bottom: 0.5rem;
-	border-bottom: 2px solid #333;
-	display: inline-block;
-	align-self: flex-start;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #333;
+  display: inline-block;
 }
 
-/* Container chính của 4 sản phẩm */
+/* Đổi tên class cũ (productGrid) thành bestsellersProductGrid (chỉ chứa 4 ảnh) */
 .bestsellersProductGrid {
-	display: grid;
-	/* Mặc định 2 cột cho di động */
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 2rem;
-	width: 100%;
-	margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%; 
+  margin-bottom: 2rem; 
 }
 
-/* Ensure grid items can shrink (prevent child min-width overflow) and product card fills column */
+/* Allow children to shrink inside grid columns and make product cards responsive */
 .bestsellersProductGrid > * {
-	min-width: 0;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .productCard {
-	width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bestsellersProductGrid img,
+.productCard img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Stronger shrink rules: ensure no descendant can force column to grow */
+.bestsellersProductGrid, .bestsellersProductGrid * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.collectionGrid, .collectionGrid * {
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
 @media (min-width: 768px) {
-	.bestsellersProductGrid {
-		/* Hiển thị 4 cột trên tablet/desktop để các 4 ảnh nằm chung 1 hàng */
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 1024px) {
-	.bestsellersProductGrid {
-		/* 4 cột cho desktop */
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
 }
 
-/* KHỐI VIEW ALL - Đã sửa lỗi viền, khối trắng và căn giữa */
-.viewAllBlock {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	padding: 0;
-	border: none;
-	background-color: transparent;
+/* Make product cards equal-height and cap image height so cards stay uniform */
+.bestsellersProductGrid {
+  align-items: start;
+  grid-auto-rows: 1fr;
+}
+
+.productCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+}
+
+.productCardImage {
+  width: 100%;
+  height: 220px; /* default image box height on desktop */
+  overflow: hidden;
+}
+
+.productCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (min-width: 1200px) {
+  .productCardImage { height: 260px; }
+}
+
+/* Ensure product meta (title, price) doesn't add unexpected width */
+.productCard .meta, .productCard .title, .productCard .price {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Ensure product card layout doesn't force extra width on desktop */
+.productCard {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.productCard > * {
+  flex: 0 1 auto;
+}
+
+@media (min-width: 1200px) {
+  /* extra-wide desktops: keep 4 columns and slightly reduce gap */
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+/* VIEW ALL BLOCK MỚI - Đã sửa lỗi hiển thị khối trắng */
+.viewAllBlock { 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  text-align: center;
+  justify-self: center; /* center the block inside its grid cell */
+  align-self: center;
+  
+  /* KHẮC PHỤC LỖI VIỀN/KHỐI TRẮNG */
+  padding: 0; 
+  border: none;
+  background-color: transparent;
 }
 
 .viewAllText {
-	font-size: 0.875rem;
-	color: #999;
-	margin-bottom: 1rem;
-	text-align: center;
+  font-size: 0.875rem;
+  color: #999;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .viewAllBtn {
-	background-color: #333;
-	color: white;
-	font-size: 0.875rem;
-	font-weight: 600;
-	padding: 0.5rem 1.5rem;
-	border: none;
-	cursor: pointer;
-	transition: background-color 0.2s;
+  background-color: #333;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .viewAllBtn:hover {
-	background-color: #ec6b8b;
+  background-color: #ec6b8b;
 }
 
 
-/* Collections Section (Không đổi) */
+/* Collections Section */
 .collectionsSection {
-	max-width: 80rem;
-	margin: 0 auto;
-	padding: 4rem 1rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 4rem 1rem;
 }
 
-/* ... (Các class Collections khác không đổi) ... */
 .collectionSectionTitle {
-	text-align: center;
-	font-size: 1.25rem;
-	font-family: serif;
-	color: #666;
-	margin-bottom: 2rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 1rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-family: serif;
+  color: #666;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .collectionDecorator {
-	color: #ec6b8b;
+  color: #ec6b8b;
 }
 
 .collectionTitleText {
-	letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
 }
 
 .collectionGrid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+/* Ensure grid children can shrink and don't force columns to wrap */
+.collectionGrid > * {
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
-	.collectionGrid {
-		grid-template-columns: repeat(3, 1fr);
-	}
+  .collectionGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Make collection cards/images fill their grid cell and keep aspect ratio */
+.collectionCard {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+}
+
+.collectionCardImage,
+.collectionCardImage img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .collectionCard {
-	position: relative;
-	aspect-ratio: 3 / 2;
-	overflow: hidden;
-	cursor: pointer;
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .collectionCardImage {
-	transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
 
 .collectionCard:hover .collectionCardImage {
-	transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .collectionCardOverlay {
-	position: absolute;
-	inset: 0;
-	background-color: rgba(0, 0, 0, 0.3);
-	display: flex;
-	align-items: flex-end;
-	padding: 1rem;
-	transition: background-color 0.2s;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+  transition: background-color 0.2s;
 }
 
 .collectionCard:hover .collectionCardOverlay {
-	background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .collectionCardTitle {
-	color: white;
-	font-size: 1.25rem;
-	font-weight: bold;
-	border-bottom: 2px solid white;
-	padding-bottom: 0.25rem;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-bottom: 2px solid white;
+  padding-bottom: 0.25rem;
 }
 
-/* Content Section (Không đổi) */
+/* Content Section */
 .contentSection {
-	max-width: 48rem;
-	margin: 0 auto;
-	padding: 5rem 1rem;
-	text-align: center;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 5rem 1rem;
+  text-align: center;
 }
 
-/* ... (Các class Content khác không đổi) ... */
 .contentSectionTitle {
-	font-size: 1.875rem;
-	font-family: serif;
-	color: #333;
-	margin-bottom: 2rem;
+  font-size: 1.875rem;
+  font-family: serif;
+  color: #333;
+  margin-bottom: 2rem;
 }
 
 @media (min-width: 640px) {
-	.contentSectionTitle {
-		font-size: 2rem;
-	}
+  .contentSectionTitle {
+    font-size: 2rem;
+  }
 }
 
 .contentSectionDescription {
-	color: #666;
-	margin-bottom: 3rem;
+  color: #666;
+  margin-bottom: 3rem;
 }
 
 .accordionContainer {
-	display: flex;
-	flex-direction: column;
-	gap: 1.5rem;
-	text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
 }
 
 .accordionItem {
-	border-bottom: 1px solid #e0e0e0;
-	padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
 }
 
 .accordionItemTitle {
-	font-weight: 600;
-	color: #333;
-	padding: 0.75rem 0;
+  font-weight: 600;
+  color: #333;
+  padding: 0.75rem 0;
 }
