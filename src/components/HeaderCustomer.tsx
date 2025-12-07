@@ -43,13 +43,13 @@ export const HeaderCustomer = () => {
             </Link>
             
             <div className={styles.dropdownMenu}>
-                <Link href="/customer/collection" className={styles.dropdownItem}>All collections</Link>
-                <Link href="/customer/collection/1" className={styles.dropdownItem}>Birthday</Link>
-                <Link href="/customer/collection/2" className={styles.dropdownItem}>Anniversary</Link>
-                <Link href="/customer/collection/3" className={styles.dropdownItem}>Congratulations</Link>
-                <Link href="/customer/collection/4" className={styles.dropdownItem}>Parent's Day</Link>
-                <Link href="/customer/collection/5" className={styles.dropdownItem}>Teacher's Day</Link>
-                <Link href="/customer/collection/6" className={styles.dropdownItem}>Women's Day</Link>
+                <Link href="/customer/collection" className={styles.dropdownItem}>All Collections</Link>
+                <Link href="/customer/collection?id=1" className={styles.dropdownItem}>Birthday</Link>
+                <Link href="/customer/collection?id=2" className={styles.dropdownItem}>Anniversary</Link>
+                <Link href="/customer/collection?id=3" className={styles.dropdownItem}>Congratulations</Link>
+                <Link href="/customer/collection?id=4" className={styles.dropdownItem}>Parent's Day</Link>
+                <Link href="/customer/collection?id=5" className={styles.dropdownItem}>Teacher's Day</Link>
+                <Link href="/customer/collection?id=6" className={styles.dropdownItem}>Women's Day</Link>
             </div>
           </div>
 
