@@ -6,7 +6,7 @@ import styles from './Footer.module.css';
 
 // Data
 const SHOP_LINKS = [
-  { label: "All Bouquets", href: "/customer/bouquet" },
+  { label: "All Bouquets", href: "/bouquets" },
   { label: "Signature Bouquets", href: "/signature" },
   { label: "Preserved Roses", href: "/preserved" },
   { label: "Roses", href: "/roses" },
