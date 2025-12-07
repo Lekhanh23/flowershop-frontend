@@ -5,12 +5,19 @@ import styles from './page.module.css';
 import Link from 'next/link';
 import { getImageUrl } from '@/lib/utils';
 
+// --- CẤU HÌNH ---
+const BACKEND_URL = 'http://localhost:3000';
+
 // 1. Định nghĩa kiểu dữ liệu
 interface Product {
   id: number;
   name: string;
   price: number;
+<<<<<<< HEAD
+  image: string; // Tên file trong DB
+=======
   image: string; 
+>>>>>>> 345826bbb82e49e080f0640b0235c8e3e1d4f231
   description?: string;
   isBestSeller?: boolean;
   occasion?: string; 
@@ -42,8 +49,10 @@ export default function BouquetPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch(`${BACKEND_URL}/api/products`);
+        
         if (!response.ok) throw new Error(`Lỗi kết nối: ${response.statusText}`);
+
         const data = await response.json();
         const productsArray = Array.isArray(data) ? data : data.data || [];
         setProducts(productsArray);
@@ -58,6 +67,9 @@ export default function BouquetPage() {
 
     fetchProducts();
   }, []);
+
+  
+  
 
   // --- HÀM XỬ LÝ FILTER UI (Đóng/Mở) ---
   const toggleFilterUI = (section: string) => {
@@ -207,34 +219,48 @@ export default function BouquetPage() {
             <div className={styles.productGrid}>
               {displayedProducts.map((product) => (
                 <div key={product.id} className={styles.productCard}>
-                  <div className={styles.imageWrapper}>
-                    {/* Sử dụng hàm getImageUrl để lấy link ảnh từ backend */}
-                    <img 
-                      src={getImageUrl(product.image)} 
-                      alt={product.name} 
-                      className={styles.productImage} 
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error+Loading";
-                      }}
-                    />
-                    <span className={styles.productNameOnImage}>{product.name}</span>
-                    <button className={styles.heartBtn}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                      </svg>
-                    </button>
-                  </div>
-
-                  <div className={styles.productInfo}>
-                    {product.isBestSeller && (
-                      <div className={styles.bestSeller}>
-                        <span className={styles.starIcon}>✪</span> Best Seller
-                      </div>
-                    )}
-                    <div className={styles.price}>
-                      From {Number(product.price).toLocaleString('vi-VN')} VNĐ
+                  {/* --- SỬA ĐỔI QUAN TRỌNG: Thêm Link bao quanh nội dung --- */}
+                  <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    
+                    <div className={styles.imageWrapper}>
+                      <img 
+                        src={getImageUrl(product.image)} 
+                        alt={product.name} 
+                        className={styles.productImage} 
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error+Loading";
+                        }}
+                      />
+                      <span className={styles.productNameOnImage}>{product.name}</span>
+                      
+                      {/* Nút tim (Yêu thích) - Cần chặn sự kiện click để không bị nhảy trang khi ấn tim */}
+                      <button 
+                        className={styles.heartBtn}
+                        onClick={(e) => {
+                          e.preventDefault(); // Chặn Link nhảy trang
+                          e.stopPropagation(); // Chặn sự kiện nổi bọt
+                          // Logic thêm vào yêu thích ở đây (nếu có)
+                          console.log("Liked", product.id);
+                        }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </button>
                     </div>
-                  </div>
+
+                    <div className={styles.productInfo}>
+                      {product.isBestSeller && (
+                        <div className={styles.bestSeller}>
+                          <span className={styles.starIcon}>✪</span> Best Seller
+                        </div>
+                      )}
+                      <div className={styles.price}>
+                        From {Number(product.price).toLocaleString('vi-VN')} VNĐ
+                      </div>
+                    </div>
+
+                  </Link>
                 </div>
               ))}
             </div>
