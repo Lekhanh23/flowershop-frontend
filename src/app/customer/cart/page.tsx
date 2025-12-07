@@ -1,160 +1,109 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 
+// Kiểu dữ liệu giỏ hàng
+interface CartItem {
+  productId: number;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  card?: { id: string; name: string; price: number };
+  note?: string;
+  totalItemPrice: number;
+}
+
 export default function CheckoutPage() {
-  // --- STATE DỮ LIỆU ---
+  // State Form
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    country: '',
-    address: '',
-    postcode: '',
-    city: '',
-    phone: '',
-    email: '',
-    note: '',
-    paymentMethod: 'online', 
-    termsAccepted: false,
-    privacyAccepted: false,
+    firstName: '', lastName: '', country: '', address: '', postcode: '', city: '', phone: '', email: '', note: '',
+    paymentMethod: 'online', termsAccepted: false, privacyAccepted: false,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // State Giỏ hàng (Đọc từ localStorage)
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
-  // --- SẢN PHẨM MẪU (Theo ảnh thiết kế) ---
-  const cartItem = {
-    id: 101, 
-    name: "A boutique of white rose",
-    price: 200000,
-    quantity: 1
-  };
-  const totalAmount = cartItem.price * cartItem.quantity;
+  // --- 1. LẤY GIỎ HÀNG TỪ LOCALSTORAGE KHI LOAD TRANG ---
+  useEffect(() => {
+    setIsClient(true);
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        // Kiểm tra nếu là mảng thì set, không thì để rỗng
+        setCartItems(Array.isArray(parsedCart) ? parsedCart : []);
+      } catch (error) {
+        console.error("Lỗi đọc giỏ hàng", error);
+        setCartItems([]);
+      }
+    }
+  }, []);
 
-  // --- HÀM XỬ LÝ ---
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // --- 2. TÍNH TỔNG TIỀN ĐỘNG ---
+  const totalAmount = cartItems.reduce((sum, item) => sum + (item.totalItemPrice || 0), 0);
+
+  // --- XỬ LÝ FORM ---
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cartItems.length === 0) return alert("Giỏ hàng đang trống!");
+    if (!formData.termsAccepted || !formData.privacyAccepted) return alert("Vui lòng đồng ý điều khoản!");
 
-    if (!formData.termsAccepted || !formData.privacyAccepted) {
-      alert("Vui lòng đồng ý với điều khoản và chính sách bảo mật.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // Payload chuẩn gửi Backend NestJS (Map theo DTO của bạn)
+    // Payload gửi Backend
     const payload = {
-      customer: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        address: `${formData.address}, ${formData.city}, ${formData.country} - Zip: ${formData.postcode}`,
-      },
-      paymentMethod: formData.paymentMethod,
-      note: formData.note,
-      totalAmount: totalAmount,
-      items: [
-        {
-          productId: cartItem.id,
-          quantity: cartItem.quantity,
-          price: cartItem.price
-        }
-      ]
+      customer: { ...formData },
+      items: cartItems,
+      totalAmount: totalAmount
     };
 
     console.log("Submitting Order:", payload);
-
-    try {
-      // Giả lập API call (Thay bằng fetch thật khi chạy)
-      /*
-      await fetch('http://localhost:3000/orders', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(payload)
-      });
-      */
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert("Đặt hàng thành công!");
-    } catch (error) {
-      console.error(error);
-      alert("Có lỗi xảy ra khi đặt hàng.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    alert("Đặt hàng thành công! (Xem console để thấy data)");
+    // Xóa giỏ hàng sau khi đặt thành công
+    // localStorage.removeItem('cart');
+    // setCartItems([]);
   };
+
+  if (!isClient) return <div className={styles.container}>Loading...</div>;
 
   return (
     <div className={styles.container}>
-      {/* Tiêu đề chính căn giữa */}
       <h1 className={styles.pageTitle}>Complete your purchase</h1>
 
       <form onSubmit={handleSubmit} className={styles.wrapper}>
         
-        {/* --- CỘT TRÁI: FORM NHẬP LIỆU --- */}
+        {/* CỘT TRÁI: THÔNG TIN KHÁCH HÀNG */}
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>Payment Information</h2>
-          
           <div className={styles.row}>
-            <div className={styles.inputGroup}>
-              <input type="text" name="firstName" placeholder="First name" required value={formData.firstName} onChange={handleChange} />
-            </div>
-            <div className={styles.inputGroup}>
-              <input type="text" name="lastName" placeholder="Last name" required value={formData.lastName} onChange={handleChange} />
-            </div>
+            <div className={styles.inputGroup}><input type="text" name="firstName" placeholder="First name" required onChange={handleChange} /></div>
+            <div className={styles.inputGroup}><input type="text" name="lastName" placeholder="Last name" required onChange={handleChange} /></div>
           </div>
+          <div className={styles.inputGroup}><input type="text" name="country" placeholder="Country/ Area" required onChange={handleChange} /></div>
+          <div className={styles.inputGroup}><input type="text" name="address" placeholder="Address" required onChange={handleChange} /></div>
+          <div className={styles.inputGroup}><input type="text" name="postcode" placeholder="Postcode" onChange={handleChange} /></div>
+          <div className={styles.inputGroup}><input type="text" name="city" placeholder="State/ City" required onChange={handleChange} /></div>
+          <div className={styles.inputGroup}><input type="tel" name="phone" placeholder="Phone number" required onChange={handleChange} /></div>
+          <div className={styles.inputGroup}><input type="email" name="email" placeholder="Email" required onChange={handleChange} /></div>
 
+          <h2 className={styles.sectionTitle} style={{marginTop: 40}}>Additional Information</h2>
           <div className={styles.inputGroup}>
-            <input type="text" name="country" placeholder="Country/ Area" required value={formData.country} onChange={handleChange} />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input type="text" name="address" placeholder="Address" required value={formData.address} onChange={handleChange} />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input type="text" name="postcode" placeholder="Postcode" value={formData.postcode} onChange={handleChange} />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input type="text" name="city" placeholder="State/ City" required value={formData.city} onChange={handleChange} />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input type="tel" name="phone" placeholder="Phone number" required value={formData.phone} onChange={handleChange} />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} />
-          </div>
-
-          {/* Additional Info Section */}
-          <h2 className={styles.sectionTitle} style={{marginTop: '40px'}}>Additional Information</h2>
-          <div className={styles.inputGroup}>
-            <textarea 
-              name="note" 
-              placeholder="Note about the order, for instance delivery time or detailed delivery address"
-              rows={5}
-              value={formData.note}
-              onChange={handleChange}
-            ></textarea>
+            <textarea name="note" placeholder="Order notes..." rows={5} onChange={handleChange}></textarea>
           </div>
         </div>
 
-        {/* --- CỘT PHẢI: YOUR ORDER (Box viền hồng) --- */}
+        {/* CỘT PHẢI: CHI TIẾT ĐƠN HÀNG */}
         <div className={styles.rightColumn}>
           <div className={styles.orderBox}>
             <h2 className={styles.boxTitle}>Your order</h2>
@@ -168,11 +117,22 @@ export default function CheckoutPage() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className={styles.prodName}>{cartItem.name}</td>
-                  <td align="center">{cartItem.quantity}</td>
-                  <td align="right" className={styles.price}>{cartItem.price.toLocaleString('vi-VN')}₫</td>
-                </tr>
+                {cartItems.length === 0 ? (
+                  <tr><td colSpan={3} style={{textAlign: 'center', padding: 20}}>Empty Cart</td></tr>
+                ) : (
+                  cartItems.map((item, index) => (
+                    <tr key={index}>
+                      <td className={styles.prodName}>
+                        {item.name}
+                        {item.card && <div style={{fontSize: '0.8em', color: '#555'}}>+ {item.card.name}</div>}
+                      </td>
+                      <td align="center">{item.quantity}</td>
+                      <td align="right" className={styles.price}>{item.totalItemPrice.toLocaleString('vi-VN')}₫</td>
+                    </tr>
+                  ))
+                )}
+                
+                {/* Hàng tổng tiền */}
                 <tr className={styles.totalRow}>
                   <td colSpan={2}>Total</td>
                   <td align="right" className={styles.totalPrice}>{totalAmount.toLocaleString('vi-VN')}₫</td>
@@ -181,77 +141,42 @@ export default function CheckoutPage() {
             </table>
 
             <h3 className={styles.paymentTitle}>Payment method</h3>
-
-            {/* Radio: Pay online */}
+            {/* Payment Options */}
             <div className={styles.paymentOption}>
               <div className={styles.radioRow}>
-                <input 
-                  type="radio" 
-                  id="online" 
-                  name="paymentMethod" 
-                  value="online"
-                  checked={formData.paymentMethod === 'online'}
-                  onChange={handleCheckChange}
-                />
+                <input type="radio" id="online" name="paymentMethod" value="online" checked={formData.paymentMethod === 'online'} onChange={handleCheckChange} />
                 <label htmlFor="online">Pay online</label>
               </div>
-              
-              {/* Hiển thị QR Code nếu chọn Pay online */}
               {formData.paymentMethod === 'online' && (
                 <div className={styles.qrContainer}>
-                  <p className={styles.qrNote}>
-                    Make a transfer to our bank account immediately. Please use your Order ID in the Payment Details section. Your order will be shipped after the payment transaction is completed.
-                  </p>
-                  {/* Link ảnh VietQR mẫu, bạn thay bằng ảnh thật trong thư mục public */}
-                  <img 
-                    src="https://img.vietqr.io/image/VCB-123456789-compact2.png" 
-                    alt="VietQR Code" 
-                    className={styles.qrImage} 
-                  />
+                   <p className={styles.qrNote}>Please transfer via QR code below.</p>
+                   <img src="https://img.vietqr.io/image/VCB-123456789-compact2.png" alt="QR" className={styles.qrImage} />
                 </div>
               )}
             </div>
-
-            {/* Radio: Cash */}
+            
             <div className={styles.paymentOption}>
               <div className={styles.radioRow}>
-                <input 
-                  type="radio" 
-                  id="cash" 
-                  name="paymentMethod" 
-                  value="cash"
-                  checked={formData.paymentMethod === 'cash'}
-                  onChange={handleCheckChange}
-                />
+                <input type="radio" id="cash" name="paymentMethod" value="cash" checked={formData.paymentMethod === 'cash'} onChange={handleCheckChange} />
                 <label htmlFor="cash">Cash</label>
               </div>
             </div>
 
-            {/* Checkboxes Terms */}
             <div className={styles.termsGroup}>
               <div className={styles.checkboxRow}>
-                <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleCheckChange} />
-                <label>I have read and agree to the website <a href="#">terms and conditions</a></label>
+                <input type="checkbox" name="termsAccepted" onChange={handleCheckChange} />
+                <label>I agree to terms & conditions</label>
               </div>
               <div className={styles.checkboxRow}>
-                <input type="checkbox" name="privacyAccepted" checked={formData.privacyAccepted} onChange={handleCheckChange} />
-                <label>I have read and agree to the website <a href="#">privacy policy</a></label>
+                <input type="checkbox" name="privacyAccepted" onChange={handleCheckChange} />
+                <label>I agree to privacy policy</label>
               </div>
             </div>
 
-            {/* Button */}
-            <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-              {isSubmitting ? 'Processing...' : 'Place order'}
-            </button>
-            
+            <button type="submit" className={styles.submitBtn}>Place order</button>
           </div>
-          
-          {/* Footer note */}
-          <p className={styles.footerNote}>
-            Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our <a href="#">privacy policy</a>.
-          </p>
+          <p className={styles.footerNote}>Privacy policy note...</p>
         </div>
-
       </form>
     </div>
   );
