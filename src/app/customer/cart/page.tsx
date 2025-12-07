@@ -15,7 +15,7 @@ export default function CheckoutPage() {
     phone: '',
     email: '',
     note: '',
-    paymentMethod: 'online', // Mặc định chọn Pay online theo mẫu
+    paymentMethod: 'online', 
     termsAccepted: false,
     privacyAccepted: false,
   });

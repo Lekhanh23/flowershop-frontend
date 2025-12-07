@@ -7,10 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import styles from './HeaderCustomer.module.css';
 
 export const HeaderCustomer = () => {
-  const { logout } = useAuth();
-  
-  // Không cần state hover phức tạp nữa vì đã xử lý bằng CSS :hover
-  
+  const { logout } = useAuth();  
   return (
     <header className={styles.header}>
       <div className={styles.container}>
