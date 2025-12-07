@@ -67,12 +67,14 @@ export const HeaderCustomer = () => {
 
           {/* CAREER DROPDOWN */}
           <div className={styles.navItemWrapper}>
-            <Link href="/career" className={styles.navLink}>
+            <Link href="/customer/career/join" className={styles.navLink}>
               Career
             </Link>
-            
+
             <div className={styles.dropdownMenu}>
-                <Link href="/shipper/join" className={styles.dropdownItem}>Become a Shipper</Link>
+                <Link href="/customer/career/join" className={styles.dropdownItem}>
+              Become a Shipper
+            </Link>
             </div>
           </div>
         </nav>
