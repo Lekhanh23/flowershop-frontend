@@ -2,73 +2,123 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
+type Profile = {
+  full_name?: string;
+  email?: string;
+  phone?: string;
+  vehicle_type?: string;
+  vehicle_plate?: string;
+  national_id?: string;
+  bank_account?: string;
+};
 
 export default function ShipperProfilePage() {
-  const [profile, setProfile] = useState<any>(null);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [pRes, nRes] = await Promise.all([
-          fetch("/api/shipper/profile"),
-          fetch("/api/shipper/notifications"),
-        ]);
-        if (pRes.ok) setProfile(await pRes.json());
-        if (nRes.ok) setNotifications(await nRes.json());
-      } catch (e) {
-        setProfile({ vehicle_type: "Motorbike", vehicle_plate: "29H1-123.45", national_id: "0123456789", bank_account: "Vietcombank - 0123456 - Nguyen A" });
-        setNotifications([{id:1, text:"Order #123 assigned", time:"1h"}]);
+        const res = await fetch("/api/shipper/profile");
+        if (res.ok) setProfile(await res.json());
+      } catch {
+        setProfile({
+          full_name: "Jane Doe",
+          email: "shipper@example.com",
+          phone: "0912345678",
+          vehicle_type: "Motorbike",
+          vehicle_plate: "29H1-123.45",
+          national_id: "0123456789",
+          bank_account: "Bank of Example — 0123456 — Jane Doe",
+        });
+      } finally {
+        setLoading(false);
       }
     }
     load();
   }, []);
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-pink-50 p-5">
+        <div className="max-w-xl mx-auto animate-pulse space-y-4">
+          <div className="h-20 bg-white rounded-xl" />
+          <div className="h-44 bg-white rounded-xl" />
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="max-w-3xl mx-auto p-6 bg-gray-50">
-      <header className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
-        <p className="text-sm text-gray-500">Your account information</p>
-      </header>
+    <main className="min-h-screen bg-pink-50 p-5">
+      <div className="max-w-xl mx-auto">
 
-      <section className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm text-gray-500">Vehicle</div>
-            <div className="text-xl font-semibold text-gray-800">{profile?.vehicle_type ?? "-"}</div>
-            <div className="text-xs text-gray-400">Plate: {profile?.vehicle_plate ?? "-"}</div>
+        {/* PAGE TITLE */}
+        <h1 className="text-2xl font-bold text-gray-800 mb-1">My Profile</h1>
+        <p className="text-sm text-gray-500 mb-4">Shipper account overview</p>
+
+        {/* TOP CARD — NO AVATAR */}
+        <section className="bg-white rounded-2xl shadow p-5 mb-5">
+
+          <h2 className="text-lg font-semibold text-gray-800">{profile?.full_name}</h2>
+          <p className="text-sm text-gray-600 mt-1">{profile?.email}</p>
+
+          {/* Buttons */}
+          <div className="mt-5 flex gap-3">
+            <Link
+              href="/shipper/profile/edit"
+              className="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-pink-100 text-pink-700 text-sm font-medium hover:bg-pink-200 transition"
+            >
+              Edit profile
+            </Link>
+
+            <Link
+              href="/shipper/profile/change-password"
+              className="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-pink-600 text-white text-sm font-medium hover:bg-pink-700 transition"
+            >
+              Change password
+            </Link>
           </div>
+        </section>
 
-          <div className="text-right">
-            <div className="text-sm text-gray-500">Verified</div>
-            <div className={`mt-1 text-sm font-semibold ${profile?.is_verified ? "text-green-600" : "text-yellow-600"}`}>
-              {profile?.is_verified ? "Yes" : "Pending"}
+        {/* DETAILS CARD */}
+        <section className="bg-white rounded-2xl shadow p-5 mb-8">
+          <h3 className="text-sm font-semibold text-gray-800 mb-4">Account details</h3>
+
+          <div className="space-y-4">
+            <Detail label="Full name" value={profile?.full_name} />
+            <Detail label="Email" value={profile?.email} />
+            <Detail label="Phone" value={profile?.phone} />
+
+            {/* Vehicle info */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-pink-50 rounded-xl">
+                <div className="text-xs text-gray-500">Vehicle</div>
+                <div className="text-sm font-medium text-gray-800">{profile?.vehicle_type}</div>
+              </div>
+
+              <div className="p-3 bg-pink-50 rounded-xl">
+                <div className="text-xs text-gray-500">Plate</div>
+                <div className="text-sm font-medium text-gray-800">{profile?.vehicle_plate}</div>
+              </div>
             </div>
+
+            <Detail label="National ID" value={profile?.national_id} />
+            <Detail label="Bank account" value={profile?.bank_account} />
           </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-2">
-          <div className="text-sm text-gray-600">National ID: <span className="text-gray-800 ml-1">{profile?.national_id ?? "-"}</span></div>
-          <div className="text-sm text-gray-600">Bank account: <span className="text-gray-800 ml-1">{profile?.bank_account ?? "-"}</span></div>
-        </div>
-
-        <div className="mt-4">
-          <a href="/shipper/profile/edit" className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Edit profile</a>
-        </div>
-      </section>
-
-      <section className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="font-semibold mb-4 text-lg">Notifications</h2>
-        <ul className="space-y-2">
-          {notifications.map(n => (
-            <li key={n.id} className="text-sm flex justify-between items-center">
-              <span>{n.text}</span>
-              <span className="text-xs text-gray-400">{n.time}</span>
-            </li>
-          ))}
-          {notifications.length === 0 && <div className="text-sm text-gray-500">No notifications</div>}
-        </ul>
-      </section>
+        </section>
+      </div>
     </main>
+  );
+}
+
+function Detail({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <div className="text-xs text-gray-500">{label}</div>
+      <div className="text-sm font-medium text-gray-800">{value ?? "—"}</div>
+    </div>
   );
 }
