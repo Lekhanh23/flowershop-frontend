@@ -13,11 +13,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
-<<<<<<< HEAD
-  image: string; // Tên file trong DB
-=======
-  image: string; 
->>>>>>> 345826bbb82e49e080f0640b0235c8e3e1d4f231
+  image: string;
   description?: string;
   isBestSeller?: boolean;
   occasion?: string; 
@@ -219,7 +215,6 @@ export default function BouquetPage() {
             <div className={styles.productGrid}>
               {displayedProducts.map((product) => (
                 <div key={product.id} className={styles.productCard}>
-                  {/* --- SỬA ĐỔI QUAN TRỌNG: Thêm Link bao quanh nội dung --- */}
                   <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                     
                     <div className={styles.imageWrapper}>
