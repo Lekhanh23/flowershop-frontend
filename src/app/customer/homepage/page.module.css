@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 ﻿/* Hero Section */
-=======
-/* Hero Section */
->>>>>>> Stashed changes
 .heroSection {
   background-color: #ffe8ee;
   position: relative;
@@ -15,17 +11,10 @@
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
-<<<<<<< Updated upstream
   gap: 1rem;
 }
 
 @media (min-width: 680px) {
-=======
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
->>>>>>> Stashed changes
   .heroContainer {
     flex-direction: row;
     align-items: flex-start;
@@ -34,13 +23,8 @@
 
 .heroContent {
   flex: 1;
-<<<<<<< Updated upstream
   padding-top: 2rem;
   padding-bottom: 1rem;
-=======
-  padding-top: 3rem;
-  padding-bottom: 2rem;
->>>>>>> Stashed changes
   position: relative;
   z-index: 10;
 }
@@ -56,13 +40,8 @@
   font-weight: 500;
   font-family: serif;
   color: #333;
-<<<<<<< Updated upstream
   letter-spacing: 0.02em;
   margin-bottom: 0.75rem;
-=======
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 640px) {
@@ -75,44 +54,26 @@
   font-size: 1.125rem;
   color: #ec6b8b;
   font-weight: 600;
-<<<<<<< Updated upstream
   margin-bottom: 1rem;
-=======
-  margin-bottom: 1.5rem;
->>>>>>> Stashed changes
 }
 
 .heroDescription {
   color: #666;
-<<<<<<< Updated upstream
   max-width: 24rem;
   margin-bottom: 1rem;
-=======
-  max-width: 28rem;
-  margin-bottom: 2rem;
->>>>>>> Stashed changes
 }
 
 .heroButtons {
   display: flex;
-<<<<<<< Updated upstream
   gap: 0.75rem;
   margin-bottom: 0.5rem;
-=======
-  gap: 1rem;
-  margin-bottom: 1rem;
->>>>>>> Stashed changes
 }
 
 .heroPrimaryBtn {
   background-color: #ec6b8b;
   color: white;
   font-weight: 600;
-<<<<<<< Updated upstream
   padding: 0.6rem 1.5rem;
-=======
-  padding: 0.75rem 2rem;
->>>>>>> Stashed changes
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -127,11 +88,7 @@
   border: 2px solid #ec6b8b;
   color: #ec6b8b;
   font-weight: 600;
-<<<<<<< Updated upstream
   padding: 0.6rem 1.5rem;
-=======
-  padding: 0.75rem 2rem;
->>>>>>> Stashed changes
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -150,11 +107,7 @@
   flex: 1;
   position: relative;
   height: 400px;
-<<<<<<< Updated upstream
   margin-top: 1rem;
-=======
-  margin-top: 2rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 768px) {
@@ -176,7 +129,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-<<<<<<< Updated upstream
 /* --- Bestsellers Section (SỬA ĐỔI LAYOUT VIEW ALL) --- */
 .bestsellersSection {
   max-width: 80rem;
@@ -185,31 +137,18 @@
   display: flex; 
   flex-direction: column;
   align-items: flex-start; 
-=======
-/* Bestsellers Section */
-.bestsellersSection {
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 4rem 1rem;
->>>>>>> Stashed changes
 }
 
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
-<<<<<<< Updated upstream
   margin-bottom: 1rem;
   padding-bottom: 0.25rem;
-=======
-  margin-bottom: 2rem;
-  padding-bottom: 0.5rem;
->>>>>>> Stashed changes
   border-bottom: 2px solid #333;
   display: inline-block;
 }
 
-<<<<<<< Updated upstream
 /* Đổi tên class cũ (productGrid) thành bestsellersProductGrid (chỉ chứa 4 ảnh) */
 .bestsellersProductGrid {
   display: grid;
@@ -253,22 +192,10 @@
 @media (min-width: 768px) {
   .bestsellersProductGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-=======
-.productGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(3, 1fr);
->>>>>>> Stashed changes
   }
 }
 
 @media (min-width: 1024px) {
-<<<<<<< Updated upstream
   .bestsellersProductGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
@@ -347,21 +274,6 @@
   padding: 0; 
   border: none;
   background-color: transparent;
-=======
-  .productGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.viewAllCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: 3 / 4;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
->>>>>>> Stashed changes
 }
 
 .viewAllText {
@@ -377,10 +289,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.5rem 1.5rem;
-<<<<<<< Updated upstream
-=======
-  border: none;
->>>>>>> Stashed changes
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -389,10 +297,6 @@
   background-color: #ec6b8b;
 }
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 /* Collections Section */
 .collectionsSection {
   max-width: 80rem;
@@ -417,16 +321,11 @@
 }
 
 .collectionTitleText {
-<<<<<<< Updated upstream
   letter-spacing: 0.08em;
-=======
-  letter-spacing: 0.15em;
->>>>>>> Stashed changes
 }
 
 .collectionGrid {
   display: grid;
-<<<<<<< Updated upstream
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
@@ -435,15 +334,10 @@
 .collectionGrid > * {
   min-width: 0;
   box-sizing: border-box;
-=======
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
->>>>>>> Stashed changes
 }
 
 @media (min-width: 768px) {
   .collectionGrid {
-<<<<<<< Updated upstream
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -463,10 +357,6 @@
   height: 100%;
   display: block;
   object-fit: cover;
-=======
-    grid-template-columns: repeat(3, 1fr);
-  }
->>>>>>> Stashed changes
 }
 
 .collectionCard {
