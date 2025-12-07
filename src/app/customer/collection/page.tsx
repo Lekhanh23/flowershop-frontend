@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { getImageUrl, formatPrice } from '@/lib/utils';
 
@@ -67,9 +68,34 @@ export default function CollectionPage() {
   }, [activeTab]); // Chạy lại khi activeTab thay đổi
 
   // Hàm xử lý khi bấm vào Tab
+  const router = useRouter();
+
+  // Map collection IDs to their dedicated pages
+  const collectionPaths: Record<number, string> = {
+    1: '/customer/birthday_collection',
+    2: '/customer/anniversary_collection',
+    3: '/customer/congratulations_collection',
+    4: '/customer/parent_collection',
+    5: '/customer/teacher_collection',
+    6: '/customer/women_collection'
+  };
+
   const handleTabClick = (id: number | 'all', name: string) => {
     setActiveTab(id);
     setActiveTabName(name);
+
+    // If user clicked 'All', navigate to the main collection listing
+    if (id === 'all') {
+      router.push('/customer/collection');
+      return;
+    }
+
+    // If we have a dedicated page for this collection id, navigate there
+    if (typeof id === 'number' && collectionPaths[id]) {
+      router.push(collectionPaths[id]);
+      return;
+    }
+    // Otherwise stay on this page and let the product fetch handle filtering
   };
 
   return (
@@ -112,7 +138,7 @@ export default function CollectionPage() {
         ) : (
           products.map((product) => (
             <div key={product.id} className={styles.productCard}>
-              <Link href={`/customer/bouquet/${product.id}`}> {/* Link tới chi tiết */}
+              <Link href={`/customer/bouquet/${product.id}`}>
                 <div className={styles.imageWrapper}>
                   <img
                     src={getImageUrl(product.image)}

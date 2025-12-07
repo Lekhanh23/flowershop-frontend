@@ -13,7 +13,11 @@ interface Product {
   id: number;
   name: string;
   price: number;
+<<<<<<< HEAD
   image: string; // Tên file trong DB
+=======
+  image: string; 
+>>>>>>> 345826bbb82e49e080f0640b0235c8e3e1d4f231
   description?: string;
   isBestSeller?: boolean;
   occasion?: string; 

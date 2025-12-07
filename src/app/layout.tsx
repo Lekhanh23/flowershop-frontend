@@ -3,7 +3,10 @@ import './globals.css';
 import { Providers } from './providers'; // <-- Import file providers
 
 export const metadata = {
-  title: 'FlowerShop',
+  title: 'Blossom Flower Shop',
+  icons: {
+    icon: "/images/logo.png"
+  }
 };
 
 export default function RootLayout({
@@ -13,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning = {true}>
-      <body>
+      <body suppressHydrationWarning={true}>
         <Providers>{children}</Providers> {/* <-- File này chứa AuthProvider */}
       </body>
     </html>

@@ -1,4 +1,4 @@
-/* Hero Section */
+﻿/* Hero Section */
 .heroSection {
   background-color: #ffe8ee;
   position: relative;
@@ -11,10 +11,10 @@
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 680px) {
   .heroContainer {
     flex-direction: row;
     align-items: flex-start;
@@ -23,8 +23,8 @@
 
 .heroContent {
   flex: 1;
-  padding-top: 3rem;
-  padding-bottom: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
   position: relative;
   z-index: 10;
 }
@@ -40,8 +40,8 @@
   font-weight: 500;
   font-family: serif;
   color: #333;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.75rem;
 }
 
 @media (min-width: 640px) {
@@ -54,26 +54,26 @@
   font-size: 1.125rem;
   color: #ec6b8b;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .heroDescription {
   color: #666;
-  max-width: 28rem;
-  margin-bottom: 2rem;
+  max-width: 24rem;
+  margin-bottom: 1rem;
 }
 
 .heroButtons {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .heroPrimaryBtn {
   background-color: #ec6b8b;
   color: white;
   font-weight: 600;
-  padding: 0.75rem 2rem;
+  padding: 0.6rem 1.5rem;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -88,7 +88,7 @@
   border: 2px solid #ec6b8b;
   color: #ec6b8b;
   font-weight: 600;
-  padding: 0.75rem 2rem;
+  padding: 0.6rem 1.5rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -107,7 +107,7 @@
   flex: 1;
   position: relative;
   height: 400px;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 @media (min-width: 768px) {
@@ -129,49 +129,151 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Bestsellers Section */
+/* --- Bestsellers Section (SỬA ĐỔI LAYOUT VIEW ALL) --- */
 .bestsellersSection {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 4rem 1rem;
+  padding: 2.5rem 1rem;
+  display: flex; 
+  flex-direction: column;
+  align-items: flex-start; 
 }
 
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 2rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
   border-bottom: 2px solid #333;
   display: inline-block;
 }
 
-.productGrid {
+/* Đổi tên class cũ (productGrid) thành bestsellersProductGrid (chỉ chứa 4 ảnh) */
+.bestsellersProductGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  gap: 1rem;
+  width: 100%; 
+  margin-bottom: 2rem; 
+}
+
+/* Allow children to shrink inside grid columns and make product cards responsive */
+.bestsellersProductGrid > * {
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.productCard {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bestsellersProductGrid img,
+.productCard img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Stronger shrink rules: ensure no descendant can force column to grow */
+.bestsellersProductGrid, .bestsellersProductGrid * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.collectionGrid, .collectionGrid * {
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 
 @media (min-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(3, 1fr);
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
-  .productGrid {
-    grid-template-columns: repeat(4, 1fr);
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
   }
 }
 
-.viewAllCard {
+/* Make product cards equal-height and cap image height so cards stay uniform */
+.bestsellersProductGrid {
+  align-items: start;
+  grid-auto-rows: 1fr;
+}
+
+.productCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+}
+
+.productCardImage {
+  width: 100%;
+  height: 220px; /* default image box height on desktop */
+  overflow: hidden;
+}
+
+.productCardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (min-width: 1200px) {
+  .productCardImage { height: 260px; }
+}
+
+/* Ensure product meta (title, price) doesn't add unexpected width */
+.productCard .meta, .productCard .title, .productCard .price {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Ensure product card layout doesn't force extra width on desktop */
+.productCard {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.productCard > * {
+  flex: 0 1 auto;
+}
+
+@media (min-width: 1200px) {
+  /* extra-wide desktops: keep 4 columns and slightly reduce gap */
+  .bestsellersProductGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+/* VIEW ALL BLOCK MỚI - Đã sửa lỗi hiển thị khối trắng */
+.viewAllBlock { 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  aspect-ratio: 3 / 4;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
+  align-items: center; 
+  text-align: center;
+  justify-self: center; /* center the block inside its grid cell */
+  align-self: center;
+  
+  /* KHẮC PHỤC LỖI VIỀN/KHỐI TRẮNG */
+  padding: 0; 
+  border: none;
+  background-color: transparent;
 }
 
 .viewAllText {
@@ -187,7 +289,6 @@
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.5rem 1.5rem;
-  border: none;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -195,6 +296,7 @@
 .viewAllBtn:hover {
   background-color: #ec6b8b;
 }
+
 
 /* Collections Section */
 .collectionsSection {
@@ -220,19 +322,42 @@
 }
 
 .collectionTitleText {
-  letter-spacing: 0.15em;
+  letter-spacing: 0.08em;
 }
 
 .collectionGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+
+/* Ensure grid children can shrink and don't force columns to wrap */
+.collectionGrid > * {
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
   .collectionGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+/* Make collection cards/images fill their grid cell and keep aspect ratio */
+.collectionCard {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+}
+
+.collectionCardImage,
+.collectionCardImage img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .collectionCard {
