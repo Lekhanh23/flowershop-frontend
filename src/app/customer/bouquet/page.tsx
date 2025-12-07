@@ -215,7 +215,6 @@ export default function BouquetPage() {
             <div className={styles.productGrid}>
               {displayedProducts.map((product) => (
                 <div key={product.id} className={styles.productCard}>
-                  {/* --- SỬA ĐỔI QUAN TRỌNG: Thêm Link bao quanh nội dung --- */}
                   <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                     
                     <div className={styles.imageWrapper}>

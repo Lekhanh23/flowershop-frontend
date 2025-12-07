@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import styles from './page.module.css';
+import { getImageUrl } from '@/lib/utils';
 
 // --- CẤU HÌNH ---
 const BACKEND_URL = 'http://localhost:3000';
@@ -18,7 +19,7 @@ interface Product {
 // Giả lập dữ liệu các loại thiệp (Vì database chưa chắc có bảng cards)
 const CARD_OPTIONS = [
   { id: 'none', name: 'No Card', price: 0, image: 'https://placehold.co/150x150?text=No+Card' },
-  { id: 'cardA', name: 'Card A', price: 30000, image: 'https://placehold.co/150x150/e0e0e0/333?text=Card+A' }, // Thay ảnh thật của bạn
+  { id: 'cardA', name: 'Card A', price: 30000, image: '/images/card1.png' }, // Thay ảnh thật của bạn
   { id: 'cardB', name: 'Card B', price: 20000, image: 'https://placehold.co/150x150/d0d0d0/333?text=Card+B' },
   { id: 'cardC', name: 'Card C', price: 25000, image: 'https://placehold.co/150x150/c0c0c0/333?text=Card+C' },
 ];
@@ -80,14 +81,6 @@ export default function ProductDetailPage() {
   // Tính tổng tiền chỉ bao gồm giá sản phẩm và giá thiệp
   const totalPrice = (productPrice * quantity) + cardPrice;
 
-  // --- 3. HÀM XỬ LÝ ẢNH ---
-  const getImageUrl = (imageName: string) => {
-    if (!imageName) return "https://placehold.co/400x500?text=No+Image";
-    if (imageName.startsWith('http')) return imageName;
-    const cleanName = imageName.startsWith('/') ? imageName.slice(1) : imageName;
-    return `${BACKEND_URL}/img/${cleanName}`;
-  };
-
   // --- 4. HÀNH ĐỘNG ---
   const handleAddToCart = () => {
     if (!product) return;
@@ -119,7 +112,7 @@ export default function ProductDetailPage() {
 
   const handleBuyNow = () => {
     handleAddToCart(); // Thêm vào giỏ trước
-    router.push('/cart'); // Chuyển trang sang Cart
+    router.push('/customer/cart'); // Chuyển trang sang Cart
   };
 
   // --- RENDER ---

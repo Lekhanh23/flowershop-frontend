@@ -7,33 +7,22 @@ import styles from './page.module.css';
 // Cấu hình backend
 const BACKEND_URL = 'http://localhost:3000';
 
-// Định nghĩa kiểu dữ liệu cho Service (Thiệp/Dịch vụ)
-interface Service {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-}
-
-// Định nghĩa kiểu dữ liệu cho Product
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  description?: string;
-}
+// Data giả lập cho phần chọn Thiệp (Card) - Vì database chưa chắc có
+const CARD_OPTIONS = [
+  { id: 'cardA', name: 'Card A', price: 30000, img: 'https://placehold.co/150x150?text=Card+A' },
+  { id: 'cardB', name: 'Card B', price: 20000, img: 'https://placehold.co/150x150?text=Card+B' },
+  { id: 'cardC', name: 'Card C', price: 25000, img: 'https://placehold.co/150x150?text=Card+C' },
+];
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { id } = params; 
 
-  // State
-  const [product, setProduct] = useState<Product | null>(null);
-  const [cardOptions, setCardOptions] = useState<Service[]>([]); // State chứa danh sách thiệp từ DB
+  // State sản phẩm
+  const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // State UI người dùng chọn
   const [quantity, setQuantity] = useState(1);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null); // ID database là số
@@ -44,23 +33,14 @@ export default function ProductDetailPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // A. Gọi API lấy thông tin Sản phẩm
-        const prodRes = await fetch(`${BACKEND_URL}/api/products`);
-        const prodData = await prodRes.json();
-        const prodList = Array.isArray(prodData) ? prodData : prodData.data || [];
-        const foundProduct = prodList.find((p: any) => p.id == id);
-        setProduct(foundProduct);
-
-        // B. Gọi API lấy danh sách Thiệp (Services)
-        // Giả định bạn đã có API: http://localhost:3000/api/services trả về dữ liệu từ bảng services
-        const servRes = await fetch(`${BACKEND_URL}/api/services`);
-        if (servRes.ok) {
-          const servData = await servRes.json();
-          // Kiểm tra cấu trúc trả về là mảng hay object { data: [] }
-          setCardOptions(Array.isArray(servData) ? servData : servData.data || []);
-        }
-
+        // Gọi API lấy toàn bộ danh sách rồi tìm ID (hoặc gọi API chi tiết nếu có)
+        const res = await fetch(`${BACKEND_URL}/api/products`);
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : data.data || [];
+        
+        // Tìm sản phẩm trùng ID
+        const found = list.find((p: any) => p.id == id);
+        setProduct(found);
       } catch (error) {
         console.error("Lỗi tải dữ liệu:", error);
       } finally {
@@ -71,11 +51,10 @@ export default function ProductDetailPage() {
     if (id) fetchData();
   }, [id]);
 
-  // --- 2. HÀM XỬ LÝ ẢNH ---
+  // --- 2. HÀM XỬ LÝ ẢNH  ---
   const getImageUrl = (imageName: string) => {
     if (!imageName) return "https://placehold.co/500x600?text=No+Image";
     if (imageName.startsWith('http')) return imageName;
-    // Xử lý đường dẫn ảnh từ backend (thường lưu tên file)
     const cleanName = imageName.startsWith('/') ? imageName.slice(1) : imageName;
     return `${BACKEND_URL}/img/${cleanName}`;
   };
@@ -84,46 +63,21 @@ export default function ProductDetailPage() {
   const getTotalPrice = () => {
     if (!product) return 0;
     const itemPrice = Number(product.price) * quantity;
-    // Tìm giá thiệp trong danh sách cardOptions đã fetch được
-    const selectedCard = selectedCardId ? cardOptions.find(c => c.id === selectedCardId) : null;
-    const cardPrice = selectedCard ? Number(selectedCard.price) : 0;
+    const cardPrice = selectedCardId ? (CARD_OPTIONS.find(c => c.id === selectedCardId)?.price || 0) : 0;
     
+    // Đã xóa deliveryFee = 15000
     return itemPrice + cardPrice;
   };
 
   // --- 4. LƯU VÀO LOCALSTORAGE ---
   const handleAddToCart = () => {
-    if (!product) return;
-
-    // Tìm thiệp đã chọn từ danh sách thật
-    const selectedCard = selectedCardId ? cardOptions.find(c => c.id === selectedCardId) : null;
-
-    // Tạo object món hàng
-    const newItem = {
-        productId: product.id,
-        name: product.name,
-        price: Number(product.price),
-        image: product.image,
-        quantity: quantity,
-        card: selectedCard, // Lưu cả object card để hiển thị bên Cart
-        note: note,
-        totalItemPrice: getTotalPrice() 
-    };
-
-    // Lấy giỏ cũ & Thêm mới
-    const currentCartJson = localStorage.getItem('cart');
-    const currentCart = currentCartJson ? JSON.parse(currentCartJson) : [];
-    currentCart.push(newItem);
-
-    // Lưu lại
-    localStorage.setItem('cart', JSON.stringify(currentCart));
-
-    alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
+    alert(`Đã thêm ${product.name} vào giỏ!\nTổng: ${getTotalPrice().toLocaleString()}đ`);
+    // Code lưu vào localStorage ở đây nếu cần
   };
 
   const handleBuyNow = () => {
-    handleAddToCart(); 
-    router.push('/cart'); 
+    handleAddToCart();
+    router.push('/cart'); // Chuyển hướng sang trang Cart
   };
 
   if (loading) return <div className={styles.loading}>Đang tải dữ liệu...</div>;
@@ -145,15 +99,20 @@ export default function ProductDetailPage() {
           
           {/* Chỉ giữ lại ảnh chính */}
           <div className={styles.mainImageFrame}>
-            <img 
-              src={getImageUrl(product.image)} 
-              alt={product.name} 
-              className={styles.mainImg} 
-              onError={(e) => e.currentTarget.src = "https://placehold.co/500x600?text=No+Image"}
-            />
+            <img src={getImageUrl(product.image)} alt={product.name} className={styles.mainImg} />
           </div>
-          
-          {/* Đã xóa phần thumbnails (3 ảnh nhỏ) ở đây */}
+
+          <div className={styles.thumbnails}>
+            <div className={`${styles.thumb} ${styles.active}`}>
+              <img src={getImageUrl(product.image)} alt="" />
+            </div>
+            <div className={styles.thumb}>
+              <img src="https://placehold.co/100x100?text=2" alt="" />
+            </div>
+            <div className={styles.thumb}>
+              <img src="https://placehold.co/100x100?text=3" alt="" />
+            </div>
+          </div>
         </div>
 
         {/* --- CỘT PHẢI: THÔNG TIN --- */}
