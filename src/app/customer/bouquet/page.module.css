@@ -26,13 +26,18 @@
   text-align: center;
   margin-bottom: 60px;
 }
+
+/* --- SỬA FONT CHỮ TIÊU ĐỀ GIỐNG HÌNH MẪU --- */
 .pageTitle {
-  font-size: 32px;
-  letter-spacing: 2px;
-  font-weight: 400;
-  margin-bottom: 10px;
+  font-family: "Times New Roman", Times, serif; /* Font có chân sang trọng */
+  font-size: 42px; /* Kích thước lớn */
+  font-weight: 400; /* Nét thanh mảnh, không in đậm */
+  letter-spacing: 1.5px;
+  margin-bottom: 15px;
   text-transform: uppercase;
+  color: #000;
 }
+
 .subtitle {
   font-size: 16px;
   color: #666;
@@ -74,7 +79,7 @@
   padding: 15px 0;
   cursor: pointer;
   font-size: 15px;
-  user-select: none; /* Chặn bôi đen text khi click liên tục */
+  user-select: none;
 }
 .filterHeader:hover {
   color: #000;
@@ -99,7 +104,7 @@
   margin-right: 10px;
   width: 16px;
   height: 16px;
-  accent-color: #333; /* Màu đen cho checkbox khi tick */
+  accent-color: #333;
 }
 .resetBtn {
   margin-top: 20px;
@@ -118,10 +123,12 @@
 .mainContent {
   flex-grow: 1;
 }
+
+/* --- GRID 2 CỘT --- */
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive Grid */
-  gap: 40px 20px;
+  grid-template-columns: 1fr 1fr; /* Chia đều 2 cột */
+  gap: 40px; 
 }
 
 /* Card Sản phẩm */
@@ -132,7 +139,7 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  padding-top: 125%; /* Tỉ lệ khung hình 4:5 */
+  padding-top: 125%; /* Tỉ lệ 4:5 */
   background-color: #f9f9f9;
   overflow: hidden;
   margin-bottom: 15px;
@@ -147,7 +154,7 @@
   transition: transform 0.5s ease;
 }
 .imageWrapper:hover .productImage {
-  transform: scale(1.05); /* Zoom nhẹ khi hover */
+  transform: scale(1.05);
 }
 .productNameOnImage {
   position: absolute;
@@ -184,7 +191,7 @@
 }
 .bestSeller {
   font-size: 12px;
-  color: #bfa059; /* Màu vàng đồng */
+  color: #bfa059;
   font-weight: 600;
   margin-bottom: 5px;
   text-transform: uppercase;
@@ -215,6 +222,43 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* --- PHÂN TRANG (Pagination) --- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 60px;
+}
+.pageBtn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.pageBtn:hover:not(:disabled) {
+  border-color: #333;
+  color: #000;
+}
+.pageBtn.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+.pageBtn:disabled {
+  color: #ccc;
+  border-color: #eee;
+  cursor: not-allowed;
+}
+
 /* Responsive Mobile */
 @media (max-width: 768px) {
   .layoutWrapper {
@@ -223,7 +267,8 @@
   .sidebar {
     width: 100%;
   }
+  /* Trên mobile để 1 cột cho dễ nhìn */
   .productGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr; 
   }
 }
