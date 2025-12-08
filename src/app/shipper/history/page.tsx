@@ -1,72 +1,86 @@
-// src/app/shipper/history/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import api from "@/lib/api";
+import styles from "./page.module.css";
 
-type HistoryItem = {
+type HistoryOrder = {
   id: number;
-  order_code: string;
-  date: string;
-  status: string;
-  proof_url?: string;
+  total_amount: number;
+  address: string;
+  delivery_status: string;
+  order_date: string;
 };
 
 export default function HistoryPage() {
-  const [items, setItems] = useState<HistoryItem[]>([]);
-  const [range, setRange] = useState("30"); // 7,30,90 days
+  const [orders, setOrders] = useState<HistoryOrder[]>([]);
+  const [range, setRange] = useState("30");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/shipper/history?days=${range}`);
-        if (res.ok) {
-          setItems(await res.json());
-        } else {
-          // sample
-          setItems([
-            {id:1, order_code:"ORD-100", date:"2025-12-01", status:"Delivered", proof_url:"/images/sample-proof.jpg"},
-            {id:2, order_code:"ORD-90", date:"2025-11-25", status:"Delivery Failed"},
-          ]);
-        }
-      } catch (e) {
-        setItems([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    setLoading(true);
+    api.get(`/shipper/history?days=${range}`)
+      .then(res => setOrders(res.data))
+      .finally(() => setLoading(false));
   }, [range]);
 
   return (
-    <main className="max-w-3xl mx-auto p-4">
-      <header className="mb-4">
-        <h1 className="text-xl font-semibold">Delivery History</h1>
-        <p className="text-sm text-gray-500">Filter and review past deliveries</p>
-      </header>
-
-      <div className="flex gap-2 mb-4">
-        <button onClick={() => setRange("7")} className={`px-3 py-1 rounded ${range==="7" ? "bg-pink-500 text-white" : "bg-white border"}`}>7d</button>
-        <button onClick={() => setRange("30")} className={`px-3 py-1 rounded ${range==="30" ? "bg-pink-500 text-white" : "bg-white border"}`}>30d</button>
-        <button onClick={() => setRange("90")} className={`px-3 py-1 rounded ${range==="90" ? "bg-pink-500 text-white" : "bg-white border"}`}>90d</button>
-      </div>
-
-      {loading ? <div>Loading...</div> : (
-        <div className="space-y-3">
-          {items.length === 0 && <div className="text-sm text-gray-500">No records</div>}
-          {items.map(it => (
-            <article key={it.id} className="bg-white rounded-lg shadow p-3 flex items-center justify-between">
-              <div>
-                <div className="font-semibold">{it.order_code}</div>
-                <div className="text-xs text-gray-500">{it.date} • {it.status}</div>
-              </div>
-              {it.proof_url ? <Link href={it.proof_url}><img src={it.proof_url} alt="proof" className="w-16 h-16 object-cover rounded" /></Link> : null}
-            </article>
-          ))}
+    <main className={styles.container}>
+      <div className={styles.wrapper}>
+        <div className={styles.header}>
+            <h1 className={styles.title}>Lịch sử giao hàng</h1>
+            <div className={styles.filterGroup}>
+                {['7', '30', '90'].map(d => (
+                    <button 
+                        key={d}
+                        onClick={() => setRange(d)}
+                        className={`${styles.filterBtn} ${range === d ? styles.filterBtnActive : ''}`}
+                    >
+                        {d} ngày
+                    </button>
+                ))}
+            </div>
         </div>
-      )}
+
+        <div className={styles.tableContainer}>
+            <table className={styles.table}>
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Ngày đặt</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th style={{textAlign: 'right'}}>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {loading ? (
+                        <tr><td colSpan={5} style={{textAlign: 'center', padding: 30}}>Đang tải...</td></tr>
+                    ) : orders.length === 0 ? (
+                        <tr><td colSpan={5} style={{textAlign: 'center', padding: 30}}>Không có dữ liệu.</td></tr>
+                    ) : (
+                        orders.map(o => (
+                            <tr key={o.id} className={styles.tableRow}>
+                                <td><span className={styles.orderLink}>#{o.id}</span></td>
+                                <td>{new Date(o.order_date).toLocaleDateString()}</td>
+                                <td style={{maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                    {o.address || '---'}
+                                </td>
+                                <td>
+                                    <span className={`${styles.status} ${
+                                        o.delivery_status === 'delivered' ? styles.statusDelivered : styles.statusFailed
+                                    }`}>
+                                        {o.delivery_status}
+                                    </span>
+                                </td>
+                                <td className={styles.price}>{Number(o.total_amount).toLocaleString()}đ</td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+      </div>
     </main>
   );
 }

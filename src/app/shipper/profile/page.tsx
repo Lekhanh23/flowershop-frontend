@@ -1,124 +1,143 @@
-// src/app/shipper/profile/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import api from "@/lib/api";
+import styles from "./page.module.css"; // Import CSS Module
 
 type Profile = {
-  full_name?: string;
-  email?: string;
-  phone?: string;
-  vehicle_type?: string;
-  vehicle_plate?: string;
-  national_id?: string;
-  bank_account?: string;
+  id: number;
+  vehicleType: string;
+  vehiclePlate: string;
+  nationalId: string;
+  bankAccount: string;
+  status: 'available' | 'unavailable' | 'suspended';
+  user: {
+    full_name: string;
+    email: string;
+    phone: string;
+  };
 };
 
 export default function ShipperProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState(false);
 
   useEffect(() => {
-    async function load() {
+    const loadProfile = async () => {
       try {
-        const res = await fetch("/api/shipper/profile");
-        if (res.ok) setProfile(await res.json());
-      } catch {
-        setProfile({
-          full_name: "Jane Doe",
-          email: "shipper@example.com",
-          phone: "0912345678",
-          vehicle_type: "Motorbike",
-          vehicle_plate: "29H1-123.45",
-          national_id: "0123456789",
-          bank_account: "Bank of Example — 0123456 — Jane Doe",
-        });
+        const res = await api.get("/shipper/profile");
+        setProfile(res.data);
+      } catch (e) {
+        console.error(e);
       } finally {
         setLoading(false);
       }
-    }
-    load();
+    };
+    loadProfile();
   }, []);
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-pink-50 p-5">
-        <div className="max-w-xl mx-auto animate-pulse space-y-4">
-          <div className="h-20 bg-white rounded-xl" />
-          <div className="h-44 bg-white rounded-xl" />
-        </div>
-      </main>
-    );
-  }
+  const handleToggleStatus = async () => {
+    if (!profile) return;
+    setToggling(true);
+    const newStatus = profile.status === 'available' ? 'unavailable' : 'available';
+    try {
+      await api.patch("/shipper/profile/status", { status: newStatus });
+      setProfile({ ...profile, status: newStatus });
+    } catch (e) {
+      alert("Lỗi kết nối");
+    } finally {
+      setToggling(false);
+    }
+  };
+
+  if (loading) return <div className={styles.container}>Loading...</div>;
+
+  const isOnline = profile?.status === 'available';
 
   return (
-    <main className="min-h-screen bg-pink-50 p-5">
-      <div className="max-w-xl mx-auto">
+    <main className={styles.container}>
+      {/* HEADER */}
+      <div className={styles.header}>
+        <div>
+          <h1 className={styles.title}>Shipper Profile</h1>
+          <p className={styles.subtitle}>Personal information management</p>
+        </div>
+        
+        <div className={styles.statusGroup}>
+          <span className={`${styles.badge} ${isOnline ? styles.badgeOnline : styles.badgeOffline}`}>
+            {isOnline ? "● ONLINE" : "○ OFFLINE"}
+          </span>
+          <button 
+            onClick={handleToggleStatus}
+            disabled={toggling}
+            className={styles.toggleBtn}
+          >
+            {toggling ? "..." : (isOnline ? "Tắt trạng thái" : "Bật trạng thái")}
+          </button>
+        </div>
+      </div>
 
-        {/* PAGE TITLE */}
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">My Profile</h1>
-        <p className="text-sm text-gray-500 mb-4">Shipper account overview</p>
+      {/* SECTION 1: PERSONAL INFO */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.sectionTitle}>Thông tin cá nhân</h3>
+          <Link href="/shipper/profile/edit" className={styles.editLink}>Chỉnh sửa</Link>
+        </div>
+        
+        <table className={styles.table}>
+          <tbody>
+            <tr>
+              <td className={styles.labelCol}>Họ và tên</td>
+              <td className={styles.valueCol}>{profile?.user.full_name}</td>
+            </tr>
+            <tr>
+              <td className={styles.labelCol}>Email</td>
+              <td className={styles.valueCol}>{profile?.user.email}</td>
+            </tr>
+            <tr>
+              <td className={styles.labelCol}>Số điện thoại</td>
+              <td className={styles.valueCol}>{profile?.user.phone || "---"}</td>
+            </tr>
+            <tr>
+              <td className={styles.labelCol}>CCCD / CMND</td>
+              <td className={styles.valueCol}>{profile?.nationalId}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        {/* TOP CARD — NO AVATAR */}
-        <section className="bg-white rounded-2xl shadow p-5 mb-5">
+      {/* SECTION 2: VEHICLE & BANK */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.sectionTitle}>Phương tiện & Tài khoản</h3>
+        </div>
+        
+        <table className={styles.table}>
+          <tbody>
+            <tr>
+              <td className={styles.labelCol}>Loại xe</td>
+              <td className={styles.valueCol}>{profile?.vehicleType}</td>
+            </tr>
+            <tr>
+              <td className={styles.labelCol}>Biển số xe</td>
+              <td className={`${styles.valueCol} ${styles.highlight}`}>{profile?.vehiclePlate}</td>
+            </tr>
+            <tr>
+              <td className={styles.labelCol}>Tài khoản ngân hàng</td>
+              <td className={`${styles.valueCol} ${styles.highlight}`}>{profile?.bankAccount}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-          <h2 className="text-lg font-semibold text-gray-800">{profile?.full_name}</h2>
-          <p className="text-sm text-gray-600 mt-1">{profile?.email}</p>
-
-          {/* Buttons */}
-          <div className="mt-5 flex gap-3">
-            <Link
-              href="/shipper/profile/edit"
-              className="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-pink-100 text-pink-700 text-sm font-medium hover:bg-pink-200 transition"
-            >
-              Edit profile
-            </Link>
-
-            <Link
-              href="/shipper/profile/change-password"
-              className="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-pink-600 text-white text-sm font-medium hover:bg-pink-700 transition"
-            >
-              Change password
-            </Link>
-          </div>
-        </section>
-
-        {/* DETAILS CARD */}
-        <section className="bg-white rounded-2xl shadow p-5 mb-8">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Account details</h3>
-
-          <div className="space-y-4">
-            <Detail label="Full name" value={profile?.full_name} />
-            <Detail label="Email" value={profile?.email} />
-            <Detail label="Phone" value={profile?.phone} />
-
-            {/* Vehicle info */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-pink-50 rounded-xl">
-                <div className="text-xs text-gray-500">Vehicle</div>
-                <div className="text-sm font-medium text-gray-800">{profile?.vehicle_type}</div>
-              </div>
-
-              <div className="p-3 bg-pink-50 rounded-xl">
-                <div className="text-xs text-gray-500">Plate</div>
-                <div className="text-sm font-medium text-gray-800">{profile?.vehicle_plate}</div>
-              </div>
-            </div>
-
-            <Detail label="National ID" value={profile?.national_id} />
-            <Detail label="Bank account" value={profile?.bank_account} />
-          </div>
-        </section>
+      {/* FOOTER */}
+      <div className={styles.footer}>
+        <Link href="/shipper/profile/change-password" className={styles.passwordBtn}>
+          Đổi mật khẩu
+        </Link>
       </div>
     </main>
-  );
-}
-
-function Detail({ label, value }: { label: string; value?: string }) {
-  return (
-    <div>
-      <div className="text-xs text-gray-500">{label}</div>
-      <div className="text-sm font-medium text-gray-800">{value ?? "—"}</div>
-    </div>
   );
 }

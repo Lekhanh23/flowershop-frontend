@@ -4,6 +4,7 @@ import { useState, ChangeEvent, FormEvent, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import styles from "./page.module.css";
+import api from "@/lib/api";
 
 // Interface matches shipper_applications table schema
 interface ShipperApplicationForm {
@@ -112,34 +113,16 @@ export default function ShipperJoinPage() {
     try {
       // Create FormData for multipart/form-data submission
       const data = new FormData();
-
-      // Append user_id (from auth context)
-      if (user?.id) {
-        data.append("user_id", String(user.id));
-      }
-
-      // Append application_data as JSON
       data.append("application_data", JSON.stringify(formData.application_data));
-
-      // Append resume_text
       data.append("resume_text", formData.resume_text);
-
-      // Append documents
-      for (let i = 0; i < formData.documents.length; i++) {
-        data.append("documents", formData.documents[i]);
+      if(formData.documents) {
+        for(let i = 0; i < formData.documents.length; i++) {
+          data.append("documents", formData.documents[i]);
+        }
       }
 
       // POST to API endpoint
-      const res = await fetch("/api/shipper/applications", {
-        method: "POST",
-        body: data,
-        // NOTE: Do NOT set Content-Type header - browser will set it with correct boundary
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ message: "Submission failed" }));
-        throw new Error(err.message || "Failed to submit application");
-      }
+      const res = await api.post("/shipper/apply", data);
 
       setNotification({
         type: "success",
@@ -161,8 +144,9 @@ export default function ShipperJoinPage() {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "An error occurred while submitting.";
+    } catch (error: any) {
+      console.error(error);
+      const errorMessage = error.response?.data?.message || "An error occured while submitting";
       setNotification({
         type: "error",
         message: errorMessage,

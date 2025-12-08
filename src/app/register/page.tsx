@@ -1,9 +1,9 @@
-// src/app/register/page.tsx
 "use client";
 
 import React, { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api"; 
 
 const BG =
   "https://www.odealarose.com/media/cache/1920_1080_webp/build/images/flower-delivery.webp";
@@ -29,40 +29,36 @@ export default function RegisterPage() {
     e.preventDefault();
     setErr("");
 
+    // Validate client-side
     if (form.password !== form.confirm_password) {
-      setErr("Passwords do not match.");
+      setErr("Mật khẩu xác nhận không khớp.");
       return;
     }
 
     if (form.password.length < 6) {
-        setErr("Password must be at least 6 characters.");
+        setErr("Mật khẩu phải có ít nhất 6 ký tự.");
         return;
     }
 
     setLoading(true);
     try {
-    const res = await fetch("http://localhost:3000/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-    full_name: form.full_name.trim(),
-    email: form.email.trim(),
-    phone: form.phone.trim(),
-    address: form.address.trim(),
-    password: form.password,
-  }),
-});
+      const response = await api.post("auth/register", {
+        full_name: form.full_name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        address: form.address.trim(),
+        password: form.password,
+      });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setErr(data?.message || "Registration failed. Please try again.");
-        setLoading(false);
-        return;
-      }
-
+      // Nếu không có lỗi, chuyển hướng sang login
       router.push("/login?registered=1");
-    } catch (e) {
-      setErr("Server error. Please try again.");
+      
+    } catch (e: any) {
+      console.error("Register Error:", e);
+      // Lấy thông báo lỗi từ Backend trả về
+      const msg = e.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại.";
+      setErr(msg);
+    } finally {
       setLoading(false);
     }
   }
@@ -89,7 +85,6 @@ export default function RegisterPage() {
           backgroundRepeat: "no-repeat",
           padding: 0,
           margin: 0,
-          // prevent page body from adding extra scroll gap
           boxSizing: "border-box",
         }}
       >
@@ -112,6 +107,7 @@ export default function RegisterPage() {
                   onChange={(e) => update("full_name", e.target.value)}
                   required
                   autoFocus
+                  placeholder="Nguyễn Văn A"
                 />
               </div>
 
@@ -127,6 +123,7 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={(e) => update("email", e.target.value)}
                   required
+                  placeholder="email@example.com"
                 />
               </div>
             </div>
@@ -134,7 +131,7 @@ export default function RegisterPage() {
             <div className="form-row">
               <div className="form-col">
                 <label className="register-label" htmlFor="phone">
-                  Phone
+                  Phone Number
                 </label>
                 <input
                   className="register-input"
@@ -142,6 +139,7 @@ export default function RegisterPage() {
                   name="phone"
                   value={form.phone}
                   onChange={(e) => update("phone", e.target.value)}
+                  placeholder="0901234567"
                 />
               </div>
 
@@ -155,6 +153,7 @@ export default function RegisterPage() {
                   name="address"
                   value={form.address}
                   onChange={(e) => update("address", e.target.value)}
+                  placeholder="Số nhà, đường, quận..."
                 />
               </div>
             </div>
@@ -172,6 +171,7 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
                   required
+                  placeholder="••••••"
                 />
               </div>
 
@@ -187,6 +187,7 @@ export default function RegisterPage() {
                   value={form.confirm_password}
                   onChange={(e) => update("confirm_password", e.target.value)}
                   required
+                  placeholder="••••••"
                 />
               </div>
             </div>
@@ -197,19 +198,19 @@ export default function RegisterPage() {
           </form>
 
           <hr className="register-divider" />
-          <div className="register-new-title">Already have an account?</div>
+          <div className="register-new-title">You already have an account?</div>
           <div style={{ textAlign: "center", marginTop: 8 }}>
             <button
               className="register-create-btn"
               onClick={() => router.push("/login")}
               aria-label="Sign in"
             >
-              <div style={{ fontSize: 12 }}>Sign<br />in</div>
+              <div style={{ fontSize: 12 }}>Sign<br />In</div>
             </button>
           </div>
         </div>
 
-        {/* Scoped CSS - compact to avoid vertical scroll */}
+        {/* CSS Styles */}
         <style jsx>{`
           :global(html, body) {
             height: 100%;
@@ -226,11 +227,10 @@ export default function RegisterPage() {
             border-radius: 6px;
             max-width: 720px;
             width: 100%;
-            padding: 22px 28px; /* reduced padding */
+            padding: 22px 28px;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-            /* make sure box fits into most viewports without page scroll */
             max-height: calc(100vh - 48px);
-            overflow: hidden; /* hide any accidental overflow */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -238,11 +238,12 @@ export default function RegisterPage() {
 
           .register-title {
             font-family: "Playfair Display", serif;
-            font-size: 30px; /* slightly smaller */
+            font-size: 30px;
             font-weight: 700;
             letter-spacing: 1px;
             text-align: center;
             margin-bottom: 14px;
+            text-transform: uppercase;
           }
 
           .register-label {
@@ -250,7 +251,8 @@ export default function RegisterPage() {
             color: #222;
             margin-bottom: 6px;
             display: block;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
           }
 
           .register-input {
@@ -258,16 +260,18 @@ export default function RegisterPage() {
             padding: 8px 10px;
             margin-bottom: 10px;
             border-radius: 4px;
-            border: 1px solid #222;
+            border: 1px solid #ccc;
             font-size: 14px;
             background: #fff;
             box-sizing: border-box;
-            height: 36px;
+            height: 40px;
+            transition: border 0.2s;
           }
 
           .register-input:focus {
             outline: none;
-            border-color: #e75480;
+            border-color: #d81b60; /* Màu hồng chủ đạo */
+            border-width: 1.5px;
           }
 
           .register-btn {
@@ -278,14 +282,21 @@ export default function RegisterPage() {
             color: #fff;
             border: none;
             border-radius: 24px;
-            padding: 8px 0;
+            padding: 10px 0;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s;
           }
 
           .register-btn:hover {
-            background: #e75480;
+            background: #d81b60;
+          }
+
+          .register-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
           }
 
           .register-divider {
@@ -297,9 +308,9 @@ export default function RegisterPage() {
 
           .register-new-title {
             font-family: "Playfair Display", serif;
-            font-size: 12px;
+            font-size: 13px;
             font-style: italic;
-            color: #222;
+            color: #555;
             margin-bottom: 6px;
             text-align: center;
           }
@@ -314,28 +325,33 @@ export default function RegisterPage() {
             border: 1.5px solid #222;
             border-radius: 50%;
             padding: 4px;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
           }
 
           .register-create-btn:hover {
-            background: #e75480;
+            background: #d81b60;
             color: #fff;
-            border-color: #e75480;
+            border-color: #d81b60;
           }
 
           .error {
-            color: #e75480;
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 8px;
+            border-radius: 4px;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-size: 13px;
+            font-weight: 500;
           }
 
           .form-row {
             display: flex;
-            gap: 18px;
-            margin-bottom: 0;
+            gap: 20px;
+            margin-bottom: 5px;
           }
 
           .form-col {
@@ -344,20 +360,24 @@ export default function RegisterPage() {
             flex-direction: column;
           }
 
-          @media (max-width: 900px) {
+          @media (max-width: 768px) {
             .register-box {
-              padding: 16px;
-              max-height: calc(100vh - 32px);
+              padding: 20px;
+              max-height: none;
+              border-radius: 0;
+              border: none;
+              height: 100vh;
+              overflow-y: auto;
             }
             .form-row {
               flex-direction: column;
-              gap: 8px;
+              gap: 0;
             }
             .register-btn {
               width: 100%;
             }
             .register-title {
-              font-size: 20px;
+              font-size: 24px;
             }
           }
         `}</style>

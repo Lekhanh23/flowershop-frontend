@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else if(userData.role === 'customer') {
         router.push('/customer/homepage');
       } else if(userData.role === 'shipper') {
-        router.push('shipper/my-shipment');
+        router.push('/shipper');
       } else {
         router.push('/')
       }

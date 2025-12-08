@@ -1,67 +1,69 @@
-// src/app/shipper/assigned/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import api from "@/lib/api";
+import styles from "./page.module.css";
 
-type OrderSummary = {
+type Order = {
   id: number;
-  order_code: string;
-  address: string;
-  eta?: string;
-  status: string;
-  customer_phone?: string;
-  items_count?: number;
+  total_amount: number;
+  delivery_status: string;
+  user: { full_name: string; phone: string; address: string };
+  order_date: string;
 };
 
 export default function AssignedPage() {
-  const [orders, setOrders] = useState<OrderSummary[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/shipper/assigned");
-        if (res.ok) setOrders(await res.json());
-        else setOrders([]);
-      } catch (e) {
-        setOrders([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    api.get("/shipper/assigned")
+      .then(res => setOrders(res.data))
+      .catch(() => setOrders([]))
+      .finally(() => setLoading(false));
   }, []);
 
+  if (loading) return <div style={{padding: 40, textAlign: 'center'}}>Đang tải...</div>;
+
   return (
-    <main className="max-w-3xl mx-auto">
-      <header className="mb-4">
-        <h1 className="text-xl font-semibold">Assigned Deliveries</h1>
-        <p className="text-sm text-gray-500">Tap an order to view details</p>
-      </header>
+    <main className={styles.container}>
+      <div className={styles.wrapper}>
+        <h1 className={styles.headerTitle}>Đơn hàng cần giao ({orders.length})</h1>
 
-      {loading ? <div>Loading...</div> : (
-        <div className="space-y-3">
-          {orders.length === 0 && <div className="text-sm text-gray-500">No assigned orders.</div>}
-          {orders.map(o => (
-            <article key={o.id} className="bg-white rounded-lg shadow p-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-xs text-gray-400">Order</div>
-                  <div className="font-semibold">{o.order_code}</div>
-                  <div className="text-sm text-gray-600 mt-1">{o.address}</div>
-                  <div className="text-xs text-gray-400 mt-1">ETA: {o.eta ?? "-"}</div>
-                </div>
-
-                <div className="flex flex-col items-end gap-2">
-                  <a href={`tel:${o.customer_phone}`} className="text-sm text-gray-600 border px-3 py-1 rounded">Call</a>
-                  <Link href={`/shipper/orders/${o.id}`} className="bg-pink-500 text-white px-3 py-1 rounded text-sm">Manage</Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+        {orders.length === 0 ? (
+            <div className={styles.emptyState}>Chưa có đơn hàng mới.</div>
+        ) : (
+            <div className={styles.list}>
+                {orders.map(order => (
+                    <div key={order.id} className={styles.card}>
+                        <div className={styles.infoCol}>
+                            <div className={styles.headerRow}>
+                                <span className={styles.orderId}>#{order.id}</span>
+                                <span className={styles.statusBadge}>
+                                    {order.delivery_status?.replace('_', ' ') || 'Assigned'}
+                                </span>
+                                <span className={styles.date}>{new Date(order.order_date).toLocaleDateString()}</span>
+                            </div>
+                            <div className={styles.address}>{order.user?.address || "Địa chỉ khách hàng"}</div>
+                            <div className={styles.customer}>
+                                {order.user?.full_name} • <span className={styles.phone}>{order.user?.phone}</span>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.actionCol}>
+                            <div className={styles.price}>
+                                {Number(order.total_amount).toLocaleString()}đ
+                            </div>
+                            <Link href={`/shipper/orders/${order.id}`} className={styles.detailBtn}>
+                                Chi tiết
+                            </Link>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )}
+      </div>
     </main>
   );
 }

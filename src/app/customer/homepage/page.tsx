@@ -129,7 +129,7 @@ export default function HomePage() {
           <div className={styles.heroImage}>
             <div className="relative w-full h-full">
                 <img 
-                src="/images/home_banner.jpg" 
+                src="/images/image.png" 
                 alt="Banner" 
                 className="object-cover w-full h-full rounded-lg shadow-lg"
                 onError={(e) => e.currentTarget.src = "https://images.unsplash.com/photo-1562690868-60bbe7293e94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"}

@@ -1,104 +1,141 @@
-// src/app/shipper/orders/[id]/page.tsx
 "use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 import Link from "next/link";
+import styles from "./page.module.css";
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
   const router = useRouter();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const fileRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`/api/shipper/orders/${id}`);
-        if (res.ok) setOrder(await res.json());
-      } catch (e) {
-        // fallback sample
-        setOrder({
-          id,
-          order_code: `ORD-${id}`,
-          customer_name: "Nguyen Van A",
-          customer_phone: "090xxx",
-          address: "123 Example St",
-          notes: "Leave at gate",
-          items: [{name:"Red Roses", qty:1}],
-          status: "Ready to Pick up",
-        });
-      } finally { setLoading(false); }
-    }
-    load();
-  }, [id]);
+    api.get(`/shipper/orders/${params.id}`)
+      .then(res => setOrder(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [params.id]);
 
-  async function updateStatus(nextStatus: string, proof?: File) {
-    if (!order) return;
-    if (nextStatus === "Delivered" && !proof) {
-      fileRef.current?.click();
-      return;
-    }
-
-    const fd = new FormData();
-    fd.append("status", nextStatus);
-    if (proof) fd.append("proof", proof);
+  const handleUpdateStatus = async (status: string, file?: File) => {
+    const formData = new FormData();
+    formData.append("status", status);
+    if (file) formData.append("proof", file);
 
     setUploading(true);
     try {
-      const res = await fetch(`/api/shipper/orders/${order.id}/status`, { method: "POST", body: fd });
-      if (res.ok) {
-        setOrder({...order, status: nextStatus});
-        if (nextStatus === "Delivered") router.push("/shipper/assigned");
-      } else {
-        alert("Failed");
-      }
+        await api.post(`/shipper/orders/${params.id}/status`, formData);
+        alert("Cập nhật thành công!");
+        if (status === 'delivered') router.push('/shipper/assigned');
+        else window.location.reload();
     } catch (e) {
-      alert("Network error");
-    } finally { setUploading(false); }
-  }
+        alert("Lỗi cập nhật.");
+    } finally {
+        setUploading(false);
+    }
+  };
 
-  function onProof(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (f) updateStatus("Delivered", f);
-  }
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+        if (confirm("Xác nhận đã giao hàng thành công?")) {
+            handleUpdateStatus("delivered", e.target.files[0]);
+        }
+    }
+  };
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!order) return <div className="p-4">Order not found</div>;
+  if (loading) return <div style={{padding: 40, textAlign: 'center'}}>Loading...</div>;
+  if (!order) return <div style={{padding: 40, textAlign: 'center'}}>Không tìm thấy đơn hàng.</div>;
+
+  // Xử lý status theo logic database của bạn
+  // Enum: assigned, picked_up, in_transit, delivered
+  const currentStatus = order.delivery_status; 
 
   return (
-    <main className="max-w-3xl mx-auto p-4">
-      <Link href="/shipper/assigned" className="text-sm text-pink-600">← Back</Link>
-      <h1 className="text-xl font-semibold mt-3">{order.order_code}</h1>
-      <div className="text-sm text-gray-500 mb-3">{order.status}</div>
+    <main className={styles.container}>
+      <div className={styles.wrapper}>
+        <Link href="/shipper/assigned" className={styles.backLink}>&larr; Quay lại danh sách</Link>
 
-      <section className="bg-white rounded-lg shadow p-4 mb-3">
-        <div className="font-semibold">Customer</div>
-        <div className="text-sm mt-1">{order.customer_name} • <a href={`tel:${order.customer_phone}`} className="text-pink-600">{order.customer_phone}</a></div>
-        <div className="text-sm text-gray-600 mt-1">{order.address}</div>
-        {order.notes && <div className="text-sm text-gray-600 mt-1">Notes: {order.notes}</div>}
-      </section>
+        {/* INFO CARD */}
+        <div className={styles.card}>
+            <div className={styles.cardHeader}>
+                <div>
+                    <h1 className={styles.orderTitle}>Đơn hàng #{order.id}</h1>
+                    <div className={styles.orderTime}>{new Date(order.created_at || order.order_date).toLocaleString()}</div>
+                </div>
+                <span className={styles.statusBadge}>
+                    {currentStatus?.replace('_', ' ')}
+                </span>
+            </div>
+            
+            <div className={styles.cardBody}>
+                {/* Customer */}
+                <div className={styles.infoBlock}>
+                    <div className={styles.label}>Khách hàng</div>
+                    <div className={styles.value}>{order.user?.full_name}</div>
+                    <a href={`tel:${order.user?.phone}`} className={styles.link}>{order.user?.phone}</a>
+                </div>
 
-      <section className="bg-white rounded-lg shadow p-4 mb-3">
-        <div className="font-semibold">Items</div>
-        <ul className="mt-2 space-y-1">
-          {order.items.map((it:any,i:number) => <li key={i} className="text-sm">{it.qty}× {it.name}</li>)}
-        </ul>
-      </section>
+                {/* Address */}
+                <div className={styles.infoBlock}>
+                    <div className={styles.label}>Địa chỉ giao hàng</div>
+                    <div className={styles.addressBox}>{order.user?.address || "Không có địa chỉ"}</div>
+                </div>
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <button onClick={() => updateStatus("Picked Up")} className="py-2 rounded bg-white border text-sm">Picked Up</button>
-        <button onClick={() => updateStatus("Out for Delivery")} className="py-2 rounded bg-yellow-400 text-white text-sm">Out for Delivery</button>
-        <button onClick={() => fileRef.current?.click()} className="py-2 rounded bg-green-600 text-white text-sm">Delivered (Photo)</button>
-      </section>
+                {/* Items */}
+                <div className={styles.infoBlock}>
+                    <div className={styles.label}>Sản phẩm</div>
+                    <ul className={styles.itemList}>
+                        {order.items?.map((item: any) => (
+                            <li key={item.id} className={styles.itemRow}>
+                                <span>
+                                    <span className={styles.quantity}>{item.quantity}x</span> 
+                                    {item.product?.name}
+                                </span>
+                                <span>{Number(item.price).toLocaleString()}đ</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className={styles.totalRow}>
+                        <span>Tổng tiền</span>
+                        <span>{Number(order.total_amount).toLocaleString()}đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <div className="mt-3">
-        <button onClick={() => updateStatus("Delivery Failed")} className="w-full py-2 rounded border text-red-600">Delivery Failed / Request Reassignment</button>
+        {/* ACTIONS BUTTONS */}
+        <div className={styles.actionGrid}>
+            
+            {currentStatus === 'assigned' && (
+                <button onClick={() => handleUpdateStatus("picked_up")} className={`${styles.btn} ${styles.btnPrimary}`}>
+                    Đã lấy hàng (Picked Up)
+                </button>
+            )}
+
+            {currentStatus === 'picked_up' && (
+                <button onClick={() => handleUpdateStatus("in_transit")} className={`${styles.btn} ${styles.btnBlue}`}>
+                    Bắt đầu giao (In Transit)
+                </button>
+            )}
+
+            {(currentStatus === 'picked_up' || currentStatus === 'in_transit') && (
+                <button onClick={() => fileRef.current?.click()} className={`${styles.btn} ${styles.btnGreen}`}>
+                    {uploading ? "Đang tải ảnh..." : "✅ Giao thành công (Chụp ảnh)"}
+                </button>
+            )}
+
+            {currentStatus !== 'delivered' && currentStatus !== 'cancelled' && (
+                <button onClick={() => handleUpdateStatus("cancelled")} className={`${styles.btn} ${styles.btnDanger}`}>
+                    Hủy đơn / Giao thất bại
+                </button>
+            )}
+        </div>
+
+        <input type="file" ref={fileRef} accept="image/*" capture="environment" className={styles.hidden} onChange={onFileChange} />
       </div>
-
-      <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={onProof} className="hidden" />
     </main>
   );
 }
