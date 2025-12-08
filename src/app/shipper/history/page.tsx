@@ -7,9 +7,12 @@ import styles from "./page.module.css";
 type HistoryOrder = {
   id: number;
   total_amount: number;
-  address: string;
-  delivery_status: string;
+  deliveryStatus: string; 
   order_date: string;
+  user: { 
+    full_name: string;
+    address: string;
+  };
 };
 
 export default function HistoryPage() {
@@ -21,6 +24,7 @@ export default function HistoryPage() {
     setLoading(true);
     api.get(`/shipper/history?days=${range}`)
       .then(res => setOrders(res.data))
+      .catch(() => setOrders([]))
       .finally(() => setLoading(false));
   }, [range]);
 
@@ -62,15 +66,19 @@ export default function HistoryPage() {
                         orders.map(o => (
                             <tr key={o.id} className={styles.tableRow}>
                                 <td><span className={styles.orderLink}>#{o.id}</span></td>
-                                <td>{new Date(o.order_date).toLocaleDateString()}</td>
+                                <td>{new Date(o.order_date).toLocaleDateString('vi-VN')}</td>
+                                
+                                {/* [FIX QUAN TRỌNG] Lấy địa chỉ từ o.user.address */}
                                 <td style={{maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-                                    {o.address || '---'}
+                                    {o.user?.address || '---'} 
                                 </td>
+                                
                                 <td>
+                                    {/* [FIX QUAN TRỌNG] Lấy status từ o.deliveryStatus */}
                                     <span className={`${styles.status} ${
-                                        o.delivery_status === 'delivered' ? styles.statusDelivered : styles.statusFailed
+                                        o.deliveryStatus === 'delivered' ? styles.statusDelivered : styles.statusFailed
                                     }`}>
-                                        {o.delivery_status}
+                                        {o.deliveryStatus?.toUpperCase()}
                                     </span>
                                 </td>
                                 <td className={styles.price}>{Number(o.total_amount).toLocaleString()}đ</td>

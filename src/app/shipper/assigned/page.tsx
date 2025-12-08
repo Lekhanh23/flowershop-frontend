@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 type Order = {
   id: number;
   total_amount: number;
-  delivery_status: string;
+  deliveryStatus: string; // [FIX]: Sửa tên type
   user: { full_name: string; phone: string; address: string };
   order_date: string;
 };
@@ -24,7 +24,7 @@ export default function AssignedPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div style={{padding: 40, textAlign: 'center'}}>Đang tải...</div>;
+  if (loading) return <div className="p-10 text-center text-gray-500">Đang tải đơn hàng...</div>;
 
   return (
     <main className={styles.container}>
@@ -32,33 +32,40 @@ export default function AssignedPage() {
         <h1 className={styles.headerTitle}>Đơn hàng cần giao ({orders.length})</h1>
 
         {orders.length === 0 ? (
-            <div className={styles.emptyState}>Chưa có đơn hàng mới.</div>
+            <div className={styles.emptyState}>Không tìm thấy đơn hàng.</div>
         ) : (
             <div className={styles.list}>
                 {orders.map(order => (
                     <div key={order.id} className={styles.card}>
-                        <div className={styles.infoCol}>
-                            <div className={styles.headerRow}>
+                        <div className={styles.cardHeader}>
+                            <div>
                                 <span className={styles.orderId}>#{order.id}</span>
-                                <span className={styles.statusBadge}>
-                                    {order.delivery_status?.replace('_', ' ') || 'Assigned'}
+                                {/* [FIX]: Dùng deliveryStatus */}
+                                <span className={styles.statusBadge} style={{marginLeft: 8}}>
+                                    {order.deliveryStatus?.replace('_', ' ').toUpperCase()}
                                 </span>
-                                <span className={styles.date}>{new Date(order.order_date).toLocaleDateString()}</span>
                             </div>
+                            <span className={styles.date}>
+                                {new Date(order.order_date).toLocaleDateString('vi-VN')}
+                            </span>
+                        </div>
+
+                        <div className={styles.infoRow}>
                             <div className={styles.address}>{order.user?.address || "Địa chỉ khách hàng"}</div>
                             <div className={styles.customer}>
                                 {order.user?.full_name} • <span className={styles.phone}>{order.user?.phone}</span>
                             </div>
                         </div>
                         
-                        <div className={styles.actionCol}>
+                        <div className={styles.priceRow}>
                             <div className={styles.price}>
                                 {Number(order.total_amount).toLocaleString()}đ
                             </div>
-                            <Link href={`/shipper/orders/${order.id}`} className={styles.detailBtn}>
-                                Chi tiết
-                            </Link>
                         </div>
+
+                        <Link href={`/shipper/orders/${order.id}`} className={styles.detailBtn}>
+                            Chi tiết
+                        </Link>
                     </div>
                 ))}
             </div>

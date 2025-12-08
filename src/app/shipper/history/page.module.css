@@ -1,7 +1,7 @@
 .container {
     min-height: 100vh;
     background-color: #f8f9fa;
-    padding: 24px;
+    padding: 16px;
   }
   
   .wrapper {
@@ -52,7 +52,7 @@
     background: white;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
-    overflow: hidden;
+    overflow-x: auto;
     box-shadow: 0 2px 5px rgba(0,0,0,0.03);
   }
   

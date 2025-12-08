@@ -12,11 +12,9 @@ export default function ShipperHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // Load trạng thái từ API Profile
   useEffect(() => {
     async function load() {
       try {
-        // Gọi API lấy profile để biết trạng thái hiện tại
         const res = await api.get("/shipper/profile");
         if (res.data) {
           setAvailable(res.data.status === 'available');
@@ -28,7 +26,6 @@ export default function ShipperHeader() {
     load();
   }, []);
 
-  // Đóng menu khi click ra ngoài
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (!menuOpen) return;
@@ -40,18 +37,15 @@ export default function ShipperHeader() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [menuOpen]);
 
-  // Hàm Toggle trạng thái
   async function toggleAvailable() {
     const nextState = !available;
     const statusEnum = nextState ? 'available' : 'unavailable';
-    
-    // Optimistic Update (Cập nhật UI trước cho nhanh)
     setAvailable(nextState);
 
     try {
       await api.patch("/shipper/profile/status", { status: statusEnum });
     } catch (e) {
-      setAvailable(!nextState); // Revert nếu lỗi
+      setAvailable(!nextState);
       alert("Lỗi cập nhật trạng thái");
     }
   }
@@ -80,6 +74,11 @@ export default function ShipperHeader() {
         {/* RIGHT ACTIONS */}
         <div className={styles.right}>
           
+          {/* Icon Chuông Thông Báo */}
+          <Link href="/shipper/notifications" className={styles.iconBtn} title="Thông báo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          </Link>
+
           {/* Status Toggle */}
           <div className={`${styles.statusBox} ${available ? styles.statusBoxActive : ''}`}>
             <span className={styles.statusDot} style={{ background: available ? "#22c55e" : "#9ca3af" }} />
@@ -111,7 +110,7 @@ export default function ShipperHeader() {
         <div ref={menuRef} className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
           <div className={styles.mobileMenuInner}>
              <div className={styles.mobileUserInfo}>
-                <div className={styles.mobileAvatar}>{user?.full_name?.charAt(0) || "S"}</div>
+                <div className={styles.mobileAvatar}>{user?.full_name?.charAt(0).toUpperCase() || "S"}</div>
                 <div>
                     <div className={styles.mobileName}>{user?.full_name}</div>
                     <div className={styles.mobileEmail}>{user?.email}</div>
@@ -121,6 +120,7 @@ export default function ShipperHeader() {
              <Link href="/shipper/assigned" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Assigned Orders</Link>
              <Link href="/shipper/history" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>History</Link>
              <Link href="/shipper/profile" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Profile</Link>
+             <Link href="/shipper/notifications" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Notifications</Link>
              <hr className={styles.divider}/>
              <button className={`${styles.mobileLink} ${styles.logoutLink}`} onClick={() => { logout?.(); setMenuOpen(false); }}>
                 Log Out

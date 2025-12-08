@@ -62,7 +62,7 @@ export default function ShipperDashboardPage() {
             <div className={styles.card}>
                 <div className={styles.cardHeader}>
                     <div>
-                        <span className={styles.cardLabel}>Tổng thu nhập (20%)</span>
+                        <span className={styles.cardLabel}>Tổng thu nhập (10%)</span>
                         <div className={`${styles.cardValue} ${styles.textBlue}`}>
                             {Number(stats.totalIncome).toLocaleString()}đ
                         </div>
