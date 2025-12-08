@@ -1,261 +1,191 @@
-/* Container chính */
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #333;
-  min-height: 60vh;
+  min-height: 80vh;
 }
 
-/* --- TRẠNG THÁI CHƯA ĐĂNG NHẬP --- */
-.guestContainer {
+.loading {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.pageHeader h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.layout {
+  display: flex;
+  gap: 40px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  border-right: 1px solid #eee;
+  padding-right: 20px;
+}
+
+.avatarCircle {
+  width: 80px;
+  height: 80px;
+  background: #fce4ec;
+  color: #e75480;
+  font-size: 2rem;
+  font-family: "Playfair Display", serif;
+  display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 60px 0;
-}
-.guestTitle {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 36px;
-  margin-bottom: 20px;
-  color: #000;
-}
-.guestText {
-  color: #666;
-  margin-bottom: 30px;
-  font-size: 16px;
-}
-.authButtonGroup {
-  display: flex;
-  gap: 20px;
-}
-.authBtn {
-  padding: 12px 30px;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
-  border: 1px solid #333;
-  transition: all 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.loginBtn {
-  background-color: #333;
-  color: #fff;
-}
-.loginBtn:hover {
-  background-color: #555;
-  border-color: #555;
-}
-.registerBtn {
-  background-color: #fff;
-  color: #333;
-}
-.registerBtn:hover {
-  background-color: #f5f5f5;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  font-weight: bold;
 }
 
-/* --- TRẠNG THÁI ĐÃ ĐĂNG NHẬP --- */
-.headerSection {
-  text-align: center;
-  margin-bottom: 50px;
-}
-.pageTitle {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 42px;
-  font-weight: 400;
-  letter-spacing: 1.5px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  color: #000;
-}
-.subtitle {
-  color: #666;
-  font-style: italic;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 18px;
-}
-
-/* Layout chia 2 cột: Trái (Thông tin) - Phải (Đơn hàng) */
-.profileWrapper {
-  display: flex;
-  gap: 50px;
-  align-items: flex-start;
-}
-.leftColumn {
-  flex: 1;
-  background: #fdfdfd;
-  padding: 30px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-}
-.rightColumn {
-  flex: 1.5;
-}
-
-/* Form Styles */
-.sectionTitle {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 24px;
-  margin-bottom: 25px;
-  border-bottom: 2px solid #ffd1dc; /* Màu hồng phấn */
-  padding-bottom: 10px;
-  display: inline-block;
-}
-
-.formGroup {
-  margin-bottom: 20px;
-}
-.label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
-}
-.input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 15px;
-  transition: border-color 0.2s;
-}
-.input:focus {
-  outline: none;
-  border-color: #333;
-}
-.input:disabled {
-  background-color: #f9f9f9;
-  color: #999;
-}
-
-.saveBtn {
-  background-color: #333;
-  color: #fff;
-  border: none;
-  padding: 12px 25px;
-  font-size: 14px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: background 0.3s;
-  margin-top: 10px;
-}
-.saveBtn:hover {
-  background-color: #555;
-}
-
-/* Divider giữa 2 form */
-.divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 40px 0;
-}
-
-/* --- ORDER HISTORY --- */
-.orderList {
+.navMenu {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
-.orderCard {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 20px;
-  background: #fff;
-  transition: box-shadow 0.3s;
+
+.navMenu button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #666;
+  transition: 0.2s;
+  border-radius: 6px;
 }
-.orderCard:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+
+.navMenu button:hover {
+  background-color: #f5f5f5;
+  color: #000;
 }
-.orderHeader {
+
+.navMenu button.active {
+  background-color: #fce4ec;
+  color: #e75480;
+  font-weight: 600;
+}
+
+.logoutBtn {
+  margin-top: 20px;
+  color: #d32f2f !important;
+}
+
+/* CONTENT */
+.content {
+  flex-grow: 1;
+}
+
+.tabBox h2 {
+  font-family: "Playfair Display", serif;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.boxHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.infoView p {
   margin-bottom: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px dashed #eee;
+  font-size: 1rem;
+  line-height: 1.6;
 }
-.orderId {
-  font-weight: bold;
-  font-size: 16px;
-}
-.orderDate {
+
+.infoView strong {
+  display: inline-block;
+  width: 120px;
   color: #888;
-  font-size: 14px;
-}
-.orderBody {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.orderTotal {
-  font-size: 15px;
   font-weight: 500;
 }
-.orderTotal span {
-  color: #d32f2f; /* Màu đỏ cho giá tiền */
-  font-size: 18px;
+
+/* FORM */
+.formGroup {
+  margin-bottom: 15px;
 }
 
-/* Status Badges */
-.statusBadge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.statusPending {
-  background-color: #fff8e1;
-  color: #ffa000;
-}
-.statusShipped {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-.statusDelivered {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-.statusCancelled {
-  background-color: #ffebee;
-  color: #d32f2f;
-}
-
-.viewDetailBtn {
-  margin-top: 15px;
-  font-size: 13px;
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
   color: #666;
-  text-decoration: underline;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .profileWrapper {
-    flex-direction: column;
-  }
-  .leftColumn, .rightColumn {
-    width: 100%;
-  }
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
-.logoutLink {
-  margin-top: 10px;
-  background: none;
+
+.btnRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.saveBtn, .editBtn {
+  background: #222;
+  color: #fff;
   border: none;
-  color: #d32f2f;
-  text-decoration: underline;
+  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
-.logoutLink:hover {
-  color: #b71c1c;
+
+.saveBtn:hover, .editBtn:hover {
+  background: #e75480;
+}
+
+.cancelBtn {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ALERT */
+.alertSuccess, .alertError {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.alertSuccess {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.alertError {
+  background: #ffebee;
+  color: #c62828;
 }

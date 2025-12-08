@@ -1,0 +1,256 @@
+/* Import fonts giống thiết kế: Playfair Display (Tiêu đề) và Inter (Nội dung) */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap');
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 50px 20px;
+  font-family: 'Inter', sans-serif;
+  color: #444;
+  background-color: #fff;
+}
+
+/* Tiêu đề chính trang web (Font có chân sang trọng) */
+.pageTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 50px;
+  color: #111;
+}
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 60px; /* Khoảng cách giữa 2 cột lớn hơn */
+}
+
+/* --- LEFT COLUMN --- */
+.leftColumn {
+  flex: 1.2;
+  min-width: 320px;
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: #111;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.inputGroup {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Input Styles: Viền mờ, bo góc nhẹ */
+.inputGroup input,
+.inputGroup textarea {
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  outline: none;
+  background: #fff;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+  color: #999;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  border-color: #aaa;
+}
+
+/* --- RIGHT COLUMN (ORDER BOX) --- */
+.rightColumn {
+  flex: 0.8;
+  min-width: 300px;
+}
+
+/* Box viền hồng giống thiết kế */
+.orderBox {
+  border: 2px solid #ea85a8; /* Màu hồng nhạt viền */
+  padding: 30px;
+  background-color: #fff;
+}
+
+.boxTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin-bottom: 25px;
+  color: #111;
+}
+
+/* Table styles */
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.orderTable th {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.orderTable td {
+  padding: 15px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.prodName {
+  color: #666;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.totalRow td {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.totalPrice {
+  font-weight: 700;
+}
+
+/* Payment Section */
+.paymentTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #111;
+}
+
+.paymentOption {
+  margin-bottom: 15px;
+}
+
+.radioRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.radioRow input[type="radio"] {
+  accent-color: #007bff; /* Màu xanh mặc định cho radio */
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.radioRow label {
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* QR Code Section */
+.qrContainer {
+  margin-top: 10px;
+  margin-left: 26px; /* Thụt vào thẳng hàng với text */
+}
+
+.qrNote {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+.qrImage {
+  max-width: 120px;
+  display: block;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Terms Checkboxes */
+.termsGroup {
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #555;
+}
+
+.checkboxRow input {
+  margin-top: 2px;
+}
+
+.checkboxRow a {
+  color: #e91e63; /* Link màu hồng */
+  text-decoration: underline;
+}
+
+/* Place Order Button */
+.submitBtn {
+  width: 100%;
+  background-color: #e91e63; /* Màu hồng đậm chủ đạo */
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submitBtn:hover {
+  background-color: #d81b60;
+}
+
+.submitBtn:disabled {
+  background-color: #ccc;
+}
+
+/* Footer Note */
+.footerNote {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #777;
+  line-height: 1.4;
+}
+
+.footerNote a {
+  color: #e91e63;
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
