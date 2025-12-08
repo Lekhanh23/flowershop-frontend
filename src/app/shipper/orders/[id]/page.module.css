@@ -1,0 +1,200 @@
+.container {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 24px;
+  }
+  
+  .wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .backLink {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  
+  .backLink:hover {
+    color: #d81b60;
+  }
+  
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  
+  .cardHeader {
+    padding: 20px;
+    background-color: #fafafa;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .orderTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: #333;
+    margin: 0;
+  }
+  
+  .orderTime {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  
+  .statusBadge {
+    padding: 6px 12px;
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid #bbdefb;
+  }
+  
+  .cardBody {
+    padding: 20px;
+  }
+  
+  /* INFO BLOCKS */
+  .infoBlock {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  
+  .value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .link {
+    color: #d81b60;
+    text-decoration: none;
+  }
+  
+  .addressBox {
+    background-color: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+  }
+  
+  /* ITEMS LIST */
+  .itemList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .itemRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 14px;
+  }
+  
+  .itemRow:last-child {
+    border-bottom: none;
+  }
+  
+  .quantity {
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  
+  .totalRow {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+    margin-top: 5px;
+    border-top: 1px solid #eee;
+    font-size: 16px;
+    font-weight: 800;
+    color: #d81b60;
+  }
+  
+  /* BUTTONS GRID */
+  .actionGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  @media (min-width: 600px) {
+    .actionGrid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .btn {
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  
+  .btnPrimary {
+    background-color: #d81b60;
+    color: white;
+  }
+  .btnPrimary:hover { background-color: #ad1457; }
+  
+  .btnBlue {
+    background-color: #1976d2;
+    color: white;
+  }
+  .btnBlue:hover { background-color: #1565c0; }
+  
+  .btnGreen {
+    background-color: #2e7d32;
+    color: white;
+  }
+  .btnGreen:hover { background-color: #1b5e20; }
+  
+  .btnOutline {
+    background-color: white;
+    border-color: #ccc;
+    color: #555;
+  }
+  .btnOutline:hover { background-color: #f5f5f5; }
+  
+  .btnDanger {
+    background-color: transparent;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+  }
+  .btnDanger:hover { background-color: #ffebee; }
+  
+  .hidden { display: none; }

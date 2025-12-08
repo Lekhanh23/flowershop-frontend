@@ -1,167 +1,108 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import api from "@/lib/api";
-import styles from "./page.module.css";
-import { formatPrice } from "@/lib/utils";
-
-// Hàm format ngày
-const formatDate = (dateString: string) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleString('en-GB', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
-  }).replace(',', '');
-};
+import styles from "./page.module.css"; // Import CSS Module
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]); // Thêm type any[] để tránh lỗi TS
-  const [shippers, setShippers] = useState<any[]>([]); 
+  // Khởi tạo mảng rỗng để tránh lỗi map undefined
+  const [orders, setOrders] = useState<any[]>([]); 
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    try {
-      const resOrders = await api.get('/orders/admin/all?limit=100');
-      setOrders(resOrders.data.data);
-
-      const resShippers = await api.get('/admin/users?role=shipper&limit=100');
-      setShippers(resShippers.data.data || []);
-      
-    } catch (error) {
-      console.error("Failed to fetch data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get("/orders/admin/all");
+        
+        // Kiểm tra cấu trúc trả về từ NestJS
+        if (res.data && Array.isArray(res.data.data)) {
+            setOrders(res.data.data);
+        } else if (Array.isArray(res.data)) {
+            setOrders(res.data);
+        } else {
+            setOrders([]);
+        }
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
-  const handleAssignShipper = async (orderId: number, shipperId: string) => {
-    if (!shipperId) return;
-    if (!confirm("Bạn muốn giao đơn này cho shipper đã chọn?")) return;
-
-    try {
-      await api.patch(`/orders/admin/${orderId}/assign`, { shipperId: Number(shipperId) });
-      alert("Đã giao việc thành công!");
-      fetchData(); 
-    } catch (error) {
-      alert("Lỗi khi gán đơn hàng");
+  // Helper để chọn class màu cho status
+  const getStatusClass = (status: string) => {
+    switch (status) {
+        case 'delivered': return styles.statusDelivered;
+        case 'shipped': return styles.statusShipped;
+        case 'cancelled': return styles.statusCancelled;
+        default: return styles.statusPending;
     }
   };
 
-  const handleStatusChange = async (id: number, newStatus: string) => {
-    try {
-      await api.patch(`/orders/admin/${id}/status`, { status: newStatus });
-      setOrders((prev: any) => prev.map((o: any) => 
-        o.id === id ? { ...o, status: newStatus } : o
-      ));
-    } catch (error) {
-      alert("Lỗi cập nhật trạng thái");
-    }
-  };
-
-  // --- Tìm các shipper đang bận (có đơn hàng trạng thái 'shipped') ---
-  const busyShipperIds = orders
-    .filter((o: any) => o.status === 'shipped' && o.shipper)
-    .map((o: any) => o.shipper.id);
-
-  if (loading) return <div className="p-8">Loading Orders...</div>;
+  if (loading) return <div className={styles.loading}>Loading data...</div>;
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <h1 className={styles.title}>Order Management</h1>
-
-      <div className={styles.tableWrap}>
+      
+      <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>STT</th>
-              <th>ID</th>
-              <th>CUSTOMER</th>
-              <th>TOTAL</th>
-              <th>SHIPPER</th> 
-              <th>STATUS</th>
-              <th>CREATED AT</th>
-              <th>ACTION</th>
+              <th>No.</th>       
+              <th>Order ID</th>  
+              <th>Customer</th>  
+              <th>Total</th>     
+              <th>Shipper</th>   
+              <th>Status</th>    
+              <th>Date</th>      
             </tr>
           </thead>
           <tbody>
-            {orders.map((o: any, index: number) => (
-              <tr key={o.id}>
-                <td style={{fontWeight: 'bold', textAlign: 'center', color: '#666'}}>{index + 1}</td>
-                <td style={{fontWeight: 'bold', textAlign: 'center'}}>#{o.id}</td>
-                <td>
-                    <div>{o.user?.full_name || "Guest"}</div>
-                    <div style={{fontSize: 12, color:'#888'}}>{o.user?.address}</div>
-                </td>
-                <td style={{fontWeight: 600}}>{formatPrice(o.total_amount)}</td>
-                
-                {/* CỘT SHIPPER */}
-                <td>
-                  {o.shipper ? (
-                    <span style={{color: '#2196f3', fontWeight: 500}}>
-                      {o.shipper.full_name}
-                    </span>
-                  ) : (
-                    <select 
-                      className={styles.statusSelect}
-                      onChange={(e) => handleAssignShipper(o.id, e.target.value)}
-                      defaultValue=""
-                    >
-                      <option value="" disabled>-- Assign --</option>
-                      {shippers.map((s) => {
-                        // Kiểm tra xem shipper này có đang bận không
-                        const isBusy = busyShipperIds.includes(s.id);
-                        return (
-                          <option 
-                            key={s.id} 
-                            value={s.id} 
-                            disabled={isBusy} // Disable nếu đang bận
-                            style={isBusy ? {color: '#999', fontStyle: 'italic'} : {}}
-                          >
-                            {s.full_name} {isBusy ? '(Busy)' : ''}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  )}
-                </td>
-
-                {/* CỘT STATUS */}
-                <td>
-                  <select
-                    className={styles.statusSelect}
-                    value={o.status}
-                    onChange={(e) => handleStatusChange(o.id, e.target.value)}
-                    style={{
-                        color: o.status === 'delivered' ? '#4caf50' : (o.status === 'shipped' ? '#2196f3' : '#333')
-                    }}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                  <div style={{fontSize: 11, color: '#666', marginTop: 4}}>
-                  {(!o.deliveryStatus || o.deliveryStatus === 'unassigned') ? '' : `(${o.deliveryStatus})`}
-                  </div>
-                </td>
-
-                <td>{formatDate(o.order_date)}</td>
-                <td>
-                  <Link href={`/admin/orders/${o.id}`} className={styles.viewBtn}>
-                    View
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            {orders.length === 0 ? (
+                <tr>
+                    <td colSpan={7} className={styles.empty}>
+                        No orders found.
+                    </td>
+                </tr>
+            ) : (
+                orders.map((o: any, index: number) => (
+                <tr key={o.id}>
+                    <td className={styles.stt}>{index + 1}</td>
+                    <td className={styles.id}>#{o.id}</td>
+                    <td>
+                        <span className={styles.customerName}>{o.user?.full_name}</span>
+                        <span className={styles.customerPhone}>{o.user?.phone}</span>
+                    </td>
+                    <td className={styles.total}>
+                        {Number(o.total_amount).toLocaleString()}đ
+                    </td>
+                    <td>
+                        {o.shipper ? (
+                            <span className={styles.shipperName}>{o.shipper.full_name}</span>
+                        ) : (
+                            <span className={styles.shipperUnassigned}>Unassigned</span>
+                        )}
+                    </td>
+                    <td>
+                        <span className={`${styles.badge} ${getStatusClass(o.status)}`}>
+                            {o.status}
+                        </span>
+                    </td>
+                    <td className={styles.date}>
+                        {/* Hiển thị ngày tháng theo chuẩn quốc tế hoặc VN tuỳ bạn chọn */}
+                        {new Date(o.order_date || o.created_at).toLocaleDateString('en-GB')}
+                    </td>
+                </tr>
+                ))
+            )}
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 }

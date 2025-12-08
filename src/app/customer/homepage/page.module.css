@@ -171,8 +171,8 @@
 .viewAllText {
 	font-size: 0.95rem;
 	color: #666;
-	max-width: 400px; 
-}
+	max-width: 400px; /* Giới hạn chiều rộng text cho đẹp */
+  }
   
 .viewAllBtn {
 	background-color: #333;
@@ -188,9 +188,9 @@
 	display: inline-block;
 }
   
-.viewAllBtn:hover {
-	background-color: #e91e63; 
-	transform: translateY(-2px); 
+  .viewAllBtn:hover {
+	background-color: #e91e63; /* Màu hồng khi hover */
+	transform: translateY(-2px); /* Hiệu ứng nổi lên */
 	box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
 }
   

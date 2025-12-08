@@ -250,6 +250,7 @@ export default function BouquetPage() {
             <p className={styles.statusText}>No products match your filter.</p>
           )}
 
+<<<<<<< HEAD
           {!loading && !error && currentProducts.length > 0 && (
             <>
               {/* Product Grid */}
@@ -278,6 +279,49 @@ export default function BouquetPage() {
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                           </svg>
                         </button>
+=======
+          {!loading && !error && displayedProducts.length > 0 && (
+            <div className={styles.productGrid}>
+              {displayedProducts.map((product) => (
+                <div key={product.id} className={styles.productCard}>
+                  <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    
+                    <div className={styles.imageWrapper}>
+                      <img 
+                        src={getImageUrl(product.image)} 
+                        alt={product.name} 
+                        className={styles.productImage} 
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error+Loading";
+                        }}
+                      />
+                      <span className={styles.productNameOnImage}>{product.name}</span>
+                      
+                      {/* Nút tim (Yêu thích) - Cần chặn sự kiện click để không bị nhảy trang khi ấn tim */}
+                      <button 
+                        className={styles.heartBtn}
+                        onClick={(e) => {
+                          e.preventDefault(); // Chặn Link nhảy trang
+                          e.stopPropagation(); // Chặn sự kiện nổi bọt
+                          // Logic thêm vào yêu thích ở đây (nếu có)
+                          console.log("Liked", product.id);
+                        }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className={styles.productInfo}>
+                      {product.isBestSeller && (
+                        <div className={styles.bestSeller}>
+                          <span className={styles.starIcon}>✪</span> Best Seller
+                        </div>
+                      )}
+                      <div className={styles.price}>
+                        From {Number(product.price).toLocaleString('vi-VN')} VNĐ
+>>>>>>> d04522bbca66abe8fc7f03fb365c8506178ec3f9
                       </div>
 
                       <div className={styles.productInfo}>

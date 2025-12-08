@@ -1,0 +1,279 @@
+/* src/components/ShipperHeader.module.css */
+
+.header {
+  padding: 0;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #f0f0f0;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* --- LOGO --- */
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logoBox {
+  width: 40px;
+  height: 40px;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandName {
+  font-size: 16px;
+  font-weight: 800;
+  color: #d81b60;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.brandSub {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- NAV --- */
+.nav {
+  display: none;
+  gap: 30px;
+  margin-left: 40px;
+}
+
+@media (min-width: 900px) {
+  .nav { display: flex; }
+}
+
+.navLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s;
+  padding: 8px 0;
+}
+
+.navLink:hover {
+  color: #d81b60;
+}
+
+/* --- RIGHT SIDE --- */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* [MỚI] Icon Chuông */
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover {
+  background-color: #fce4ec;
+  color: #d81b60;
+}
+
+/* Status Switch */
+.statusBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s;
+}
+
+.statusBoxActive {
+  background: #e8f5e9;
+  border-color: #c8e6c9;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusText {
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* User Info */
+.userInfo {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding-left: 20px;
+  border-left: 1px solid #eee;
+}
+
+@media (min-width: 900px) {
+  .userInfo { display: flex; }
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  background-color: #d81b60;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.userName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Hamburger */
+.hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  padding: 5px;
+}
+
+@media (min-width: 900px) {
+  .hamburger { display: none; }
+}
+
+/* --- MOBILE MENU --- */
+.mobileMenu {
+  display: none;
+  position: absolute;
+  top: 70px;
+  right: 0;
+  left: 0;
+  background: white;
+  border-top: 1px solid #eee;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 10px 20px 20px;
+  z-index: 999;
+}
+
+.mobileMenuOpen {
+  display: block;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobileMenuInner {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+}
+
+.mobileAvatar {
+  width: 40px;
+  height: 40px;
+  background: #d81b60;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.mobileName {
+  font-weight: 700;
+  color: #333;
+}
+
+.mobileEmail {
+  font-size: 12px;
+  color: #666;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 5px 0 10px;
+}
+
+.mobileLink {
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mobileLink:hover {
+  color: #d81b60;
+}
+
+.logoutLink {
+  color: #d32f2f;
+  font-weight: 600;
+}

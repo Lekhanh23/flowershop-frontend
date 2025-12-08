@@ -29,17 +29,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (storedToken && storedUser) {
         const parsedUser = JSON.parse(storedUser) as User;
-        if (parsedUser.role === 'admin') {
-          setToken(storedToken);
-          setUser(parsedUser);
-          api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        } else {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-        }
+        setToken(storedToken);
+        setUser(parsedUser);
+        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       }
     } catch (error) {
       console.error("Failed to parse stored auth data", error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     setIsLoading(false);
   }, []);
@@ -48,19 +45,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await api.post('/auth/login', { email, password });
       const { access_token, user: userData } = res.data;
-
-      if (userData.role !== 'admin') {
-        alert('Access Denied. Only admins can login.');
-        return;
-      }
-
       setToken(access_token);
       setUser(userData);
       localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(userData));
       api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      router.push('/admin/dashboard'); // Chuyển hướng đến /admin (dashboard)
+      if(userData.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else if(userData.role === 'customer') {
+        router.push('/customer/homepage');
+      } else if(userData.role === 'shipper') {
+        router.push('/shipper');
+      } else {
+        router.push('/')
+      }
     } catch (err) {
       console.error(err);
       alert('Login failed: Invalid credentials');

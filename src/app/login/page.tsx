@@ -9,14 +9,15 @@ import { useAuth } from "@/context/AuthContext";
 export default function LoginPage() {
   const router = useRouter();
   const search = useSearchParams();
-  const redirect = search.get("redirect"); 
+  // const redirect = search.get("redirect"); // Biến này chưa dùng, có thể giữ hoặc bỏ
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
-  const {login} = useAuth();
+  const { login } = useAuth();
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErr("");
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      // Xử lý redirect sau khi login thành công ở đây nếu cần
     } catch (e) {
       setErr("Server error. Please try again.");
     } finally {
@@ -92,13 +94,28 @@ export default function LoginPage() {
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
+
+          {/* --- PHẦN MỚI THÊM VÀO (button thay vì Link) --- */}
+          <div className="new-customer-box">
+            <div className="new-customer-text"><i>New Customer?</i></div>
+            <button
+              type="button"
+              className="btn-register"
+              onClick={() => router.push("/register")}
+              disabled={loading}
+            >
+              Create my account
+            </button>
+          </div>
+          {/* ------------------------- */}
+          
         </div>
       </div>
 
       {/* SCOPED CSS  */}
       <style jsx>{`
         .login-bg {
-          height: 100vh; /* full screen */
+          height: 100vh;
           min-height: unset;
           background: url("https://www.odealarose.com/media/cache/1920_1080_webp/build/images/flower-delivery.webp")
             center center / cover no-repeat;
@@ -117,7 +134,7 @@ export default function LoginPage() {
           max-width: 370px;
           width: 100%;
           margin: 48px auto;
-          padding: 36px 32px 28px 32px;
+          padding: 36px 32px 36px 32px; /* Tăng padding bottom một chút */
           box-sizing: border-box;
           box-shadow: 0 2px 12px #eee;
         }
@@ -181,7 +198,7 @@ export default function LoginPage() {
           font-family: "Montserrat", Arial, sans-serif;
           font-weight: 700;
           cursor: pointer;
-          margin: 18px 0 18px 0;
+          margin: 18px 0 0 0; /* Giảm margin bottom để dành chỗ cho phần dưới */
           transition: background 0.2s;
         }
         .login-btn:hover {
@@ -196,6 +213,49 @@ export default function LoginPage() {
           text-align: center;
           margin-bottom: 12px;
           font-size: 14px;
+        }
+
+
+        .new-customer-box {
+          margin-top: 32px;
+          border-top: 1px solid #eee;
+          padding-top: 24px;
+          text-align: center;
+        }
+        .new-customer-text {
+          font-size: 16px;
+          font-family: "Playfair Display", serif;
+          font-weight: 700;
+          margin-bottom: 12px;
+          color: #222;
+          text-align: left;
+        }
+        .btn-register {
+          display: block;
+          width: 100%;
+          height: 44px;
+          line-height: 44px;
+          background: #fff;
+          color: #666;
+          border: 1px solid #d0d0d0;
+          border-radius: 9999px;
+          padding: 0 24px;
+          font-size: 14px;
+          font-family: "Montserrat", Arial, sans-serif;
+          font-weight: 600;
+          text-align: center;
+          text-decoration: none;
+          transition: all 0.15s ease;
+          cursor: pointer;
+        }
+        .btn-register:hover {
+          background: #e75480;
+          color: #fff;
+          border-color: #e75480;
+        }
+        .btn-register[disabled] {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
       `}</style>
     </main>

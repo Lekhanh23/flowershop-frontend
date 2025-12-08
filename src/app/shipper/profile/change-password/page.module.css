@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 60px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 450px;
+    border-top: 4px solid #d81b60;
+  }
+  
+  .title {
+    color: #d81b60;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .formGroup {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: #d81b60;
+  }
+  
+  .saveBtn {
+    width: 100%;
+    background-color: #d81b60;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 10px;
+  }
+  
+  .saveBtn:hover {
+    background-color: #ad1457;
+  }
+  
+  .backBtn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #777;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .backBtn:hover { text-decoration: underline; }

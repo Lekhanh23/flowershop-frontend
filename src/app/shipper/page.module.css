@@ -1,0 +1,147 @@
+.container {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  .wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  /* WELCOME SECTION */
+  .welcomeSection {
+    margin-bottom: 30px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+  }
+  
+  /* STATS GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #d81b60;
+  }
+  
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .cardLabel {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.5px;
+  }
+  
+  .cardValue {
+    font-size: 32px;
+    font-weight: 800;
+    margin-top: 10px;
+    line-height: 1;
+  }
+  
+  /* Colors for specific cards */
+  .textPink { color: #d81b60; }
+  .textGreen { color: #2e7d32; }
+  .textBlue { color: #1976d2; }
+  
+  .iconBox {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .bgPink { background-color: #fce4ec; color: #d81b60; }
+  .bgGreen { background-color: #e8f5e9; color: #2e7d32; }
+  .bgBlue { background-color: #e3f2fd; color: #1976d2; }
+  
+  .cardFooter {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #999;
+    font-weight: 500;
+  }
+  
+  /* QUICK ACTION */
+  .actionBox {
+    background-color: #fdf2f8;
+    border: 1px solid #fbcfe8;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .actionTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #d81b60;
+    margin: 0;
+  }
+  
+  .actionDesc {
+    font-size: 13px;
+    color: #ad1457;
+    margin: 4px 0 0 0;
+  }
+  
+  .checkBtn {
+    background-color: #d81b60;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  
+  .checkBtn:hover {
+    background-color: #ad1457;
+  }
