@@ -107,7 +107,6 @@ export default function RegisterPage() {
                   onChange={(e) => update("full_name", e.target.value)}
                   required
                   autoFocus
-                  placeholder="Nguyễn Văn A"
                 />
               </div>
 
@@ -123,7 +122,6 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={(e) => update("email", e.target.value)}
                   required
-                  placeholder="email@example.com"
                 />
               </div>
             </div>
@@ -139,7 +137,6 @@ export default function RegisterPage() {
                   name="phone"
                   value={form.phone}
                   onChange={(e) => update("phone", e.target.value)}
-                  placeholder="0901234567"
                 />
               </div>
 
@@ -153,7 +150,6 @@ export default function RegisterPage() {
                   name="address"
                   value={form.address}
                   onChange={(e) => update("address", e.target.value)}
-                  placeholder="Số nhà, đường, quận..."
                 />
               </div>
             </div>
@@ -171,7 +167,6 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={(e) => update("password", e.target.value)}
                   required
-                  placeholder="••••••"
                 />
               </div>
 
@@ -187,7 +182,6 @@ export default function RegisterPage() {
                   value={form.confirm_password}
                   onChange={(e) => update("confirm_password", e.target.value)}
                   required
-                  placeholder="••••••"
                 />
               </div>
             </div>

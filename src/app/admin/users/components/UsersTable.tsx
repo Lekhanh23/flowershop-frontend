@@ -20,8 +20,8 @@ export default function UsersTable({ role, title, disableEdit = false }: UsersTa
       setLoading(true);
       try {
         const url = role 
-            ? `/admin/users?limit=100&role=${role}` 
-            : '/admin/users?limit=100';
+            ? `/users/admin/list?limit=100&role=${role}` 
+            : '/users/admin/list?limit=100';
         const res = await api.get(url);
         // Sắp xếp theo ID
         const sorted = (res.data.data || []).sort((a: any, b: any) => a.id - b.id);

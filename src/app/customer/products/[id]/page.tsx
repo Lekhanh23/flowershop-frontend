@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Link from 'next/link';
 import { formatPrice, getImageUrl } from '@/lib/utils';
+import api from '@/lib/api';
 
 // Cấu hình backend
 const BACKEND_URL = 'http://localhost:3000';
@@ -91,47 +92,34 @@ export default function ProductDetailPage() {
   };
 
   // --- 3. HÀNH ĐỘNG ---
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product) return;
-    
-    const selectedService = services.find(s => s.id === selectedServiceId);
 
-    const cartItem = {
-        productId: product.id,
-        name: product.name,
-        price: Number(product.price),
-        image: product.image,
-        quantity: quantity,
-        serviceId: selectedServiceId || null, 
-        service: selectedService ? {
-            id: selectedService.id,
-            name: selectedService.name,
-            price: Number(selectedService.price)
-        } : null,
-        note: note,
-        totalItemPrice: getTotalPrice()
-    };
-
-    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    // Kiểm tra trùng sản phẩm (trùng cả ID sản phẩm và ID dịch vụ)
-    const existingItemIndex = currentCart.findIndex((item: any) => 
-        item.productId === cartItem.productId && item.serviceId === cartItem.serviceId
-    );
-
-    if (existingItemIndex > -1) {
-        currentCart[existingItemIndex].quantity += quantity;
-        currentCart[existingItemIndex].totalItemPrice += cartItem.totalItemPrice;
-    } else {
-        currentCart.push(cartItem);
+    // Kiểm tra login (nếu chưa có token thì chuyển hướng)
+    const token = localStorage.getItem('token'); // Hoặc lấy từ Context
+    if (!token) {
+        alert("Vui lòng đăng nhập để mua hàng!");
+        router.push('/login');
+        return;
     }
 
-    localStorage.setItem('cart', JSON.stringify(currentCart));
-    alert(`Đã thêm ${product.name} ${selectedService ? `(+ ${selectedService.name})` : ''} vào giỏ hàng!`);
+    try {
+        // Gọi API Backend: CartController.addToCart
+        await api.post('/cart', {
+            productId: product.id,
+            quantity: quantity,
+            serviceId: selectedServiceId
+        });
+
+        alert('Đã thêm vào giỏ hàng thành công!');
+        router.push('/customer/cart');
+    } catch (error: any) {
+        alert(error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng");
+    }
   };
 
-  const handleBuyNow = () => {
-    handleAddToCart();
+  const handleBuyNow = async () => {
+    await handleAddToCart();
     router.push('/customer/cart'); 
   };
 

@@ -36,7 +36,7 @@ export default function UserRow({ user, disableEdit = false, index }: UserRowPro
     const handleSave = async () => {
         setLoading(true);
         try {
-            await api.patch(`/admin/users/${user.id}`, formData);
+            await api.patch(`/users/admin/${user.id}`, formData);
             setIsEditing(false);
             alert("Cập nhật thành công!");
             // Refresh lại trang để đồng bộ dữ liệu nếu cần, 

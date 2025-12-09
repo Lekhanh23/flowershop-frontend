@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { getImageUrl } from '@/lib/utils';
+import { getImageUrl } from '@/lib/utils'; // Đảm bảo bạn có hàm này, hoặc thay bằng logic lấy ảnh trực tiếp
 
 // --- CẤU HÌNH ---
 const BACKEND_URL = 'http://localhost:3000';
@@ -22,7 +22,6 @@ interface Product {
   image: string;
   description?: string;
   isBestSeller?: boolean;
-  // Hỗ trợ cả 2 trường hợp tên biến (do Backend có thể trả về camelCase hoặc snake_case)
   collection_id?: number; 
   collectionId?: number;
 }
@@ -37,7 +36,7 @@ export default function BouquetPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]); 
   const [loading, setLoading] = useState(true);
-  const [colLoading, setColLoading] = useState(true); // Loading riêng cho Collection
+  const [colLoading, setColLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // UI State
@@ -52,16 +51,15 @@ export default function BouquetPage() {
 
   // --- GỌI API ---
   useEffect(() => {
-    // 1. Hàm lấy Sản phẩm
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        // API lấy sản phẩm
         const response = await fetch(`${BACKEND_URL}/api/products?limit=100`);
         if (!response.ok) throw new Error(`Products Error: ${response.statusText}`);
         
         const data = await response.json();
         const list = Array.isArray(data) ? data : data.data || [];
-        console.log("Products Loaded:", list); // Debug xem có collection_id không
         setProducts(list);
       } catch (err: any) {
         console.error("Lỗi tải SP:", err);
@@ -71,20 +69,18 @@ export default function BouquetPage() {
       }
     };
 
-    // 2. Hàm lấy Collections
     const fetchCollections = async () => {
       try {
         setColLoading(true);
+        // API lấy danh mục
         const response = await fetch(`${BACKEND_URL}/api/collections`);
         if (!response.ok) throw new Error(`Collections Error: ${response.statusText}`);
         
         const data = await response.json();
         const list = Array.isArray(data) ? data : data.data || [];
-        console.log("Collections Loaded:", list); // Debug xem danh sách có rỗng không
         setCollections(list);
       } catch (err: any) {
         console.error("Lỗi tải Collections:", err);
-        // Không set error chung để tránh chặn hiển thị sản phẩm
       } finally {
         setColLoading(false);
       }
@@ -94,7 +90,7 @@ export default function BouquetPage() {
     fetchCollections();
   }, []);
 
-  // Reset trang khi filter đổi
+  // Reset về trang 1 khi thay đổi bộ lọc
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
@@ -104,7 +100,6 @@ export default function BouquetPage() {
     setExpandedFilter(expandedFilter === section ? null : section);
   };
 
-  // --- HÀM FILTER ---
   const handlePriceChange = (range: string) => {
     setFilters(prev => ({
       ...prev,
@@ -124,7 +119,7 @@ export default function BouquetPage() {
     });
   };
 
-  // --- 1. LOGIC LỌC DATA ---
+  // --- LOGIC LỌC DATA ---
   const filteredProducts = products.filter(p => {
     // A. Lọc theo giá
     if (filters.priceRange === 'under500' && p.price >= 500000) return false;
@@ -133,10 +128,7 @@ export default function BouquetPage() {
 
     // B. Lọc theo Collection
     if (filters.collectionIds.length > 0) {
-       // Lấy ID chuẩn: ưu tiên collection_id, nếu không có thì lấy collectionId
        const pColId = p.collection_id || p.collectionId;
-       
-       // Nếu sản phẩm không thuộc collection nào hoặc ID không khớp -> Loại
        if (!pColId || !filters.collectionIds.includes(pColId)) {
          return false;
        }
@@ -144,7 +136,7 @@ export default function BouquetPage() {
     return true;
   });
 
-  // --- 2. PHÂN TRANG ---
+  // --- PHÂN TRANG ---
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -250,7 +242,6 @@ export default function BouquetPage() {
             <p className={styles.statusText}>No products match your filter.</p>
           )}
 
-<<<<<<< HEAD
           {!loading && !error && currentProducts.length > 0 && (
             <>
               {/* Product Grid */}
@@ -258,12 +249,15 @@ export default function BouquetPage() {
                 {currentProducts.map((product) => (
                   <div key={product.id} className={styles.productCard}>
                     <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      
                       <div className={styles.imageWrapper}>
                         <img 
-                          src={getImageUrl(product.image)} 
+                          src={getImageUrl(product.image)} // Đảm bảo hàm này trả về URL hợp lệ
                           alt={product.name} 
                           className={styles.productImage} 
-                          onError={(e) => { (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=No+Image"; }}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=No+Image";
+                          }}
                         />
                         <span className={styles.productNameOnImage}>{product.name}</span>
                         
@@ -279,49 +273,6 @@ export default function BouquetPage() {
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                           </svg>
                         </button>
-=======
-          {!loading && !error && displayedProducts.length > 0 && (
-            <div className={styles.productGrid}>
-              {displayedProducts.map((product) => (
-                <div key={product.id} className={styles.productCard}>
-                  <Link href={`/customer/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    
-                    <div className={styles.imageWrapper}>
-                      <img 
-                        src={getImageUrl(product.image)} 
-                        alt={product.name} 
-                        className={styles.productImage} 
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://placehold.co/400x500?text=Error+Loading";
-                        }}
-                      />
-                      <span className={styles.productNameOnImage}>{product.name}</span>
-                      
-                      {/* Nút tim (Yêu thích) - Cần chặn sự kiện click để không bị nhảy trang khi ấn tim */}
-                      <button 
-                        className={styles.heartBtn}
-                        onClick={(e) => {
-                          e.preventDefault(); // Chặn Link nhảy trang
-                          e.stopPropagation(); // Chặn sự kiện nổi bọt
-                          // Logic thêm vào yêu thích ở đây (nếu có)
-                          console.log("Liked", product.id);
-                        }}
-                      >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                      </button>
-                    </div>
-
-                    <div className={styles.productInfo}>
-                      {product.isBestSeller && (
-                        <div className={styles.bestSeller}>
-                          <span className={styles.starIcon}>✪</span> Best Seller
-                        </div>
-                      )}
-                      <div className={styles.price}>
-                        From {Number(product.price).toLocaleString('vi-VN')} VNĐ
->>>>>>> d04522bbca66abe8fc7f03fb365c8506178ec3f9
                       </div>
 
                       <div className={styles.productInfo}>

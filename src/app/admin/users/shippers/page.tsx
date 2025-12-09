@@ -22,7 +22,7 @@ export default function ManageShippersPage() {
         const res = await api.get('/shipper/applications?status=pending');
         setApplications(res.data || []);
       } else {
-        const res = await api.get('/admin/users?limit=100&role=shipper');
+        const res = await api.get('/users/admin/list?limit=100&role=shipper');
         setActiveShippers(res.data.data || []);
       }
     } catch (error) { console.error(error); } 

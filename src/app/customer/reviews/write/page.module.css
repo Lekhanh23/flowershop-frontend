@@ -1,0 +1,176 @@
+.container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  .title {
+    text-align: center;
+    color: #d81b60;
+    margin: 0 0 30px 0;
+    font-family: "Playfair Display", serif;
+    font-size: 32px;
+  }
+  
+  /* Product Info Section */
+  .productInfo {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed #eee;
+    margin-bottom: 30px;
+    align-items: center;
+  }
+  
+  .imgWrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #f0f0f0;
+      background: #f9f9f9;
+  }
+  
+  .productImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .productDetails {
+      flex: 1;
+  }
+  
+  .productName {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  
+  .productPrice {
+      color: #666;
+      font-size: 14px;
+  }
+  
+  /* Form Styles */
+  .form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Star Rating */
+  .starGroup {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .starBtn {
+    background: none;
+    border: none;
+    font-size: 36px;
+    cursor: pointer;
+    color: #e0e0e0; /* Màu xám khi chưa chọn */
+    transition: all 0.2s;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .starBtn:hover,
+  .starBtn.active {
+    color: #ffc107; /* Màu vàng khi chọn/hover */
+    transform: scale(1.1);
+  }
+  
+  .ratingText {
+      font-size: 14px;
+      color: #d81b60;
+      font-weight: 600;
+      height: 20px; /* Giữ chỗ để không bị nhảy layout */
+  }
+  
+  /* Textarea */
+  .textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 150px;
+    transition: border-color 0.2s;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  .textarea:focus {
+    border-color: #d81b60;
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.05);
+  }
+  
+  /* Buttons */
+  .actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+  }
+  
+  .submitBtn {
+    flex: 2;
+    padding: 14px;
+    background-color: #d81b60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submitBtn:hover {
+    background-color: #ad1457;
+  }
+  
+  .submitBtn:disabled {
+    background-color: #f8bbd0;
+    cursor: not-allowed;
+  }
+  
+  .cancelBtn {
+      flex: 1;
+      padding: 14px;
+      background-color: #f5f5f5;
+      color: #666;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+  }
+  
+  .cancelBtn:hover {
+      background-color: #e0e0e0;
+      color: #333;
+  }

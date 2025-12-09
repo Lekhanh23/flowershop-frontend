@@ -1,231 +1,264 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import styles from "./page.module.css";
-
-// CẤU HÌNH ĐƯỜNG DẪN API (Sửa 1 chỗ này là được)
-const API_BASE = "http://localhost:3000"; 
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import api from '@/lib/api'; 
+import styles from './page.module.css';
 
 export default function ProfilePage() {
   const router = useRouter();
-  
-  // --- STATE ---
-  const [user, setUser] = useState<any>(null); // Dùng any để đỡ lỗi type
+
+  const [user, setUser] = useState<any>(null); 
+  const [orders, setOrders] = useState<any[]>([]); 
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"info" | "password" | "orders">("info");
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // State chỉnh sửa
+  const [passForm, setPassForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ name: "", phone: "", address: "" });
+  const [formData, setFormData] = useState({ full_name: '', phone: '', address: '' });
 
-  // State đổi pass
-  const [passForm, setPassForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
-
-  // --- 1. KIỂM TRA LOGIN & LẤY DỮ LIỆU ---
   useEffect(() => {
-    // Check token trong túi
-    const token = localStorage.getItem("accessToken"); 
-    
-    if (!token) {
-      router.push("/login"); // Không có chìa khóa -> Về trang login
-      return;
-    }
-
-    // Hàm gọi API lấy thông tin User
-    const fetchProfile = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        // Gọi thử vào đường dẫn phổ biến nhất
-        const res = await fetch(`${API_BASE}/auth/me`, { // Hoặc /api/users/profile
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          // LOGIC THÔNG MINH: Tự dò xem dữ liệu nằm ở đâu
-          // Nếu backend trả về { data: user } thì lấy data.data
-          // Nếu backend trả về { user } thì lấy data
-          const userData = data.data || data.user || data; 
-          
-          setUser(userData);
-          setEditForm({
-            name: userData.name || "",
-            phone: userData.phone || "",
-            address: userData.address || "",
+        const userRes = await api.get('/users/profile');
+        if (userRes.data) {
+          setUser(userRes.data);
+          setFormData({
+            full_name: userRes.data.full_name || '',
+            phone: userRes.data.phone || '',
+            address: userRes.data.address || ''
           });
-        } else {
-          // Token hết hạn hoặc lỗi
-          if (res.status === 401) {
-             localStorage.removeItem("accessToken");
-             router.push("/login");
+
+          try {
+            const orderRes = await api.get('/orders/my-orders');
+            const orderList = Array.isArray(orderRes.data) ? orderRes.data : (orderRes.data.data || []);
+            setOrders(orderList);
+          } catch (err) {
+            console.error("Order fetch error:", err);
+            setOrders([]);
           }
         }
-      } catch (err) {
-        console.error("Lỗi mạng:", err);
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('cart');
+            }
+            router.push('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
-
-    fetchProfile();
+    fetchData();
   }, [router]);
 
-  // --- XỬ LÝ UPDATE ---
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleUpdateInfo = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("accessToken");
-    
     try {
-      // Gọi API update (Bạn cần hỏi backend đường dẫn chính xác, thường là PUT /users/update)
-      const res = await fetch(`${API_BASE}/api/users/update`, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify(editForm),
-      });
-
-      if (res.ok) {
-        const newData = await res.json();
-        setUser({ ...user, ...editForm }); // Cập nhật giao diện ngay
+      const res = await api.patch('/users/profile', formData);
+      if (res.data) {
+        setUser(res.data);
         setIsEditing(false);
-        setMessage({ type: "success", text: "Cập nhật thành công!" });
-      } else {
-        setMessage({ type: "error", text: "Lỗi cập nhật. Vui lòng thử lại." });
+        alert("Cập nhật thông tin thành công!");
       }
-    } catch (error) {
-       // Nếu API chưa có thì giả vờ thành công để test UI
-       setUser({ ...user, ...editForm });
-       setIsEditing(false);
-       setMessage({ type: "success", text: "Đã lưu (Demo UI)." });
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Cập nhật thất bại.");
     }
   };
 
-  // --- RENDER ---
-  if (loading) return <div className={styles.loading}>Đang tải thông tin...</div>;
-  if (!user) return null;
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passForm.newPassword !== passForm.confirmPassword) {
+      alert("Mật khẩu xác nhận không khớp!");
+      return;
+    }
+    try {
+      await api.post('/users/change-password', {
+        currentPassword: passForm.currentPassword,
+        newPassword: passForm.newPassword
+      });
+      alert("Đổi mật khẩu thành công!");
+      setPassForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Đổi mật khẩu thất bại.");
+    }
+  };
+
+  const renderStatusBadge = (status: string) => {
+    const s = status ? status.toLowerCase() : '';
+    let className = styles.badge;
+    if (s === 'pending') className += ` ${styles.statusPending}`;
+    else if (s === 'shipped') className += ` ${styles.statusShipped}`;
+    else if (s === 'delivered') className += ` ${styles.statusDelivered}`;
+    else if (s === 'cancelled') className += ` ${styles.statusCancelled}`;
+    
+    return <span className={className}>{status}</span>;
+  };
+
+  if (loading) return <div style={{textAlign:'center', padding: 100, color:'#666'}}>Loading...</div>;
+  if (!user) return null; 
 
   return (
     <div className={styles.container}>
-      <div className={styles.pageHeader}>
-        <h1>TÀI KHOẢN CỦA TÔI</h1>
-        <p>Xin chào, {user.name || user.email}!</p>
+      <div className={styles.headerSection}>
+        <h1 className={styles.pageTitle}>My Profile</h1>
       </div>
 
-      <div className={styles.layout}>
-        {/* MENU BÊN TRÁI */}
-        <aside className={styles.sidebar}>
-          <div className={styles.avatarCircle}>
-            {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-          </div>
-          <nav className={styles.navMenu}>
-            <button 
-              className={activeTab === "info" ? styles.active : ""} 
-              onClick={() => setActiveTab("info")}
-            >
-              Thông tin tài khoản
-            </button>
-            <button 
-              className={activeTab === "orders" ? styles.active : ""} 
-              onClick={() => setActiveTab("orders")}
-            >
-              Lịch sử đơn hàng
-            </button>
-            <button 
-              className={activeTab === "password" ? styles.active : ""} 
-              onClick={() => setActiveTab("password")}
-            >
-              Đổi mật khẩu
-            </button>
-            <button 
-              className={styles.logoutBtn}
-              onClick={() => {
-                localStorage.removeItem("accessToken");
-                router.push("/login");
-              }}
-            >
-              Đăng xuất
-            </button>
-          </nav>
-        </aside>
-
-        {/* NỘI DUNG BÊN PHẢI */}
-        <main className={styles.content}>
-          {message && (
-            <div className={message.type === "error" ? styles.alertError : styles.alertSuccess}>
-              {message.text}
+      <div className={styles.profileWrapper}>
+        
+        {/* --- LEFT COLUMN: USER INFO --- */}
+        <aside className={styles.leftColumn}>
+          <div className={styles.card}>
+            <div className={styles.avatarSection}>
+                <div className={styles.avatarCircle}>
+                    {user.full_name ? user.full_name.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div className={styles.userNameDisplay}>{user.full_name}</div>
+                <div className={styles.userEmailDisplay}>{user.email}</div>
             </div>
-          )}
 
-          {/* TAB 1: THÔNG TIN */}
-          {activeTab === "info" && (
-            <div className={styles.tabBox}>
-              <div className={styles.boxHeader}>
-                <h2>Thông tin cá nhân</h2>
-                {!isEditing && (
-                  <button className={styles.editBtn} onClick={() => setIsEditing(true)}>Chỉnh sửa</button>
+            <div className={styles.divider}></div>
+
+            <div className={styles.sectionHeader}>Personal Info</div>
+            <form onSubmit={handleUpdateInfo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Full Name</label>
+                <input 
+                  className={styles.input} 
+                  value={formData.full_name} disabled={!isEditing}
+                  onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Phone</label>
+                <input 
+                  className={styles.input} 
+                  value={formData.phone} disabled={!isEditing}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Address</label>
+                <input 
+                  className={styles.input} 
+                  value={formData.address} disabled={!isEditing}
+                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                />
+              </div>
+              
+              <div className={styles.btnGroup}>
+                {isEditing ? (
+                  <>
+                    <button type="submit" className={styles.primaryBtn}>Save</button>
+                    <button 
+                      type="button" className={styles.secondaryBtn}
+                      onClick={() => { 
+                        setIsEditing(false); 
+                        setFormData({full_name: user.full_name, phone: user.phone, address: user.address}); 
+                      }}
+                    >Cancel</button>
+                  </>
+                ) : (
+                  <button 
+                    type="button"
+                    className={styles.secondaryBtn} 
+                    onClick={(e) => {
+                      e.preventDefault(); 
+                      setIsEditing(true);
+                    }}
+                  >
+                    Edit Info
+                  </button>
                 )}
               </div>
+            </form>
 
-              {isEditing ? (
-                <form onSubmit={handleUpdate} className={styles.form}>
-                  <div className={styles.formGroup}>
-                    <label>Họ và tên</label>
-                    <input value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Số điện thoại</label>
-                    <input value={editForm.phone} onChange={e => setEditForm({...editForm, phone: e.target.value})} />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Địa chỉ</label>
-                    <input value={editForm.address} onChange={e => setEditForm({...editForm, address: e.target.value})} />
-                  </div>
-                  <div className={styles.btnRow}>
-                    <button type="submit" className={styles.saveBtn}>Lưu thay đổi</button>
-                    <button type="button" className={styles.cancelBtn} onClick={() => setIsEditing(false)}>Hủy</button>
-                  </div>
-                </form>
-              ) : (
-                <div className={styles.infoView}>
-                  <p><strong>Email:</strong> {user.email}</p>
-                  <p><strong>Số điện thoại:</strong> {user.phone || "Chưa cập nhật"}</p>
-                  <p><strong>Địa chỉ:</strong> {user.address || "Chưa cập nhật"}</p>
-                  <p><strong>Vai trò:</strong> {user.role || "Customer"}</p>
-                </div>
-              )}
+            <div className={styles.divider}></div>
+
+            <div className={styles.sectionHeader}>Security</div>
+            <form onSubmit={handleChangePassword}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Current Password</label>
+                <input 
+                  type="password" className={styles.input} required 
+                  value={passForm.currentPassword}
+                  onChange={(e) => setPassForm({...passForm, currentPassword: e.target.value})}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>New Password</label>
+                <input 
+                  type="password" className={styles.input} required 
+                  value={passForm.newPassword}
+                  onChange={(e) => setPassForm({...passForm, newPassword: e.target.value})}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Confirm</label>
+                <input 
+                  type="password" className={styles.input} required 
+                  value={passForm.confirmPassword}
+                  onChange={(e) => setPassForm({...passForm, confirmPassword: e.target.value})}
+                />
+              </div>
+              <button type="submit" className={`${styles.secondaryBtn}`} style={{width: '100%'}}>Update Password</button>
+            </form>
+          </div>
+        </aside>
+
+        {/* --- RIGHT COLUMN: ORDER HISTORY --- */}
+        <main className={styles.rightColumn}>
+          <div className={styles.sectionHeader} style={{fontSize: 20, marginBottom: 20}}>Order History</div>
+          
+          {orders.length === 0 ? (
+            <div className={styles.emptyOrders}>
+              <p>You haven't placed any orders yet.</p>
+              <Link href="/customer/collection" style={{color: '#d81b60', fontWeight: 600}}>Start Shopping</Link>
             </div>
-          )}
-
-          {/* TAB 2: ĐƠN HÀNG (Giả lập giao diện nếu chưa có API) */}
-          {activeTab === "orders" && (
-             <div className={styles.tabBox}>
-               <h2>Đơn hàng của tôi</h2>
-               <p>Tính năng đang cập nhật...</p>
-               {/* Sau này map orders vào đây */}
-             </div>
-          )}
-
-          {/* TAB 3: ĐỔI PASS */}
-          {activeTab === "password" && (
-             <div className={styles.tabBox}>
-               <h2>Đổi mật khẩu</h2>
-               <form className={styles.form}>
-                  <div className={styles.formGroup}>
-                    <label>Mật khẩu hiện tại</label>
-                    <input type="password" />
+          ) : (
+            orders.map(order => (
+              <Link 
+                href={`/customer/orders/${order.id}`} 
+                key={order.id} 
+                style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+              >
+                <div className={styles.orderCard}>
+                  <div className={styles.orderHeader}>
+                    <span className={styles.orderId}>Order #{order.id}</span>
+                    <span className={styles.orderDate}>
+                      {new Date(order.created_at || order.order_date).toLocaleDateString('vi-VN', {
+                          day: 'numeric', month: 'long', year: 'numeric'
+                      })}
+                    </span>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label>Mật khẩu mới</label>
-                    <input type="password" />
+                  
+                  <div className={styles.orderBody}>
+                    <div>
+                        <div className={styles.totalLabel}>Total Amount</div>
+                        <div className={styles.totalPrice}>
+                            {Number(order.total_amount).toLocaleString('vi-VN')}đ
+                        </div>
+                    </div>
+                    <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap: '5px'}}>
+                        <div className={styles.totalLabel} style={{textAlign:'right'}}>Status</div>
+                        {renderStatusBadge(order.status)}
+                        
+                        {order.status === 'delivered' && (
+                            <span style={{fontSize: 11, color: '#d81b60', fontWeight: 600}}>
+                               Click to Review
+                            </span>
+                        )}
+                    </div>
                   </div>
-                  <button className={styles.saveBtn}>Cập nhật</button>
-               </form>
-             </div>
+                </div>
+              </Link>
+            ))
           )}
         </main>
+
       </div>
     </div>
   );
