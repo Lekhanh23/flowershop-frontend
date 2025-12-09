@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import api from '@/lib/api'; // Import instance API đã cấu hình
+import api from '@/lib/api'; 
 
-// Interface khớp với dữ liệu từ Backend trả về
 interface CartItem {
   id: number;
   quantity: number;
@@ -45,12 +44,14 @@ export default function CheckoutPage() {
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // --- 1. LẤY GIỎ HÀNG TỪ API KHI LOAD TRANG ---
+  // --- 1. LOAD DỮ LIỆU KHI VÀO TRANG ---
   useEffect(() => {
     setIsClient(true);
+
+    // A. Hàm lấy giỏ hàng
     const fetchCart = async () => {
       try {
-        const res = await api.get('/cart'); //
+        const res = await api.get('/cart'); 
         if (res.data.length === 0) {
             alert("Giỏ hàng của bạn đang trống.");
             router.push('/customer/cart');
@@ -58,11 +59,41 @@ export default function CheckoutPage() {
         setCartItems(res.data);
       } catch (error) {
         console.error("Lỗi tải giỏ hàng:", error);
-      } finally {
-        setLoading(false);
       }
     };
-    fetchCart();
+
+    // B. Hàm lấy thông tin User để điền vào Form
+    const fetchUserProfile = async () => {
+        try {
+            // API lấy profile
+            const res = await api.get('/users/profile');
+            const user = res.data;
+
+            if (user) {
+                // Xử lý tách Full Name thành First/Last Name (tương đối)
+                const nameParts = (user.full_name || '').trim().split(' ');
+                const lastName = nameParts.length > 1 ? nameParts.pop() : '';
+                const firstName = nameParts.join(' ');
+
+                setFormData(prev => ({
+                    ...prev,
+                    firstName: firstName || user.full_name, // Nếu ko tách được thì để hết vào First Name
+                    lastName: lastName || '',
+                    email: user.email || '',
+                    phone: user.phone || '',
+                    address: user.address || '',
+                    // Các trường khác giữ nguyên mặc định
+                }));
+            }
+        } catch (error) {
+            console.error("Không lấy được thông tin user:", error);
+            // Không chặn lại, người dùng có thể tự nhập tay
+        }
+    };
+
+    // Gọi song song cả 2 API
+    Promise.all([fetchCart(), fetchUserProfile()]).finally(() => setLoading(false));
+
   }, [router]);
 
   // --- 2. TÍNH TỔNG TIỀN ---
@@ -89,13 +120,8 @@ export default function CheckoutPage() {
     if (!formData.termsAccepted || !formData.privacyAccepted) return alert("Vui lòng đồng ý điều khoản!");
 
     try {
-      // Gọi API tạo đơn hàng (Backend sẽ tự lấy items từ giỏ hàng trong DB)
-      //
       const res = await api.post('/orders');
-      
       alert(`Đặt hàng thành công! Mã đơn hàng: #${res.data.id}`);
-      
-      // Chuyển hướng sang trang Profile để xem lịch sử đơn
       router.push('/customer/profile');
     } catch (error: any) {
       console.error(error);
@@ -103,7 +129,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!isClient || loading) return <div className={styles.container}>Loading...</div>;
+  if (!isClient || loading) return <div className={styles.container}>Loading info...</div>;
 
   return (
     <div className={styles.container}>
@@ -111,27 +137,70 @@ export default function CheckoutPage() {
 
       <form onSubmit={handleSubmit} className={styles.wrapper}>
         
-        {/* CỘT TRÁI: GIỮ NGUYÊN GIAO DIỆN FORM INPUT */}
+        {/* CỘT TRÁI: THÔNG TIN */}
         <div className={styles.leftColumn}>
           <h2 className={styles.sectionTitle}>Payment Information</h2>
           <div className={styles.row}>
-            <div className={styles.inputGroup}><input type="text" name="firstName" placeholder="First name" required onChange={handleChange} /></div>
-            <div className={styles.inputGroup}><input type="text" name="lastName" placeholder="Last name" required onChange={handleChange} /></div>
+            <div className={styles.inputGroup}>
+                <input 
+                    type="text" name="firstName" placeholder="First name" required 
+                    value={formData.firstName} onChange={handleChange} 
+                />
+            </div>
+            <div className={styles.inputGroup}>
+                <input 
+                    type="text" name="lastName" placeholder="Last name" required 
+                    value={formData.lastName} onChange={handleChange} 
+                />
+            </div>
           </div>
-          <div className={styles.inputGroup}><input type="text" name="country" placeholder="Country/ Area" required onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><input type="text" name="address" placeholder="Address" required onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><input type="text" name="postcode" placeholder="Postcode" onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><input type="text" name="city" placeholder="State/ City" required onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><input type="tel" name="phone" placeholder="Phone number" required onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><input type="email" name="email" placeholder="Email" required onChange={handleChange} /></div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="text" name="country" placeholder="Country/ Area" required 
+                value={formData.country} onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="text" name="address" placeholder="Address" required 
+                value={formData.address} onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="text" name="postcode" placeholder="Postcode" 
+                value={formData.postcode} onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="text" name="city" placeholder="State/ City" required 
+                value={formData.city} onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="tel" name="phone" placeholder="Phone number" required 
+                value={formData.phone} onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <input 
+                type="email" name="email" placeholder="Email" required 
+                value={formData.email} onChange={handleChange} 
+            />
+          </div>
 
           <h2 className={styles.sectionTitle} style={{marginTop: 40}}>Additional Information</h2>
           <div className={styles.inputGroup}>
-            <textarea name="note" placeholder="Order notes..." rows={5} onChange={handleChange}></textarea>
+            <textarea 
+                name="note" placeholder="Order notes..." rows={5} 
+                value={formData.note} onChange={handleChange}
+            ></textarea>
           </div>
         </div>
 
-        {/* CỘT PHẢI: CHI TIẾT ĐƠN HÀNG (Render dữ liệu từ API nhưng giữ class cũ) */}
+        {/* CỘT PHẢI: CHI TIẾT ĐƠN HÀNG */}
         <div className={styles.rightColumn}>
           <div className={styles.orderBox}>
             <h2 className={styles.boxTitle}>Your order</h2>
@@ -159,7 +228,6 @@ export default function CheckoutPage() {
                     );
                 })}
                 
-                {/* Hàng tổng tiền */}
                 <tr className={styles.totalRow}>
                   <td colSpan={2}>Total</td>
                   <td align="right" className={styles.totalPrice}>{totalAmount.toLocaleString('vi-VN')}₫</td>
@@ -168,7 +236,6 @@ export default function CheckoutPage() {
             </table>
 
             <h3 className={styles.paymentTitle}>Payment method</h3>
-            {/* Payment Options - Giữ nguyên logic QR code */}
             <div className={styles.paymentOption}>
               <div className={styles.radioRow}>
                 <input type="radio" id="online" name="paymentMethod" value="online" checked={formData.paymentMethod === 'online'} onChange={handleCheckChange} />
@@ -191,18 +258,17 @@ export default function CheckoutPage() {
 
             <div className={styles.termsGroup}>
               <div className={styles.checkboxRow}>
-                <input type="checkbox" name="termsAccepted" onChange={handleCheckChange} />
+                <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleCheckChange} />
                 <label>I agree to terms & conditions</label>
               </div>
               <div className={styles.checkboxRow}>
-                <input type="checkbox" name="privacyAccepted" onChange={handleCheckChange} />
+                <input type="checkbox" name="privacyAccepted" checked={formData.privacyAccepted} onChange={handleCheckChange} />
                 <label>I agree to privacy policy</label>
               </div>
             </div>
 
             <button type="submit" className={styles.submitBtn}>Place order</button>
           </div>
-          <p className={styles.footerNote}>Your personal data will be used to process your order...</p>
         </div>
       </form>
     </div>
