@@ -58,11 +58,6 @@ export const HeaderCustomer = () => {
             <Link href="/customer/about_us" className={styles.navLink}>
               Our Story
             </Link>
-
-            <div className={styles.dropdownMenu}>
-                <Link href="/customer/about_us" className={styles.dropdownItem}>About Us</Link>
-                <Link href="/customer/meet_our_team" className={styles.dropdownItem}>Our Team</Link>
-            </div>
           </div>
 
           {/* CAREER DROPDOWN */}

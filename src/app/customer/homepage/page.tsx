@@ -121,7 +121,7 @@ export default function HomePage() {
             </p>
             <div className={styles.heroButtons}>
               <Link href="/customer/collection" className={styles.heroPrimaryBtn}>Shop Now</Link>
-              <button className={styles.heroSecondaryBtn}>Read More</button>
+              <Link href="/customer/about_us" className={styles.heroPrimaryBtn}>Read More</Link>
             </div>
             <p className={styles.heroDiscount}>* Get 10% discount on your first purchase</p>
           </div>

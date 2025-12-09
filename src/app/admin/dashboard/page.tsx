@@ -9,7 +9,7 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 
-// Định nghĩa các màu sắc giống trong ảnh
+// Định nghĩa các màu sắc
 const COLORS = {
   sales: "#c3e6cb", 
   bestSelling: ["#f48fb1", "#ffe082", "#64b5f6", "#ffb74d", "#ba68c8"],
@@ -53,14 +53,14 @@ export default function DashboardPage() {
 
   // 2. Best Selling Products
   const bestSellingData = (stats.charts?.bestSellingProducts || []).map((item: any) => ({
-    name: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name, // Cắt tên nếu dài
+    name: item.name.length > 15 ? item.name.substring(0, 15) + '...' : item.name, 
     quantity: Number(item.sold_quantity),
     fullName: item.name
   }));
 
   // 3. Order Status (Pie Chart)
   const statusData = (stats.charts?.orderStatusDist || []).map((item: any) => ({
-    name: item.status.charAt(0).toUpperCase() + item.status.slice(1), // Viết hoa chữ cái đầu
+    name: item.status.charAt(0).toUpperCase() + item.status.slice(1), 
     value: Number(item.count)
   }));
   console.log("Status Data for Pie Chart:", statusData);
@@ -71,7 +71,7 @@ export default function DashboardPage() {
     fullName: item.name
   }));
 
-  // Custom Tooltip để hiển thị số liệu đẹp hơn
+  // Custom Tooltip 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (

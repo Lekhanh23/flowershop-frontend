@@ -30,17 +30,17 @@ export default function AboutPage() {
 					<div className={styles.teamGrid}>
 						<div className={styles.teamCard}>
 							<div className={styles.avatarPlaceholder} />
-							<div className={styles.teamName}>Jane Doe</div>
+							<div className={styles.teamName}>Hoang Huong Chi</div>
 							<div className={styles.teamRole}>Head Florist</div>
 						</div>
 						<div className={styles.teamCard}>
 							<div className={styles.avatarPlaceholder} />
-							<div className={styles.teamName}>John Smith</div>
+							<div className={styles.teamName}>Thai Ha Trang</div>
 							<div className={styles.teamRole}>Delivery Manager</div>
 						</div>
 						<div className={styles.teamCard}>
 							<div className={styles.avatarPlaceholder} />
-							<div className={styles.teamName}>Anna Lee</div>
+							<div className={styles.teamName}>Nguyen Thi Van</div>
 							<div className={styles.teamRole}>Customer Care</div>
 						</div>
 					</div>

@@ -129,11 +129,6 @@ export default function OrderDetailPage() {
                 </button>
             )}
 
-            {currentStatus === 'picked_up' && (
-                <button onClick={() => handleUpdateStatus("in_transit")} className={`${styles.btn} ${styles.btnBlue}`}>
-                    Bắt đầu giao (In Transit)
-                </button>
-            )}
 
             {(currentStatus === 'picked_up' || currentStatus === 'in_transit') && (
                 <button onClick={() => fileRef.current?.click()} className={`${styles.btn} ${styles.btnGreen}`}>
